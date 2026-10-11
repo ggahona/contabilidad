@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Inventarios NIF C-4 — Bicicletas del Norte, S.A. de C.V.</title>
+    <style>
+        /* ============================================================
+           PALETA INSTITUCIONAL AZUL (basada en las presentaciones)
+           ============================================================ */
+        :root {
+            --azul-profundo: #1a3a6b;
+            --azul-medio: #2c5aa0;
+            --azul-claro: #d6e4f5;
+            --azul-muy-claro: #eef4fb;
+            --fondo: #f7f9fc;
+            --superficie: #ffffff;
+            --texto: #1a2b45;
+            --texto-suave: #5a6b82;
+            --borde: #c5d5e8;
+            --sombra-sm: 0 1px 2px rgba(26, 58, 107, 0.06);
+            --sombra-md: 0 4px 6px rgba(26, 58, 107, 0.10);
+            --sombra-lg: 0 10px 15px rgba(26, 58, 107, 0.12);
+            --radio-sm: 4px;
+            --radio-md: 8px;
+            --radio-lg: 12px;
+            --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            --fuente-mono: 'Courier New', Courier, monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--fuente-base);
+            background: var(--fondo);
+            color: var(--texto);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            background: var(--azul-profundo);
+            color: #fff;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: var(--sombra-lg);
+            position: relative;
+        }
+
+        .header__badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 1rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .header__titulo {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .header__subtitulo {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           BOTÓN DE REGRESO
+           ============================================================ */
+        .boton-regreso {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 0.4rem 1rem;
+            border-radius: var(--radio-md);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: var(--fuente-base);
+        }
+
+        .boton-regreso:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+        }
+
+        /* ============================================================
+           CONTENEDOR PRINCIPAL
+           ============================================================ */
+        .contenedor {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* ============================================================
+           TARJETA DE CASO
+           ============================================================ */
+        .caso-base {
+            background: var(--superficie);
+            border-left: 4px solid var(--azul-medio);
+            border-radius: var(--radio-md);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--sombra-sm);
+        }
+
+        .caso-base__titulo {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--azul-profundo);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .caso-base__texto {
+            font-size: 0.95rem;
+            color: var(--texto);
+            line-height: 1.6;
+        }
+
+        .caso-base__texto strong {
+            color: var(--azul-profundo);
+        }
+
+        /* ============================================================
+           SECCIÓN DE PUNTOS
+           ============================================================ */
+        .seccion-titulo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--azul-profundo);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--azul-claro);
+        }
+
+        .seccion-subtitulo {
+            font-size: 0.9rem;
+            color: var(--texto-suave);
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-puntos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .tarjeta-punto {
+            background: var(--superficie);
+            border: 1px solid var(--borde);
+            border-radius: var(--radio-md);
+            padding: 1.25rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--sombra-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tarjeta-punto:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--sombra-md);
+        }
+
+        .tarjeta-punto__numero {
+            display: inline-block;
+            background: var(--azul-profundo);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            align-self: flex-start;
+        }
+
+        .tarjeta-punto__titulo {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--azul-profundo);
+            margin-bottom: 0.4rem;
+            line-height: 1.3;
+        }
+
+        .tarjeta-punto__descripcion {
+            font-size: 0.85rem;
+            color: var(--texto-suave);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .tarjeta-punto__enlaces {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .boton-enlace {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: var(--azul-muy-claro);
+            color: var(--azul-profundo);
+            border: 1px solid var(--azul-claro);
+            padding: 0.4rem 0.9rem;
+            border-radius: var(--radio-md);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: var(--fuente-base);
+        }
+
+        .boton-enlace:hover {
+            background: var(--azul-claro);
+            border-color: var(--azul-medio);
+            color: var(--azul-profundo);
+        }
+
+        .boton-enlace--primario {
+            background: var(--azul-medio);
+            color: #fff;
+            border-color: var(--azul-medio);
+        }
+
+        .boton-enlace--primario:hover {
+            background: var(--azul-profundo);
+            border-color: var(--azul-profundo);
+            color: #fff;
+        }
+
+        /* ============================================================
+           SECCIÓN DE GUÍA
+           ============================================================ */
+        .tarjeta-guia {
+            background: var(--superficie);
+            border: 2px solid var(--azul-medio);
+            border-radius: var(--radio-md);
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--sombra-sm);
+        }
+
+        .tarjeta-guia__titulo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--azul-profundo);
+            margin-bottom: 0.4rem;
+        }
+
+        .tarjeta-guia__descripcion {
+            font-size: 0.9rem;
+            color: var(--texto-suave);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            background: var(--azul-profundo);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            margin-top: auto;
+        }
+
+        .footer strong {
+            color: #fff;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1.5rem 1rem;
+                padding-top: 4rem;
+            }
+
+            .header__titulo {
+                font-size: 1.4rem;
+            }
+
+            .header__subtitulo {
+                font-size: 0.85rem;
+            }
+
+            .boton-regreso {
+                top: 1rem;
+                left: 1rem;
+                font-size: 0.7rem;
+                padding: 0.3rem 0.7rem;
+            }
+
+            .contenedor {
+                padding: 1.5rem 1rem 2rem;
+            }
+
+            .grid-puntos {
+                grid-template-columns: 1fr;
+            }
+
+            .tarjeta-punto__enlaces {
+                flex-direction: column;
+            }
+
+            .boton-enlace {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER CON BOTÓN DE REGRESO
+         ============================================================ -->
+    <header class="header">
+        <a href="../" class="boton-regreso">
+            ← Volver a contabilidad
+        </a>
+        <div class="header__badge">NIF C-4 · Curso completo</div>
+        <h1 class="header__titulo">El Inventario en el Ciclo Contable</h1>
+        <p class="header__subtitulo">
+            Caso: Bicicletas del Norte, S.A. de C.V. — 5 puntos temáticos + guía de referencia
+        </p>
+    </header>
+
+    <!-- ============================================================
+         CONTENIDO PRINCIPAL
+         ============================================================ -->
+    <main class="contenedor">
+
+        <!-- Caso base -->
+        <div class="caso-base">
+            <div class="caso-base__titulo">Caso base</div>
+            <div class="caso-base__texto">
+                <strong>Empresa:</strong> Bicicletas del Norte, S.A. de C.V. &nbsp;|&nbsp;
+                <strong>Giro:</strong> Ensamble y comercialización de bicicletas &nbsp;|&nbsp;
+                <strong>Norma:</strong> NIF C-4 &nbsp;|&nbsp;
+                <strong>Periodo:</strong> Enero de 2026 &nbsp;|&nbsp;
+                <strong>Moneda:</strong> Pesos mexicanos ($)
+            </div>
+        </div>
+
+        <!-- Guía de la clase -->
+        <h2 class="seccion-titulo">Guía de la clase</h2>
+        <p class="seccion-subtitulo">Documento de referencia con la introducción, datos clave y glosario del curso.</p>
+
+        <div class="tarjeta-guia">
+            <div class="tarjeta-guia__titulo">Guía e introducción de la clase</div>
+            <div class="tarjeta-guia__descripcion">
+                Documento Markdown con LaTeX para Obsidian. Contiene la bienvenida, el caso base,
+                el objetivo de aprendizaje, el recorrido de los 5 puntos, las fórmulas clave, los
+                resultados del caso y el glosario de conceptos.
+            </div>
+            <div class="tarjeta-punto__enlaces">
+                <a href="g0-guia.md" class="boton-enlace boton-enlace--primario">Abrir guía (Markdown)</a>
+            </div>
+        </div>
+
+        <!-- Puntos temáticos -->
+        <h2 class="seccion-titulo">Puntos temáticos</h2>
+        <p class="seccion-subtitulo">Cada punto incluye una presentación conceptual y una herramienta aplicativa interactiva.</p>
+
+        <div class="grid-puntos">
+
+            <!-- Punto 1 -->
+            <div class="tarjeta-punto">
+                <span class="tarjeta-punto__numero">Punto 1 de 5</span>
+                <div class="tarjeta-punto__titulo">Definición, Naturaleza y Clasificación</div>
+                <div class="tarjeta-punto__descripcion">
+                    Qué son los inventarios según la NIF C-4, por qué van en el Activo Circulante
+                    y cuáles son las 6 clases normativas.
+                </div>
+                <div class="tarjeta-punto__enlaces">
+                    <a href="g1-presentacion.html" class="boton-enlace boton-enlace--primario">Presentación</a>
+                    <a href="g1-complemento.html" class="boton-enlace">Clasificador interactivo</a>
+                </div>
+            </div>
+
+            <!-- Punto 2 -->
+            <div class="tarjeta-punto">
+                <span class="tarjeta-punto__numero">Punto 2 de 5</span>
+                <div class="tarjeta-punto__titulo">Procedimientos de Registro Contable</div>
+                <div class="tarjeta-punto__descripcion">
+                    Global, Analítico y Perpetuos: tres formas de registrar compras y ventas,
+                    todas llegan al mismo resultado final.
+                </div>
+                <div class="tarjeta-punto__enlaces">
+                    <a href="g2-presentacion.html" class="boton-enlace boton-enlace--primario">Presentación</a>
+                    <a href="g2-complemento-simulador.html" class="boton-enlace">Simulador de procedimientos</a>
+                </div>
+            </div>
+
+            <!-- Punto 3 -->
+            <div class="tarjeta-punto">
+                <span class="tarjeta-punto__numero">Punto 3 de 5</span>
+                <div class="tarjeta-punto__titulo">Fórmulas de Asignación del Costo</div>
+                <div class="tarjeta-punto__descripcion">
+                    PEPS y Costo Promedio Móvil: cómo asignar costo cuando los precios cambian
+                    a lo largo del tiempo.
+                </div>
+                <div class="tarjeta-punto__enlaces">
+                    <a href="g3-presentacion.html" class="boton-enlace boton-enlace--primario">Presentación</a>
+                    <a href="g3-calculadora-kardex.html" class="boton-enlace">Calculadora de Kardex</a>
+                </div>
+            </div>
+
+            <!-- Punto 4 -->
+            <div class="tarjeta-punto">
+                <span class="tarjeta-punto__numero">Punto 4 de 5</span>
+                <div class="tarjeta-punto__titulo">Mercancías en Tránsito y Ajustes</div>
+                <div class="tarjeta-punto__descripcion">
+                    Cuenta puente para compras foráneas y regularización de mermas, faltantes
+                    y sobrantes por recuento físico.
+                </div>
+                <div class="tarjeta-punto__enlaces">
+                    <a href="g4-presentacion.html" class="boton-enlace boton-enlace--primario">Presentación</a>
+                    <a href="g4-simulador-transito-ajustes.html" class="boton-enlace">Simulador de tránsito y ajustes</a>
+                </div>
+            </div>
+
+            <!-- Punto 5 -->
+            <div class="tarjeta-punto">
+                <span class="tarjeta-punto__numero">Punto 5 de 5</span>
+                <div class="tarjeta-punto__titulo">Relación con el Estado de Resultados</div>
+                <div class="tarjeta-punto__descripcion">
+                    Los dos puntos de contacto entre el Estado de Resultados y el Balance General,
+                    y la comprobación del circuito contable.
+                </div>
+                <div class="tarjeta-punto__enlaces">
+                    <a href="g5-presentacion.html" class="boton-enlace boton-enlace--primario">Presentación</a>
+                    <a href="g5-conciliador-er-bg.html" class="boton-enlace">Conciliador ER ↔ BG</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Ciclo contable -->
+        <h2 class="seccion-titulo">El ciclo contable del inventario</h2>
+        <p class="seccion-subtitulo">Clasificar → Registrar → Costear → Ajustar → Presentar</p>
+
+        <div class="caso-base" style="border-left-color: var(--azul-profundo);">
+            <div class="caso-base__texto" style="font-family: var(--fuente-mono); font-size: 0.9rem; text-align: center; line-height: 2;">
+                <strong>Clasificar</strong> (Punto 1) → <strong>Registrar</strong> (Punto 2) → <strong>Costear</strong> (Punto 3) → <strong>Ajustar</strong> (Punto 4) → <strong>Presentar</strong> (Punto 5)
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer">
+        <strong>Curso de Inventarios NIF C-4</strong> — Bicicletas del Norte, S.A. de C.V.<br>
+        5 puntos temáticos + guía de referencia · 10 archivos HTML + 1 Markdown
+    </footer>
+
+</body>
+</html>
