@@ -102,6 +102,11 @@ body {
   overflow-y: auto;
 }
 
+/* Slide de síntesis del Punto 1: sin restricción de altura para que el canvas no se corte */
+.slide[data-titulo="Síntesis del Punto 1"] {
+  max-height: none;
+}
+
 .slide.activo {
   display: block;
 }
@@ -572,38 +577,14 @@ body {
   color: var(--texto-suave);
 }
 
-.mapa-conceptual {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
-}
-
-.mapa-nodo {
-  background: var(--superficie);
-  border: 2px solid var(--azul-profundo);
+/* ==== CANVAS DEL ESQUEMA ==== */
+.canvas-esquema {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto var(--espacio-md);
   border-radius: var(--radio-md);
-  padding: var(--espacio-md);
-  text-align: center;
-  transition: all 0.3s;
-  cursor: default;
-}
-
-.mapa-nodo:hover {
-  background: var(--azul-profundo);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.mapa-nodo__texto {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.separador {
-  height: 1px;
-  background: var(--borde);
-  margin: var(--espacio-lg) 0;
+  background: var(--superficie);
 }
 
 @media (max-width: 768px) {
@@ -1071,26 +1052,9 @@ body {
       <p class="slide__subtitulo">Mapa conceptual, razonamiento clave y cierre</p>
 
       <div class="slide__cuerpo">
-        <div class="mapa-conceptual">
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">NIF C-4: activos no monetarios</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Activo Circulante: ciclo a corto plazo</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">6 clases normativas</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Naturaleza deudora</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Cuenta colectiva + auxiliares</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Total inicial: $275,000.00</div>
-          </div>
-        </div>
+
+        <!-- Canvas del esquema -->
+        <canvas id="esquemaCanvas" class="canvas-esquema" width="900" height="480"></canvas>
 
         <div class="caja-concepto">
           <div class="caja-concepto__titulo">Tres fundamentos clave</div>
@@ -1150,6 +1114,7 @@ const Slides = {
     this.bindKeys();
     this.bindHash();
     this.construirIndice();
+    this.dibujarEsquema();
   },
 
   ir(n) {
@@ -1219,6 +1184,172 @@ const Slides = {
       };
       lista.appendChild(li);
     });
+  },
+
+  /* ============================================================
+     DIBUJO DEL MAPA CONCEPTUAL EN CANVAS — PUNTO 1
+     ============================================================ */
+  dibujarEsquema() {
+    const canvas = document.getElementById('esquemaCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const COLOR = {
+      azulProfundo: '#1a3a6b',
+      azulMedio: '#2c5aa0',
+      azulClaro: '#d6e4f5',
+      azulMuyClaro: '#eef4fb',
+      texto: '#1a2b45',
+      textoSuave: '#5a6b82',
+      blanco: '#ffffff'
+    };
+
+    function cajaRedondeada(x, y, w, h, radio, fondo, borde, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x + radio, y);
+      ctx.lineTo(x + w - radio, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radio);
+      ctx.lineTo(x + w, y + h - radio);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radio, y + h);
+      ctx.lineTo(x + radio, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radio);
+      ctx.lineTo(x, y + radio);
+      ctx.quadraticCurveTo(x, y, x + radio, y);
+      ctx.closePath();
+      if (fondo) { ctx.fillStyle = fondo; ctx.fill(); }
+      if (borde) { ctx.strokeStyle = borde; ctx.lineWidth = grosor || 2; ctx.stroke(); }
+    }
+
+    function textoCentrado(texto, x, y, fuente, color, maxAncho) {
+      ctx.font = fuente;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (!maxAncho) {
+        ctx.fillText(texto, x, y);
+        return;
+      }
+
+      const palabras = texto.split(' ');
+      const lineas = [];
+      let lineaActual = '';
+      palabras.forEach(p => {
+        const prueba = lineaActual ? lineaActual + ' ' + p : p;
+        if (ctx.measureText(prueba).width > maxAncho && lineaActual) {
+          lineas.push(lineaActual);
+          lineaActual = p;
+        } else {
+          lineaActual = prueba;
+        }
+      });
+      if (lineaActual) lineas.push(lineaActual);
+
+      const altoLinea = parseInt(fuente.match(/(\d+)px/)[1], 10) * 1.2;
+      const inicioY = y - ((lineas.length - 1) * altoLinea) / 2;
+
+      lineas.forEach((linea, i) => {
+        ctx.fillText(linea, x, inicioY + i * altoLinea);
+      });
+    }
+
+    function linea(x1, y1, x2, y2, color, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = grosor || 2;
+      ctx.stroke();
+    }
+
+    function flechaVertical(x, y1, y2, color) {
+      linea(x, y1, x, y2, color, 2);
+      const tam = 6;
+      ctx.beginPath();
+      ctx.moveTo(x, y2);
+      ctx.lineTo(x - tam, y2 - tam);
+      ctx.lineTo(x + tam, y2 - tam);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // Fondo
+    ctx.fillStyle = COLOR.blanco;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centroX = 450;
+
+    // ============================================================
+    // NODO 1: NIF C-4 (definición)
+    // ============================================================
+    const n1Y = 30;
+    cajaRedondeada(centroX - 240, n1Y - 22, 480, 44, 8, COLOR.azulProfundo, null);
+    textoCentrado('NIF C-4: los inventarios son activos NO monetarios', centroX, n1Y, 'bold 12px system-ui', COLOR.blanco);
+
+    flechaVertical(centroX, n1Y + 22, n1Y + 55, COLOR.azulProfundo);
+
+    // ============================================================
+    // NODO 2: ¿Por qué Activo Circulante?
+    // ============================================================
+    const n2Y = 105;
+    cajaRedondeada(centroX - 240, n2Y - 26, 480, 52, 8, COLOR.azulMedio, null);
+    textoCentrado('¿Por qué va en el Activo Circulante?', centroX, n2Y - 8, 'bold 12px system-ui', COLOR.blanco);
+    textoCentrado('Porque forma parte del ciclo financiero a corto plazo', centroX, n2Y + 12, '11px system-ui', COLOR.blanco);
+
+    flechaVertical(centroX, n2Y + 26, n2Y + 59, COLOR.azulMedio);
+
+    // ============================================================
+    // NODO 3: ¿Cómo se divide?
+    // ============================================================
+    const n3Y = 190;
+    cajaRedondeada(centroX - 240, n3Y - 26, 480, 52, 8, COLOR.azulMedio, null);
+    textoCentrado('¿Cómo se divide?', centroX, n3Y - 8, 'bold 12px system-ui', COLOR.blanco);
+    textoCentrado('6 clases normativas NIF C-4', centroX, n3Y + 12, '11px system-ui', COLOR.blanco);
+
+    flechaVertical(centroX, n3Y + 26, n3Y + 59, COLOR.azulMedio);
+
+    // ============================================================
+    // NODO 4: ¿Cómo se controla?
+    // ============================================================
+    const n4Y = 275;
+    cajaRedondeada(centroX - 240, n4Y - 22, 480, 44, 8, COLOR.azulMedio, null);
+    textoCentrado('¿Cómo se controla en contabilidad?', centroX, n4Y, 'bold 12px system-ui', COLOR.blanco);
+
+    // Bifurcación hacia dos atributos
+    linea(centroX, n4Y + 22, centroX, n4Y + 40, COLOR.azulProfundo, 2);
+    const atribIzqX = centroX - 150;
+    const atribDerX = centroX + 150;
+    linea(atribIzqX, n4Y + 40, atribDerX, n4Y + 40, COLOR.azulProfundo, 2);
+    flechaVertical(atribIzqX, n4Y + 40, n4Y + 65, COLOR.azulProfundo);
+    flechaVertical(atribDerX, n4Y + 40, n4Y + 65, COLOR.azulProfundo);
+
+    // ============================================================
+    // NODOS 5 y 6: Naturaleza deudora + Cuenta colectiva
+    // ============================================================
+    const n5Y = 340;
+    cajaRedondeada(atribIzqX - 130, n5Y - 25, 260, 50, 8, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Naturaleza deudora', atribIzqX, n5Y - 8, 'bold 12px system-ui', COLOR.azulProfundo);
+    textoCentrado('Las subcuentas se cargan', atribIzqX, n5Y + 10, '11px system-ui', COLOR.textoSuave);
+
+    cajaRedondeada(atribDerX - 130, n5Y - 25, 260, 50, 8, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Cuenta colectiva + auxiliares', atribDerX, n5Y - 8, 'bold 12px system-ui', COLOR.azulProfundo);
+    textoCentrado('Mayor + tarjetas de almacén', atribDerX, n5Y + 10, '11px system-ui', COLOR.textoSuave);
+
+    // ============================================================
+    // CONVERGENCIA HACIA EL TOTAL
+    // ============================================================
+    linea(atribIzqX, n5Y + 25, atribIzqX, n5Y + 55, COLOR.azulProfundo, 2);
+    linea(atribDerX, n5Y + 25, atribDerX, n5Y + 55, COLOR.azulProfundo, 2);
+    linea(atribIzqX, n5Y + 55, atribDerX, n5Y + 55, COLOR.azulProfundo, 2);
+    flechaVertical(centroX, n5Y + 55, n5Y + 80, COLOR.azulProfundo);
+
+    // ============================================================
+    // NODO FINAL: Total inicial
+    // ============================================================
+    const n7Y = 445;
+    cajaRedondeada(centroX - 200, n7Y - 22, 400, 44, 8, COLOR.azulClaro, COLOR.azulProfundo, 2);
+    textoCentrado('Total inicial = $275,000.00', centroX, n7Y, 'bold 13px system-ui', COLOR.azulProfundo);
   }
 };
 
