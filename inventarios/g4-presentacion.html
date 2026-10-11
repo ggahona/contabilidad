@@ -94,6 +94,11 @@ body {
   overflow-y: auto;
 }
 
+/* Slide de síntesis del Punto 4: sin restricción de altura para que el canvas no se corte */
+.slide[data-titulo="Síntesis del Punto 4"] {
+  max-height: none;
+}
+
 .slide.activo { display: block; }
 
 @keyframes fadeIn {
@@ -569,32 +574,14 @@ body {
   line-height: 1.5;
 }
 
-.mapa-conceptual {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
-}
-
-.mapa-nodo {
-  background: var(--superficie);
-  border: 2px solid var(--azul-profundo);
+/* ==== CANVAS DEL ESQUEMA ==== */
+.canvas-esquema {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto var(--espacio-md);
   border-radius: var(--radio-md);
-  padding: var(--espacio-md);
-  text-align: center;
-  transition: all 0.3s;
-  cursor: default;
-}
-
-.mapa-nodo:hover {
-  background: var(--azul-profundo);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.mapa-nodo__texto {
-  font-size: 0.85rem;
-  font-weight: 600;
+  background: var(--superficie);
 }
 
 @media (max-width: 768px) {
@@ -1081,26 +1068,9 @@ body {
       <p class="slide__subtitulo">Mapa conceptual y cierre</p>
 
       <div class="slide__cuerpo">
-        <div class="mapa-conceptual">
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Mercancías en tránsito: cuenta puente</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Acumula factura + fletes + seguros</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Traspaso al Almacén al recibir</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Merma: Gastos de venta</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Faltante: Deudores diversos</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Sobrante: Otros gastos y productos</div>
-          </div>
-        </div>
+
+        <!-- Canvas del esquema -->
+        <canvas id="esquemaCanvas" class="canvas-esquema" width="900" height="420"></canvas>
 
         <div class="caja-concepto">
           <div class="caja-concepto__titulo">Tres fundamentos clave</div>
@@ -1165,6 +1135,7 @@ const Slides = {
     this.bindKeys();
     this.bindHash();
     this.construirIndice();
+    this.dibujarEsquema();
   },
 
   ir(n) {
@@ -1234,6 +1205,222 @@ const Slides = {
       };
       lista.appendChild(li);
     });
+  },
+
+  /* ============================================================
+     DIBUJO DEL ESQUEMA EN CANVAS (versión compacta, 900×420)
+     ============================================================ */
+  dibujarEsquema() {
+    const canvas = document.getElementById('esquemaCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const COLOR = {
+      azulProfundo: '#1a3a6b',
+      azulMedio: '#2c5aa0',
+      azulClaro: '#d6e4f5',
+      azulMuyClaro: '#eef4fb',
+      texto: '#1a2b45',
+      textoSuave: '#5a6b82',
+      blanco: '#ffffff',
+      ambar: '#f59e0b',
+      ambarClaro: '#fef3c7',
+      verde: '#10b981',
+      verdeClaro: '#d1fae5'
+    };
+
+    function cajaRedondeada(x, y, w, h, radio, fondo, borde, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x + radio, y);
+      ctx.lineTo(x + w - radio, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radio);
+      ctx.lineTo(x + w, y + h - radio);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radio, y + h);
+      ctx.lineTo(x + radio, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radio);
+      ctx.lineTo(x, y + radio);
+      ctx.quadraticCurveTo(x, y, x + radio, y);
+      ctx.closePath();
+      if (fondo) { ctx.fillStyle = fondo; ctx.fill(); }
+      if (borde) { ctx.strokeStyle = borde; ctx.lineWidth = grosor || 2; ctx.stroke(); }
+    }
+
+    function textoCentrado(texto, x, y, fuente, color, maxAncho) {
+      ctx.font = fuente;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (!maxAncho) {
+        ctx.fillText(texto, x, y);
+        return;
+      }
+
+      const palabras = texto.split(' ');
+      const lineas = [];
+      let lineaActual = '';
+      palabras.forEach(p => {
+        const prueba = lineaActual ? lineaActual + ' ' + p : p;
+        if (ctx.measureText(prueba).width > maxAncho && lineaActual) {
+          lineas.push(lineaActual);
+          lineaActual = p;
+        } else {
+          lineaActual = prueba;
+        }
+      });
+      if (lineaActual) lineas.push(lineaActual);
+
+      const altoLinea = parseInt(fuente.match(/(\d+)px/)[1], 10) * 1.2;
+      const inicioY = y - ((lineas.length - 1) * altoLinea) / 2;
+
+      lineas.forEach((linea, i) => {
+        ctx.fillText(linea, x, inicioY + i * altoLinea);
+      });
+    }
+
+    function linea(x1, y1, x2, y2, color, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = grosor || 2;
+      ctx.stroke();
+    }
+
+    function flechaVertical(x, y1, y2, color) {
+      linea(x, y1, x, y2, color, 2);
+      const tam = 5;
+      ctx.beginPath();
+      ctx.moveTo(x, y2);
+      ctx.lineTo(x - tam, y2 - tam);
+      ctx.lineTo(x + tam, y2 - tam);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // Fondo
+    ctx.fillStyle = COLOR.blanco;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // ============================================================
+    // NODO RAÍZ
+    // ============================================================
+    const raizX = 450;
+    const raizY = 25;
+    const raizW = 320;
+    const raizH = 36;
+
+    cajaRedondeada(raizX - raizW/2, raizY - raizH/2, raizW, raizH, 8, COLOR.azulProfundo, null);
+    textoCentrado('MERCANCÍAS EN TRÁNSITO Y AJUSTES', raizX, raizY, 'bold 12px system-ui', COLOR.blanco);
+
+    // Bifurcación
+    linea(raizX, raizY + raizH/2, raizX, 68, COLOR.azulProfundo, 2);
+    const ramaIzqX = 240;
+    const ramaDerX = 660;
+    const ramaY = 68;
+
+    linea(raizX, ramaY, ramaIzqX, ramaY, COLOR.azulProfundo, 2);
+    linea(raizX, ramaY, ramaDerX, ramaY, COLOR.azulProfundo, 2);
+    flechaVertical(ramaIzqX, ramaY, 95, COLOR.azulProfundo);
+    flechaVertical(ramaDerX, ramaY, 95, COLOR.azulProfundo);
+
+    // ============================================================
+    // RAMA IZQUIERDA: MERCANCÍAS EN TRÁNSITO
+    // ============================================================
+    const transitoX = ramaIzqX;
+    const transitoY = 115;
+    const transitoW = 220;
+    const transitoH = 36;
+
+    cajaRedondeada(transitoX - transitoW/2, transitoY - transitoH/2, transitoW, transitoH, 8, COLOR.azulMedio, null);
+    textoCentrado('MERCANCÍAS EN TRÁNSITO', transitoX, transitoY, 'bold 11px system-ui', COLOR.blanco);
+
+    // Conexión a los 3 pasos en fila
+    linea(transitoX, transitoY + transitoH/2, transitoX, 148, COLOR.azulMedio, 2);
+
+    const pasosTransito = [
+      { label: 'Cuenta puente', x: transitoX - 75 },
+      { label: 'Acumula factura + fletes', x: transitoX },
+      { label: 'Traspaso al Almacén', x: transitoX + 75 }
+    ];
+
+    linea(pasosTransito[0].x, 148, pasosTransito[2].x, 148, COLOR.azulMedio, 2);
+    pasosTransito.forEach(p => {
+      flechaVertical(p.x, 148, 168, COLOR.azulMedio);
+    });
+
+    pasosTransito.forEach(paso => {
+      const w = 70;
+      const h = 36;
+      const y = 190;
+      cajaRedondeada(paso.x - w/2, y - h/2, w, h, 6, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+      textoCentrado(paso.label, paso.x, y, '9px system-ui', COLOR.azulProfundo, w - 6);
+    });
+
+    // Cierre de la rama izquierda
+    const cierreIzqY = 250;
+    const cierreIzqW = 240;
+    const cierreIzqH = 34;
+    linea(transitoX, 208, transitoX, 232, COLOR.azulMedio, 2);
+    cajaRedondeada(transitoX - cierreIzqW/2, cierreIzqY - cierreIzqH/2, cierreIzqW, cierreIzqH, 6, COLOR.azulClaro, COLOR.azulProfundo, 2);
+    textoCentrado('Cuenta saldada en cero', transitoX, cierreIzqY, 'bold 11px system-ui', COLOR.azulProfundo, cierreIzqW - 20);
+
+    // ============================================================
+    // RAMA DERECHA: AJUSTES POR RECUENTO FÍSICO
+    // ============================================================
+    const ajusteX = ramaDerX;
+    const ajusteY = 115;
+    const ajusteW = 220;
+    const ajusteH = 36;
+
+    cajaRedondeada(ajusteX - ajusteW/2, ajusteY - ajusteH/2, ajusteW, ajusteH, 8, COLOR.azulMedio, null);
+    textoCentrado('AJUSTES POR RECUENTO FÍSICO', ajusteX, ajusteY, 'bold 11px system-ui', COLOR.blanco);
+
+    // Conexión a los 3 subnodos
+    linea(ajusteX, ajusteY + ajusteH/2, ajusteX, 148, COLOR.azulMedio, 2);
+    linea(ajusteX - 80, 148, ajusteX + 80, 148, COLOR.azulMedio, 2);
+    flechaVertical(ajusteX - 80, 148, 168, COLOR.azulMedio);
+    flechaVertical(ajusteX, 148, 168, COLOR.azulMedio);
+    flechaVertical(ajusteX + 80, 148, 168, COLOR.azulMedio);
+
+    const subnodosAjuste = [
+      { label: 'Merma normal', contrapartida: 'Gastos de venta', x: ajusteX - 80 },
+      { label: 'Faltante injustificado', contrapartida: 'Deudores diversos', x: ajusteX },
+      { label: 'Sobrante desconocido', contrapartida: 'Otros gastos', x: ajusteX + 80 }
+    ];
+
+    subnodosAjuste.forEach(nodo => {
+      const w = 76;
+      const h = 44;
+      const y = 190;
+      cajaRedondeada(nodo.x - w/2, y - h/2, w, h, 6, COLOR.ambarClaro, COLOR.ambar, 2);
+      textoCentrado(nodo.label, nodo.x, y - 9, 'bold 8px system-ui', COLOR.azulProfundo, w - 6);
+      textoCentrado(nodo.contrapartida, nodo.x, y + 8, '7px system-ui', COLOR.textoSuave, w - 6);
+    });
+
+    // Cierre de la rama derecha
+    const cierreDerY = 250;
+    const cierreDerW = 240;
+    const cierreDerH = 34;
+    linea(ajusteX, 212, ajusteX, 232, COLOR.azulMedio, 2);
+    cajaRedondeada(ajusteX - cierreDerW/2, cierreDerY - cierreDerH/2, cierreDerW, cierreDerH, 6, COLOR.verdeClaro, COLOR.verde, 2);
+    textoCentrado('Almacén cuadrado con el conteo físico', ajusteX, cierreDerY, 'bold 10px system-ui', COLOR.azulProfundo, cierreDerW - 20);
+
+    // ============================================================
+    // CONVERGENCIA FINAL
+    // ============================================================
+    linea(transitoX, 267, transitoX, 305, COLOR.azulProfundo, 2);
+    linea(ajusteX, 267, ajusteX, 305, COLOR.azulProfundo, 2);
+    linea(transitoX, 305, ajusteX, 305, COLOR.azulProfundo, 2);
+    flechaVertical(raizX, 305, 330, COLOR.azulProfundo);
+
+    // Caja final
+    const finalY = 365;
+    const finalW = 520;
+    const finalH = 40;
+    cajaRedondeada(raizX - finalW/2, finalY - finalH/2, finalW, finalH, 8, COLOR.azulClaro, COLOR.azulProfundo, 2);
+    textoCentrado('Objetivo: saldo del Almacén = valor real en bodega', raizX, finalY, 'bold 12px system-ui', COLOR.azulProfundo, finalW - 20);
   }
 };
 
