@@ -6,63 +6,66 @@
 <title>Contabilidad — Materiales de Estudio</title>
 <style>
   :root {
-    --azul-noche: #001f45;
-    --azul-institucional: #002e5f;
-    --azul-barra: #112b50;
-    --azul-titulos: #004484;
-    --azul-pizarra: #344d68;
-    --oro: #c79316;
-    --crema-oro: #fbf3dc;
-    --turquesa: #00b6d7;
-    --gris-borde: #d9e0e8;
-    --gris-texto: #333;
+    --azul-profundo: #0B1E3A;
+    --azul-brillante: #1E5EFF;
+    --cian: #4FC3F7;
+    --azul-medio: #143A7A;
+    --cian-claro: #D6F0FE;
+    --azul-claro: #DCE8FF;
+    --blanco-gris: #F0F4F8;
+    --texto: #0B1E3A;
+    --texto-suave: #4A5C7A;
+    --borde: #DCE8FF;
+    --ambar: #F59E0B;
+    --verde-exito: #10B981;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
   body {
-    background: linear-gradient(135deg, var(--azul-noche) 0%, var(--azul-institucional) 100%);
+    background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
     min-height: 100vh;
     padding: 20px;
-    color: var(--gris-texto);
+    color: var(--texto);
   }
   .container {
     max-width: 1000px;
     margin: 0 auto;
     background: white;
-    border-radius: 25px;
-    box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(11,30,58,0.35);
     overflow: hidden;
   }
   .header {
-    background: linear-gradient(135deg, var(--azul-institucional) 0%, var(--azul-barra) 100%);
+    background: var(--azul-profundo);
     color: white;
     padding: 40px 30px;
     text-align: center;
   }
-  .header h1 { font-size: 2.2em; margin-bottom: 10px; line-height: 1.2; }
-  .header p { color: var(--oro); font-size: 1.1em; font-weight: 600; }
+  .header h1 { font-size: 2.2em; margin-bottom: 10px; line-height: 1.2; font-weight: 700; }
+  .header p { color: var(--cian); font-size: 1.1em; font-weight: 600; }
 
   .content { padding: 40px 30px; }
 
   .intro {
-    background: var(--crema-oro);
+    background: var(--cian-claro);
     padding: 25px;
-    border-radius: 15px;
+    border-radius: 12px;
     margin-bottom: 30px;
     text-align: center;
-    border-left: 5px solid var(--oro);
+    border-left: 5px solid var(--azul-brillante);
   }
-  .intro h2 { color: var(--azul-titulos); margin-bottom: 10px; }
-  .intro p { color: var(--azul-pizarra); line-height: 1.6; }
+  .intro h2 { color: var(--azul-profundo); margin-bottom: 10px; font-weight: 700; }
+  .intro p { color: var(--azul-medio); line-height: 1.6; }
 
   .seccion-titulo {
-    color: var(--azul-titulos);
+    color: var(--azul-profundo);
     font-size: 1.4em;
     margin-bottom: 5px;
     padding-bottom: 8px;
-    border-bottom: 2px solid var(--gris-borde);
+    border-bottom: 2px solid var(--borde);
+    font-weight: 700;
   }
   .seccion-subtitulo {
-    color: var(--azul-pizarra);
+    color: var(--texto-suave);
     font-size: 0.9em;
     margin-bottom: 20px;
   }
@@ -75,30 +78,30 @@
   }
   .resource-card {
     background: white;
-    border: 2px solid var(--gris-borde);
-    border-radius: 15px;
+    border: 2px solid var(--borde);
+    border-radius: 12px;
     padding: 30px;
     text-align: center;
     transition: all 0.3s ease;
     text-decoration: none;
-    color: var(--gris-texto);
+    color: var(--texto);
     display: block;
   }
   .resource-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,46,95,0.2);
-    border-color: var(--oro);
+    box-shadow: 0 10px 30px rgba(30,94,255,0.2);
+    border-color: var(--azul-brillante);
   }
   .resource-card:focus-visible {
-    outline: 3px solid var(--turquesa);
+    outline: 3px solid var(--cian);
     outline-offset: 3px;
   }
-  .resource-card h3 { color: var(--azul-titulos); margin-bottom: 10px; font-size: 1.3em; }
-  .resource-card p { color: var(--azul-pizarra); font-size: 0.95em; line-height: 1.5; }
+  .resource-card h3 { color: var(--azul-profundo); margin-bottom: 10px; font-size: 1.3em; font-weight: 700; }
+  .resource-card p { color: var(--texto-suave); font-size: 0.95em; line-height: 1.5; }
   .resource-tag {
     display: inline-block;
-    background: var(--oro);
-    color: var(--azul-noche);
+    background: var(--azul-brillante);
+    color: white;
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 12px;
@@ -107,32 +110,33 @@
   }
 
   .aviso-proceso {
-    background: var(--crema-oro);
-    border: 2px dashed var(--oro);
-    border-radius: 15px;
+    background: var(--cian-claro);
+    border: 2px dashed var(--azul-brillante);
+    border-radius: 12px;
     padding: 25px;
     text-align: center;
     margin-top: 25px;
   }
   .aviso-proceso h3 {
-    color: var(--azul-titulos);
+    color: var(--azul-profundo);
     font-size: 1.1em;
     margin-bottom: 8px;
+    font-weight: 700;
   }
   .aviso-proceso p {
-    color: var(--azul-pizarra);
+    color: var(--azul-medio);
     font-size: 0.92em;
     line-height: 1.6;
   }
 
   .footer {
-    background: var(--azul-barra);
+    background: var(--azul-profundo);
     padding: 25px;
     text-align: center;
-    color: white;
+    color: rgba(255,255,255,0.85);
   }
   .footer p { font-size: 0.9em; line-height: 1.6; }
-  .footer strong { color: var(--oro); }
+  .footer strong { color: var(--cian); }
 
   @media (max-width: 600px) {
     .header h1 { font-size: 1.6em; }
