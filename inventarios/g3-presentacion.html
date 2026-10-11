@@ -502,32 +502,14 @@ body {
   line-height: 1.5;
 }
 
-.mapa-conceptual {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
-}
-
-.mapa-nodo {
-  background: var(--superficie);
-  border: 2px solid var(--azul-profundo);
+/* ==== CANVAS DEL ESQUEMA ==== */
+.canvas-esquema {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto var(--espacio-md);
   border-radius: var(--radio-md);
-  padding: var(--espacio-md);
-  text-align: center;
-  transition: all 0.3s;
-  cursor: default;
-}
-
-.mapa-nodo:hover {
-  background: var(--azul-profundo);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.mapa-nodo__texto {
-  font-size: 0.85rem;
-  font-weight: 600;
+  background: var(--superficie);
 }
 
 @media (max-width: 768px) {
@@ -1050,26 +1032,9 @@ body {
       <p class="slide__subtitulo">Mapa conceptual y cierre</p>
 
       <div class="slide__cuerpo">
-        <div class="mapa-conceptual">
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Kardex o tarjeta de almacén</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">PEPS: primeros en entrar, primeros en salir</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Promedio Móvil: costo unitario recalculado</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">PEPS: utilidad $122,000 / inventario $84,000</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Promedio: utilidad $111,200 / inventario $73,200</div>
-          </div>
-          <div class="mapa-nodo">
-            <div class="mapa-nodo__texto">Diferencia total: $10,800</div>
-          </div>
-        </div>
+
+        <!-- Canvas del esquema -->
+        <canvas id="esquemaCanvas" class="canvas-esquema" width="900" height="520"></canvas>
 
         <div class="caja-concepto">
           <div class="caja-concepto__titulo">Tres fundamentos clave</div>
@@ -1117,6 +1082,9 @@ body {
 </div>
 
 <script>
+/* ============================================================
+   SLIDES
+   ============================================================ */
 const Slides = {
   actual: 0,
   slides: [],
@@ -1129,6 +1097,7 @@ const Slides = {
     this.bindKeys();
     this.bindHash();
     this.construirIndice();
+    this.dibujarEsquema();
   },
 
   ir(n) {
@@ -1198,6 +1167,178 @@ const Slides = {
       };
       lista.appendChild(li);
     });
+  },
+
+  /* ============================================================
+     DIBUJO DEL ESQUEMA EN CANVAS
+     ============================================================ */
+  dibujarEsquema() {
+    const canvas = document.getElementById('esquemaCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const COLOR = {
+      azulProfundo: '#1a3a6b',
+      azulMedio: '#2c5aa0',
+      azulClaro: '#d6e4f5',
+      azulMuyClaro: '#eef4fb',
+      texto: '#1a2b45',
+      textoSuave: '#5a6b82',
+      blanco: '#ffffff'
+    };
+
+    function cajaRedondeada(x, y, w, h, radio, fondo, borde, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x + radio, y);
+      ctx.lineTo(x + w - radio, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radio);
+      ctx.lineTo(x + w, y + h - radio);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radio, y + h);
+      ctx.lineTo(x + radio, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radio);
+      ctx.lineTo(x, y + radio);
+      ctx.quadraticCurveTo(x, y, x + radio, y);
+      ctx.closePath();
+      if (fondo) { ctx.fillStyle = fondo; ctx.fill(); }
+      if (borde) { ctx.strokeStyle = borde; ctx.lineWidth = grosor || 2; ctx.stroke(); }
+    }
+
+    function textoCentrado(texto, x, y, fuente, color, maxAncho) {
+      ctx.font = fuente;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (!maxAncho) {
+        ctx.fillText(texto, x, y);
+        return;
+      }
+
+      const palabras = texto.split(' ');
+      const lineas = [];
+      let lineaActual = '';
+      palabras.forEach(p => {
+        const prueba = lineaActual ? lineaActual + ' ' + p : p;
+        if (ctx.measureText(prueba).width > maxAncho && lineaActual) {
+          lineas.push(lineaActual);
+          lineaActual = p;
+        } else {
+          lineaActual = prueba;
+        }
+      });
+      if (lineaActual) lineas.push(lineaActual);
+
+      const altoLinea = parseInt(fuente.match(/(\d+)px/)[1], 10) * 1.25;
+      const inicioY = y - ((lineas.length - 1) * altoLinea) / 2;
+
+      lineas.forEach((linea, i) => {
+        ctx.fillText(linea, x, inicioY + i * altoLinea);
+      });
+    }
+
+    function linea(x1, y1, x2, y2, color, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = grosor || 2;
+      ctx.stroke();
+    }
+
+    function flechaVertical(x, y1, y2, color) {
+      linea(x, y1, x, y2, color, 2);
+      const tam = 6;
+      ctx.beginPath();
+      ctx.moveTo(x, y2);
+      ctx.lineTo(x - tam, y2 - tam);
+      ctx.lineTo(x + tam, y2 - tam);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // Fondo
+    ctx.fillStyle = COLOR.blanco;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Nodo raíz
+    const raizX = 450;
+    const raizY = 50;
+    const raizW = 280;
+    const raizH = 50;
+
+    cajaRedondeada(raizX - raizW/2, raizY - raizH/2, raizW, raizH, 8, COLOR.azulProfundo, null);
+    textoCentrado('ASIGNACIÓN DEL COSTO', raizX, raizY, 'bold 15px system-ui', COLOR.blanco);
+
+    // Bifurcación
+    linea(raizX, raizY + raizH/2, raizX, 130, COLOR.azulProfundo, 2);
+    const ramaIzqX = 240;
+    const ramaDerX = 660;
+    const ramaY = 130;
+
+    linea(raizX, ramaY, ramaIzqX, ramaY, COLOR.azulProfundo, 2);
+    linea(raizX, ramaY, ramaDerX, ramaY, COLOR.azulProfundo, 2);
+    flechaVertical(ramaIzqX, ramaY, 175, COLOR.azulProfundo);
+    flechaVertical(ramaDerX, ramaY, 175, COLOR.azulProfundo);
+
+    // Nodo PEPS
+    const pepsX = ramaIzqX;
+    const pepsY = 200;
+    const pepsW = 220;
+    const pepsH = 50;
+
+    cajaRedondeada(pepsX - pepsW/2, pepsY - pepsH/2, pepsW, pepsH, 8, COLOR.azulMedio, null);
+    textoCentrado('PEPS', pepsX, pepsY, 'bold 16px system-ui', COLOR.blanco);
+
+    linea(pepsX, pepsY + pepsH/2, pepsX, 260, COLOR.azulMedio, 2);
+    linea(pepsX - 100, 260, pepsX + 100, 260, COLOR.azulMedio, 2);
+    flechaVertical(pepsX - 100, 260, 285, COLOR.azulMedio);
+    flechaVertical(pepsX + 100, 260, 285, COLOR.azulMedio);
+
+    cajaRedondeada(pepsX - 100 - 90, 310, 180, 60, 8, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Costo de ventas', pepsX - 100, 328, 'bold 12px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('a costos antiguos', pepsX - 100, 345, '12px system-ui', COLOR.textoSuave, 160);
+
+    cajaRedondeada(pepsX + 100 - 90, 310, 180, 60, 8, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Inventario final', pepsX + 100, 328, 'bold 12px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('a costos recientes', pepsX + 100, 345, '12px system-ui', COLOR.textoSuave, 160);
+
+    // Nodo Promedio Móvil
+    const promX = ramaDerX;
+    const promY = 200;
+    const promW = 220;
+    const promH = 50;
+
+    cajaRedondeada(promX - promW/2, promY - promH/2, promW, promH, 8, COLOR.azulMedio, null);
+    textoCentrado('PROMEDIO MÓVIL', promX, promY, 'bold 16px system-ui', COLOR.blanco);
+
+    linea(promX, promY + promH/2, promX, 260, COLOR.azulMedio, 2);
+    linea(promX - 100, 260, promX + 100, 260, COLOR.azulMedio, 2);
+    flechaVertical(promX - 100, 260, 285, COLOR.azulMedio);
+    flechaVertical(promX + 100, 260, 285, COLOR.azulMedio);
+
+    cajaRedondeada(promX - 100 - 90, 310, 180, 60, 8, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Costo de ventas', promX - 100, 328, 'bold 12px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('a costo promedio', promX - 100, 345, '12px system-ui', COLOR.textoSuave, 160);
+
+    cajaRedondeada(promX + 100 - 90, 310, 180, 60, 8, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Inventario final', promX + 100, 328, 'bold 12px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('a costo intermedio', promX + 100, 345, '12px system-ui', COLOR.textoSuave, 160);
+
+    // Convergencia
+    linea(pepsX, 370, pepsX, 415, COLOR.azulProfundo, 2);
+    linea(promX, 370, promX, 415, COLOR.azulProfundo, 2);
+    linea(pepsX, 415, promX, 415, COLOR.azulProfundo, 2);
+    flechaVertical(raizX, 415, 440, COLOR.azulProfundo);
+
+    // Caja final
+    const finalY = 470;
+    const finalW = 440;
+    const finalH = 60;
+
+    cajaRedondeada(raizX - finalW/2, finalY - finalH/2, finalW, finalH, 8, COLOR.azulClaro, COLOR.azulProfundo, 2);
+    textoCentrado('En inflación:', raizX, finalY - 12, 'bold 13px system-ui', COLOR.azulProfundo);
+    textoCentrado('PEPS → mayor utilidad  ·  Promedio → más conservador', raizX, finalY + 12, '12px system-ui', COLOR.texto, 420);
   }
 };
 
