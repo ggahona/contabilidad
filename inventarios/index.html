@@ -3,304 +3,760 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curso de Inventarios NIF C-4 — Bicicletas del Norte, S.A. de C.V.</title>
+<title>Inventarios — NIF C-4 | Bicicletas del Norte, S.A. de C.V.</title>
 <style>
-  :root {
-    --azul-profundo: #0B1E3A;
-    --azul-brillante: #1E5EFF;
-    --cian: #4FC3F7;
-    --azul-medio: #143A7A;
-    --cian-claro: #D6F0FE;
-    --azul-claro: #DCE8FF;
-    --blanco-gris: #F0F4F8;
-    --texto: #0B1E3A;
-    --texto-suave: #4A5C7A;
-    --borde: #DCE8FF;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
-  body {
-    background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
-    min-height: 100vh;
-    padding: 20px;
-    color: var(--texto);
-  }
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(11,30,58,0.35);
-    overflow: hidden;
-    position: relative;
-  }
-  .header {
-    background: var(--azul-profundo);
-    color: white;
-    padding: 50px 30px 40px;
-    text-align: center;
-    position: relative;
-  }
-  .header h1 { font-size: 2.2em; margin-bottom: 10px; line-height: 1.2; font-weight: 700; }
-  .header p { color: var(--cian); font-size: 1.1em; font-weight: 600; }
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .boton-regreso {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: transparent;
-    color: #fff;
-    border: 2px solid rgba(255,255,255,0.4);
-    padding: 0.4rem 1rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  }
-  .boton-regreso:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: #fff;
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+  --dorado: #C9A961;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+  --sombra-xl: 0 20px 40px rgba(11,30,58,0.18);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+  --radio-xl: 16px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ==== HEADER HERO ==== */
+.hero {
+  background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 60%, var(--azul-brillante) 100%);
+  color: #fff;
+  padding: var(--espacio-xl) var(--espacio-lg) calc(var(--espacio-xl) + 3rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(79,195,247,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(30,94,255,0.20) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero__contenido {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.hero__etiqueta {
+  display: inline-block;
+  background: rgba(79,195,247,0.2);
+  border: 1px solid var(--cian);
+  color: var(--cian);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--espacio-md);
+}
+
+.hero__titulo {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: var(--espacio-sm);
+  letter-spacing: -0.02em;
+}
+
+.hero__subtitulo {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  opacity: 0.9;
+  max-width: 720px;
+  margin-bottom: var(--espacio-lg);
+  font-weight: 400;
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-lg);
+  font-size: 0.85rem;
+}
+
+.hero__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.85;
+}
+
+.hero__meta-item strong {
+  color: var(--cian);
+  font-weight: 700;
+}
+
+/* ==== CONTENEDOR PRINCIPAL ==== */
+.contenedor {
+  max-width: 1200px;
+  margin: -2.5rem auto 0;
+  padding: 0 var(--espacio-lg) var(--espacio-xl);
+  position: relative;
+  z-index: 2;
+}
+
+/* ==== TARJETA DE INTRODUCCIÓN ==== */
+.intro {
+  background: #fff;
+  border-radius: var(--radio-xl);
+  padding: var(--espacio-lg) var(--espacio-xl);
+  box-shadow: var(--sombra-lg);
+  margin-bottom: var(--espacio-xl);
+  border-top: 4px solid var(--azul-brillante);
+}
+
+.intro__titulo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.intro__texto {
+  font-size: 0.95rem;
+  color: var(--azul-medio);
+  line-height: 1.7;
+}
+
+.intro__texto strong {
+  color: var(--azul-profundo);
+  font-weight: 700;
+}
+
+/* ==== SECCIÓN DE PUNTOS ==== */
+.seccion {
+  margin-bottom: var(--espacio-xl);
+}
+
+.seccion__titulo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-lg);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 3px solid var(--azul-claro);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.seccion__titulo::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 24px;
+  background: var(--azul-brillante);
+  border-radius: 3px;
+}
+
+.grid-puntos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--espacio-lg);
+}
+
+/* ==== TARJETA DE PUNTO ==== */
+.punto {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(11,30,58,0.06);
+  position: relative;
+}
+
+.punto:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-xl);
+}
+
+.punto__header {
+  padding: var(--espacio-lg) var(--espacio-lg) var(--espacio-md);
+  background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.punto__header::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(79,195,247,0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.punto__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid var(--cian);
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--cian);
+  margin-bottom: var(--espacio-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.punto__titulo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.punto__descripcion {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.punto__cuerpo {
+  padding: var(--espacio-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.punto__temas {
+  list-style: none;
+  margin-bottom: var(--espacio-lg);
+  flex: 1;
+}
+
+.punto__temas li {
+  font-size: 0.85rem;
+  color: var(--azul-medio);
+  padding: 0.4rem 0;
+  padding-left: 1.4rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.punto__temas li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--azul-brillante);
+  font-weight: 700;
+}
+
+.punto__acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-sm);
+  margin-top: auto;
+}
+
+.boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--fuente-base);
+}
+
+.boton--presentacion {
+  background: var(--azul-brillante);
+  color: #fff;
+}
+
+.boton--presentacion:hover {
+  background: var(--cian);
+  color: var(--azul-profundo);
+}
+
+.boton--complemento {
+  background: #fff;
+  color: var(--azul-brillante);
+  border-color: var(--azul-brillante);
+}
+
+.boton--complemento:hover {
+  background: var(--azul-brillante);
+  color: #fff;
+}
+
+.boton__icono {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* ==== TARJETA DESTACADA (PUNTO 6) ==== */
+.punto--nuevo {
+  border: 2px solid var(--dorado);
+  position: relative;
+}
+
+.punto--nuevo .punto__header {
+  background: linear-gradient(135deg, #8B6F2E 0%, var(--dorado) 100%);
+}
+
+.punto--nuevo .punto__numero {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255,255,255,0.2);
+}
+
+.badge-nuevo {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #fff;
+  color: #8B6F2E;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 2;
+  box-shadow: var(--sombra-sm);
+}
+
+/* ==== SECCIÓN DE RECURSOS ==== */
+.recursos {
+  background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
+  border-radius: var(--radio-xl);
+  padding: var(--espacio-xl) var(--espacio-lg);
+  color: #fff;
+  text-align: center;
+  box-shadow: var(--sombra-lg);
+}
+
+.recursos__titulo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: var(--espacio-sm);
+}
+
+.recursos__subtitulo {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: var(--espacio-lg);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.recursos__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--espacio-md);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.recurso {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recurso:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+  border-color: var(--cian);
+}
+
+.recurso__icono {
+  font-size: 1.5rem;
+}
+
+.recurso__nombre {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.recurso__detalle {
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+
+/* ==== FOOTER ==== */
+.footer {
+  text-align: center;
+  padding: var(--espacio-lg) var(--espacio-md);
+  color: var(--azul-medio);
+  font-size: 0.82rem;
+}
+
+.footer strong {
+  color: var(--azul-profundo);
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+  .hero {
+    padding: var(--espacio-lg) var(--espacio-md) calc(var(--espacio-lg) + 3rem);
   }
 
-  .content { padding: 40px 30px; }
+  .contenedor {
+    padding: 0 var(--espacio-md) var(--espacio-lg);
+  }
 
   .intro {
-    background: var(--cian-claro);
-    padding: 25px;
-    border-radius: 12px;
-    margin-bottom: 30px;
-    text-align: center;
-    border-left: 5px solid var(--azul-brillante);
-  }
-  .intro h2 { color: var(--azul-profundo); margin-bottom: 10px; font-weight: 700; }
-  .intro p { color: var(--azul-medio); line-height: 1.6; }
-
-  .caso-base {
-    background: white;
-    border: 2px solid var(--borde);
-    border-left: 5px solid var(--cian);
-    border-radius: 12px;
-    padding: 20px 25px;
-    margin-bottom: 30px;
-  }
-  .caso-base h3 {
-    color: var(--azul-profundo);
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-    font-weight: 700;
-  }
-  .caso-base p {
-    color: var(--texto-suave);
-    font-size: 0.95em;
-    line-height: 1.6;
-  }
-  .caso-base strong { color: var(--azul-profundo); }
-
-  .seccion-titulo {
-    color: var(--azul-profundo);
-    font-size: 1.4em;
-    margin-bottom: 5px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--borde);
-    font-weight: 700;
-  }
-  .seccion-subtitulo {
-    color: var(--texto-suave);
-    font-size: 0.9em;
-    margin-bottom: 20px;
+    padding: var(--espacio-lg) var(--espacio-md);
   }
 
-  .resources-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 35px;
-  }
-  .resource-card {
-    background: white;
-    border: 2px solid var(--borde);
-    border-radius: 12px;
-    padding: 25px;
-    text-align: center;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: var(--texto);
-    display: block;
-  }
-  .resource-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(30,94,255,0.2);
-    border-color: var(--azul-brillante);
-  }
-  .resource-card:focus-visible {
-    outline: 3px solid var(--cian);
-    outline-offset: 3px;
-  }
-  .resource-card h3 { color: var(--azul-profundo); margin-bottom: 10px; font-size: 1.15em; font-weight: 700; }
-  .resource-card p { color: var(--texto-suave); font-size: 0.92em; line-height: 1.5; }
-  .resource-tag {
-    display: inline-block;
-    background: var(--azul-brillante);
-    color: white;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.75em;
-    margin-top: 10px;
+  .grid-puntos {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-md);
   }
 
-  .ciclo {
-    background: var(--cian-claro);
-    border-radius: 12px;
-    padding: 20px 25px;
-    text-align: center;
-    border-left: 5px solid var(--azul-brillante);
-    margin-bottom: 30px;
+  .punto__acciones {
+    grid-template-columns: 1fr;
   }
-  .ciclo p {
-    color: var(--azul-profundo);
-    font-weight: 600;
-    font-size: 0.95em;
-    line-height: 1.8;
-  }
-  .ciclo strong { color: var(--azul-brillante); }
 
-  .footer {
-    background: var(--azul-profundo);
-    padding: 25px;
-    text-align: center;
-    color: rgba(255,255,255,0.85);
+  .recursos {
+    padding: var(--espacio-lg) var(--espacio-md);
   }
-  .footer p { font-size: 0.9em; line-height: 1.6; }
-  .footer strong { color: var(--cian); }
 
-  @media (max-width: 600px) {
-    .header h1 { font-size: 1.5em; }
-    .header { padding: 50px 20px 30px; }
-    .resources-grid { grid-template-columns: 1fr; }
-    .content { padding: 25px 20px; }
-    .boton-regreso {
-      top: 10px;
-      left: 10px;
-      font-size: 0.7rem;
-      padding: 0.3rem 0.7rem;
-    }
+  .hero__meta {
+    gap: var(--espacio-md);
+    font-size: 0.78rem;
   }
+}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <div class="header">
-    <a href="../" class="boton-regreso">← Volver a contabilidad</a>
-    <h1>El Inventario en el Ciclo Contable</h1>
-    <p>Curso NIF C-4 — Bicicletas del Norte, S.A. de C.V.</p>
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero__contenido">
+    <span class="hero__etiqueta">NIF C-4 · Inventarios</span>
+    <h1 class="hero__titulo">Inventarios: Ciclo Contable Completo</h1>
+    <p class="hero__subtitulo">
+      Recorrido interactivo por la NIF C-4 aplicada al caso de
+      <strong>Bicicletas del Norte, S.A. de C.V.</strong> Seis puntos que cubren desde la
+      definición hasta los temas complementarios de valuación y estimación.
+    </p>
+    <div class="hero__meta">
+      <div class="hero__meta-item">
+        <span>📚</span> <strong>6 puntos</strong> temáticos
+      </div>
+      <div class="hero__meta-item">
+        <span>🎯</span> <strong>12 recursos</strong> interactivos
+      </div>
+      <div class="hero__meta-item">
+        <span>📖</span> Basado en <strong>NIF C-4</strong> y <strong>Elías Lara Flores</strong>
+      </div>
+    </div>
   </div>
+</header>
 
-  <div class="content">
+<!-- ============ CONTENEDOR PRINCIPAL ============ -->
+<main class="contenedor">
 
-    <div class="intro">
-      <h2>¡Bienvenido!</h2>
-      <p>Recorre el ciclo contable completo de los inventarios bajo NIF C-4 en 5 puntos temáticos. Cada punto incluye una presentación conceptual y una herramienta aplicativa interactiva.</p>
+  <!-- Introducción -->
+  <section class="intro">
+    <h2 class="intro__titulo">
+      <span>🎓</span> ¿Cómo usar este material?
+    </h2>
+    <p class="intro__texto">
+      Cada punto consta de dos archivos: una <strong>presentación</strong> con los conceptos
+      teóricos y un <strong>complemento</strong> con actividades interactivas, simuladores,
+      calculadoras y un examen final. Te recomendamos recorrer los puntos en orden, ya que
+      cada uno construye sobre el anterior. Al final del recorrido dominarás el ciclo
+      contable completo de los inventarios bajo NIF C-4.
+    </p>
+  </section>
+
+  <!-- ============ SECCIÓN: PUNTOS ============ -->
+  <section class="seccion">
+    <h2 class="seccion__titulo">Recorrido por los 6 puntos</h2>
+
+    <div class="grid-puntos">
+
+      <!-- PUNTO 1 -->
+      <article class="punto">
+        <div class="punto__header">
+          <div class="punto__numero">1</div>
+          <h3 class="punto__titulo">Definición, Naturaleza y Clasificación</h3>
+          <p class="punto__descripcion">Qué son los inventarios y las 6 clases NIF C-4</p>
+        </div>
+        <div class="punto__cuerpo">
+          <ul class="punto__temas">
+            <li>Definición NIF C-4: activo no monetario</li>
+            <li>Clasificación en el Activo Circulante</li>
+            <li>Las 6 clases de inventario</li>
+            <li>Inventario inicial y asiento de apertura</li>
+          </ul>
+          <div class="punto__acciones">
+            <a href="g1-presentacion.html" class="boton boton--presentacion">
+              <span class="boton__icono">▶</span> Presentación
+            </a>
+            <a href="g1-complemento.html" class="boton boton--complemento">
+              <span class="boton__icono">⚙</span> Complemento
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PUNTO 2 -->
+      <article class="punto">
+        <div class="punto__header">
+          <div class="punto__numero">2</div>
+          <h3 class="punto__titulo">Procedimientos de Registro Contable</h3>
+          <p class="punto__descripcion">Global, Analítico y Perpetuos</p>
+        </div>
+        <div class="punto__cuerpo">
+          <ul class="punto__temas">
+            <li>Procedimiento Global (una sola cuenta)</li>
+            <li>Procedimiento Analítico (cuentas por concepto)</li>
+            <li>Procedimiento de Perpetuos (doble asiento)</li>
+            <li>Comparación de ventajas y limitaciones</li>
+          </ul>
+          <div class="punto__acciones">
+            <a href="g2-presentacion.html" class="boton boton--presentacion">
+              <span class="boton__icono">▶</span> Presentación
+            </a>
+            <a href="g2-complemento-simulador.html" class="boton boton--complemento">
+              <span class="boton__icono">⚙</span> Complemento
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PUNTO 3 -->
+      <article class="punto">
+        <div class="punto__header">
+          <div class="punto__numero">3</div>
+          <h3 class="punto__titulo">Fórmulas de Asignación del Costo</h3>
+          <p class="punto__descripcion">PEPS y Costo Promedio Móvil</p>
+        </div>
+        <div class="punto__cuerpo">
+          <ul class="punto__temas">
+            <li>PEPS: primeras entradas, primeras salidas</li>
+            <li>Costo Promedio Móvil: recalculo por compra</li>
+            <li>Kardex con lotes y con promedio</li>
+            <li>Efectos financieros en inflación</li>
+          </ul>
+          <div class="punto__acciones">
+            <a href="g3-presentacion.html" class="boton boton--presentacion">
+              <span class="boton__icono">▶</span> Presentación
+            </a>
+            <a href="g3-calculadora-kardex.html" class="boton boton--complemento">
+              <span class="boton__icono">⚙</span> Complemento
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PUNTO 4 -->
+      <article class="punto">
+        <div class="punto__header">
+          <div class="punto__numero">4</div>
+          <h3 class="punto__titulo">Mercancías en Tránsito y Ajustes</h3>
+          <p class="punto__descripcion">Cuenta puente y regularización al cierre</p>
+        </div>
+        <div class="punto__cuerpo">
+          <ul class="punto__temas">
+            <li>Cuenta puente de Mercancías en tránsito</li>
+            <li>Acumulación de fletes y seguros</li>
+            <li>Traspaso al Almacén al recibir el lote</li>
+            <li>Mermas, faltantes y sobrantes</li>
+          </ul>
+          <div class="punto__acciones">
+            <a href="g4-presentacion.html" class="boton boton--presentacion">
+              <span class="boton__icono">▶</span> Presentación
+            </a>
+            <a href="g4-simulador-transito-ajustes.html" class="boton boton--complemento">
+              <span class="boton__icono">⚙</span> Complemento
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PUNTO 5 -->
+      <article class="punto">
+        <div class="punto__header">
+          <div class="punto__numero">5</div>
+          <h3 class="punto__titulo">Relación con el Estado de Resultados</h3>
+          <p class="punto__descripcion">Los dos puntos de contacto entre ER y BG</p>
+        </div>
+        <div class="punto__cuerpo">
+          <ul class="punto__temas">
+            <li>Punto de contacto 1: inventario final</li>
+            <li>Punto de contacto 2: utilidad neta</li>
+            <li>Cálculo del costo de lo vendido</li>
+            <li>Estado de Resultados y Balance General</li>
+          </ul>
+          <div class="punto__acciones">
+            <a href="g5-presentacion.html" class="boton boton--presentacion">
+              <span class="boton__icono">▶</span> Presentación
+            </a>
+            <a href="g5-conciliador-er-bg.html" class="boton boton--complemento">
+              <span class="boton__icono">⚙</span> Complemento
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PUNTO 6 — NUEVO -->
+      <article class="punto punto--nuevo">
+        <span class="badge-nuevo">Nuevo</span>
+        <div class="punto__header">
+          <div class="punto__numero">6</div>
+          <h3 class="punto__titulo">Temas Complementarios de la NIF C-4</h3>
+          <p class="punto__descripcion">Identificación Específica, LCM, estimación y errores</p>
+        </div>
+        <div class="punto__cuerpo">
+          <ul class="punto__temas">
+            <li>Identificación Específica y Costo Estándar</li>
+            <li>Regla de Costo o Mercado, el Menor (LCM)</li>
+            <li>Métodos de estimación: Detallista y Utilidad Bruta</li>
+            <li>Efectos de errores en el inventario</li>
+          </ul>
+          <div class="punto__acciones">
+            <a href="g6-presentacion.html" class="boton boton--presentacion">
+              <span class="boton__icono">▶</span> Presentación
+            </a>
+            <a href="g6-complemento.html" class="boton boton--complemento">
+              <span class="boton__icono">⚙</span> Complemento
+            </a>
+          </div>
+        </div>
+      </article>
+
     </div>
+  </section>
 
-    <div class="caso-base">
-      <h3>Caso base</h3>
-      <p>
-        <strong>Empresa:</strong> Bicicletas del Norte, S.A. de C.V. &nbsp;|&nbsp;
-        <strong>Giro:</strong> Ensamble y comercialización de bicicletas &nbsp;|&nbsp;
-        <strong>Norma:</strong> NIF C-4 &nbsp;|&nbsp;
-        <strong>Periodo:</strong> Enero de 2026 &nbsp;|&nbsp;
-        <strong>Moneda:</strong> Pesos mexicanos ($)
-      </p>
+  <!-- ============ SECCIÓN: RECURSOS ADICIONALES ============ -->
+  <section class="recursos">
+    <h2 class="recursos__titulo">Recursos adicionales</h2>
+    <p class="recursos__subtitulo">
+      Materiales de apoyo complementarios para profundizar en la NIF C-4 y el caso práctico.
+    </p>
+    <div class="recursos__grid">
+      <a href="g0-guia.md" class="recurso" target="_blank">
+        <span class="recurso__icono">📋</span>
+        <span class="recurso__nombre">Guía general</span>
+        <span class="recurso__detalle">Estructura del curso</span>
+      </a>
+      <a href="../recursos/index.html" class="recurso">
+        <span class="recurso__icono">📁</span>
+        <span class="recurso__nombre">Recursos</span>
+        <span class="recurso__detalle">Material de apoyo</span>
+      </a>
+      <a href="../readme.md" class="recurso" target="_blank">
+        <span class="recurso__icono">📖</span>
+        <span class="recurso__nombre">README</span>
+        <span class="recurso__detalle">Documentación</span>
+      </a>
+      <a href="https://www.gob.mx/cpc" class="recurso" target="_blank" rel="noopener">
+        <span class="recurso__icono">🔗</span>
+        <span class="recurso__nombre">NIF C-4</span>
+        <span class="recurso__detalle">Norma oficial</span>
+      </a>
     </div>
+  </section>
 
-    <h2 class="seccion-titulo">Puntos temáticos</h2>
-    <p class="seccion-subtitulo">Clasificar → Registrar → Costear → Ajustar → Presentar</p>
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <p>
+      <strong>Bicicletas del Norte, S.A. de C.V.</strong> · Caso práctico de Inventarios bajo NIF C-4
+    </p>
+    <p style="margin-top: 0.25rem; opacity: 0.75;">
+      6 puntos · 12 recursos interactivos · Basado en NIF C-4 y Elías Lara Flores
+    </p>
+  </footer>
 
-    <div class="resources-grid">
+</main>
 
-      <a href="g1-presentacion.html" class="resource-card">
-        <h3>Punto 1 — Definición, Naturaleza y Clasificación</h3>
-        <p>Qué son los inventarios según la NIF C-4, por qué van en el Activo Circulante y cuáles son las 6 clases normativas.</p>
-        <span class="resource-tag">Presentación</span>
-      </a>
-
-      <a href="g1-complemento.html" class="resource-card">
-        <h3>Punto 1 — Complemento: Clasificador</h3>
-        <p>Clasificador interactivo de partidas, tabla de partida doble y examen final con calificación inmediata.</p>
-        <span class="resource-tag">Herramienta aplicativa</span>
-      </a>
-
-      <a href="g2-presentacion.html" class="resource-card">
-        <h3>Punto 2 — Procedimientos de Registro Contable</h3>
-        <p>Global, Analítico y Perpetuos: tres formas de registrar compras y ventas, todas llegan al mismo resultado final.</p>
-        <span class="resource-tag">Presentación</span>
-      </a>
-
-      <a href="g2-complemento-simulador.html" class="resource-card">
-        <h3>Punto 2 — Complemento: Simulador</h3>
-        <p>Simulador de los 3 procedimientos, actividad de ubicación de cuentas y examen final con calificación inmediata.</p>
-        <span class="resource-tag">Herramienta aplicativa</span>
-      </a>
-
-      <a href="g3-presentacion.html" class="resource-card">
-        <h3>Punto 3 — Fórmulas de Asignación del Costo</h3>
-        <p>PEPS y Costo Promedio Móvil: cómo asignar costo cuando los precios cambian a lo largo del tiempo.</p>
-        <span class="resource-tag">Presentación</span>
-      </a>
-
-      <a href="g3-calculadora-kardex.html" class="resource-card">
-        <h3>Punto 3 — Complemento: Calculadora de Kardex</h3>
-        <p>Calculadora editable de kardex, actividad de detección de errores y examen final con calificación inmediata.</p>
-        <span class="resource-tag">Herramienta aplicativa</span>
-      </a>
-
-      <a href="g4-presentacion.html" class="resource-card">
-        <h3>Punto 4 — Mercancías en Tránsito y Ajustes</h3>
-        <p>Cuenta puente para compras foráneas y regularización de mermas, faltantes y sobrantes por recuento físico.</p>
-        <span class="resource-tag">Presentación</span>
-      </a>
-
-      <a href="g4-simulador-transito-ajustes.html" class="resource-card">
-        <h3>Punto 4 — Complemento: Simulador de tránsito y ajustes</h3>
-        <p>Simulador de mercancías en tránsito, simulador de ajustes por recuento físico y examen final.</p>
-        <span class="resource-tag">Herramienta aplicativa</span>
-      </a>
-
-      <a href="g5-presentacion.html" class="resource-card">
-        <h3>Punto 5 — Relación con el Estado de Resultados</h3>
-        <p>Los dos puntos de contacto entre el Estado de Resultados y el Balance General, y la comprobación del circuito contable.</p>
-        <span class="resource-tag">Presentación</span>
-      </a>
-
-      <a href="g5-conciliador-er-bg.html" class="resource-card">
-        <h3>Punto 5 — Complemento: Conciliador ER ↔ BG</h3>
-        <p>Conciliador interactivo Estado de Resultados ↔ Balance General, actividad de ubicación y examen final.</p>
-        <span class="resource-tag">Herramienta aplicativa</span>
-      </a>
-
-    </div>
-
-    <div class="ciclo">
-      <p>
-        <strong>Clasificar</strong> (Punto 1) → <strong>Registrar</strong> (Punto 2) → <strong>Costear</strong> (Punto 3) → <strong>Ajustar</strong> (Punto 4) → <strong>Presentar</strong> (Punto 5)
-      </p>
-    </div>
-
-  </div>
-
-  <div class="footer">
-    <p><strong>Curso de Inventarios NIF C-4</strong> — Bicicletas del Norte, S.A. de C.V.<br>
-    5 puntos temáticos · 10 archivos HTML + 1 guía de referencia</p>
-  </div>
-
-</div>
 </body>
 </html>
