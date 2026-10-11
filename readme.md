@@ -1,6 +1,3 @@
-## Enlace
-ggahona.github.io/contabilidad/
-
 ## Características técnicas
 
 - **Archivos HTML autocontenidos:** cada archivo incluye CSS y JS embebidos, sin dependencias externas.
