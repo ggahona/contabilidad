@@ -98,6 +98,11 @@ body {
   overflow-y: auto;
 }
 
+/* Slide de síntesis del Punto 5: sin restricción de altura para que el canvas no se corte */
+.slide[data-titulo="Comprobación y síntesis"] {
+  max-height: none;
+}
+
 .slide.activo { display: block; }
 
 @keyframes fadeIn {
@@ -539,110 +544,6 @@ body {
   font-weight: 700;
 }
 
-.tabla-puntos-contacto {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: var(--espacio-md);
-  font-size: 0.9rem;
-  box-shadow: var(--sombra-md);
-  border-radius: var(--radio-md);
-  overflow: hidden;
-}
-
-.tabla-puntos-contacto thead {
-  background: var(--azul-profundo);
-  color: #fff;
-}
-
-.tabla-puntos-contacto th {
-  padding: 0.75rem 0.75rem;
-  text-align: left;
-  font-weight: 700;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.tabla-puntos-contacto th.monto {
-  text-align: right;
-}
-
-.tabla-puntos-contacto td {
-  padding: 0.7rem 0.75rem;
-  border-bottom: 1px solid var(--borde);
-}
-
-.tabla-puntos-contacto td.monto {
-  text-align: right;
-  font-family: var(--fuente-mono);
-  font-weight: 700;
-  color: var(--azul-profundo);
-}
-
-.tabla-puntos-contacto tbody tr:hover {
-  background: var(--fondo);
-}
-
-.tabla-puntos-contacto tbody tr.fila-punto {
-  background: var(--ambar-fondo);
-  font-weight: 700;
-  border-left: 4px solid var(--ambar-borde);
-}
-
-.tabla-puntos-contacto tbody tr.fila-punto td.monto {
-  color: var(--ambar-texto);
-}
-
-.estado-badge {
-  display: inline-block;
-  background: #d1fae5;
-  color: #065f46;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.estado-badge--base {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.estado-badge--ajuste {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.mapa-conceptual {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--espacio-md);
-  margin-bottom: var(--espacio-md);
-}
-
-.mapa-nodo {
-  background: var(--superficie);
-  border: 2px solid var(--azul-profundo);
-  border-radius: var(--radio-md);
-  padding: var(--espacio-md);
-  text-align: center;
-  transition: all 0.3s;
-  cursor: default;
-}
-
-.mapa-nodo:hover {
-  background: var(--azul-profundo);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.mapa-nodo__texto {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
 .formula-destacada {
   background: var(--azul-claro);
   border: 2px solid var(--azul-profundo);
@@ -690,6 +591,16 @@ body {
   line-height: 1.5;
 }
 
+/* ==== CANVAS DEL ESQUEMA ==== */
+.canvas-esquema {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--superficie);
+}
+
 @media (max-width: 768px) {
   .slide {
     padding: var(--espacio-lg) var(--espacio-md);
@@ -699,7 +610,7 @@ body {
   .slide__subtitulo { font-size: 0.95rem; }
   .navegacion { padding: var(--espacio-sm) var(--espacio-md); }
   .navegacion__boton { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
-  .tabla-resultados, .tabla-datos, .tabla-puntos-contacto { font-size: 0.72rem; }
+  .tabla-resultados, .tabla-datos { font-size: 0.72rem; }
   .grid-tarjetas { grid-template-columns: 1fr; }
   .indice { width: 300px; right: -300px; }
 }
@@ -766,7 +677,7 @@ body {
       </div>
     </section>
 
-    <!-- SLIDE 2: LOS DOS PUNTOS DE CONTACTO (SOLO CONCEPTO) -->
+    <!-- SLIDE 2: LOS DOS PUNTOS DE CONTACTO -->
     <section class="slide" data-titulo="Los dos puntos de contacto">
       <span class="slide__numero">Slide 2</span>
       <h1 class="slide__titulo">Los dos puntos de contacto directo</h1>
@@ -820,7 +731,7 @@ body {
       </div>
     </section>
 
-    <!-- SLIDE 3: COSTO DE LO VENDIDO (SIN MENCIONES AL PUNTO DE CONTACTO) -->
+    <!-- SLIDE 3: COSTO DE LO VENDIDO -->
     <section class="slide" data-titulo="Costo de lo vendido">
       <span class="slide__numero">Slide 3</span>
       <h1 class="slide__titulo">Primera parte del Estado de Resultados: el costo de lo vendido</h1>
@@ -1180,51 +1091,12 @@ body {
       <p class="slide__subtitulo">Verificación final y síntesis de la clase</p>
 
       <div class="slide__cuerpo">
-        <h3 style="color: var(--azul-profundo); margin-bottom: var(--espacio-md); font-size: 1.05rem;">
-          Los dos puntos de contacto lado a lado
-        </h3>
 
-        <table class="tabla-puntos-contacto">
-          <thead>
-            <tr>
-              <th>Punto de contacto</th>
-              <th>Estado de Resultados</th>
-              <th class="monto">Importe (ER)</th>
-              <th>Balance General</th>
-              <th class="monto">Importe (BG)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="fila-punto">
-              <td>Inventario final</td>
-              <td>Deducido en el costo de lo vendido</td>
-              <td class="monto">$84,000.00</td>
-              <td>Almacén de artículos terminados (cifra base)</td>
-              <td class="monto">$84,000.00</td>
-            </tr>
-            <tr class="fila-punto">
-              <td>Utilidad neta del ejercicio</td>
-              <td>Última línea del ER</td>
-              <td class="monto">$39,655.00</td>
-              <td>Dentro del Capital Contable</td>
-              <td class="monto">$39,655.00</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="nota-contacto">
-          <strong>Comprobación:</strong> los dos puntos de contacto coinciden exactamente en
-          ambos estados. El inventario final y la utilidad neta aparecen con el mismo valor
-          en el Estado de Resultados y en el Balance General. Si alguno no coincidiera, la
-          contabilidad estaría descuadrada.
-        </div>
-
-        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
-          Tres fundamentos clave
-        </h3>
+        <!-- Canvas del mapa de los dos puentes -->
+        <canvas id="esquemaCanvas" class="canvas-esquema" width="900" height="480"></canvas>
 
         <div class="caja-concepto">
-          <div class="caja-concepto__titulo">Resumen del Punto 5</div>
+          <div class="caja-concepto__titulo">Tres fundamentos clave</div>
           <div class="caja-concepto__texto">
             <strong>1. Inventario final:</strong> el mismo valor deducido en el Estado de
             Resultados aparece como activo circulante en el Balance General.<br><br>
@@ -1305,6 +1177,7 @@ const Slides = {
     this.bindKeys();
     this.bindHash();
     this.construirIndice();
+    this.dibujarEsquema();
   },
 
   ir(n) {
@@ -1374,6 +1247,209 @@ const Slides = {
       };
       lista.appendChild(li);
     });
+  },
+
+  /* ============================================================
+     DIBUJO DEL MAPA DE LOS DOS PUENTES EN CANVAS
+     ============================================================ */
+  dibujarEsquema() {
+    const canvas = document.getElementById('esquemaCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const COLOR = {
+      azulProfundo: '#1a3a6b',
+      azulMedio: '#2c5aa0',
+      azulClaro: '#d6e4f5',
+      azulMuyClaro: '#eef4fb',
+      texto: '#1a2b45',
+      textoSuave: '#5a6b82',
+      blanco: '#ffffff',
+      ambar: '#f59e0b',
+      ambarClaro: '#fef3c7',
+      ambarTexto: '#92400e'
+    };
+
+    function cajaRedondeada(x, y, w, h, radio, fondo, borde, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x + radio, y);
+      ctx.lineTo(x + w - radio, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radio);
+      ctx.lineTo(x + w, y + h - radio);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radio, y + h);
+      ctx.lineTo(x + radio, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radio);
+      ctx.lineTo(x, y + radio);
+      ctx.quadraticCurveTo(x, y, x + radio, y);
+      ctx.closePath();
+      if (fondo) { ctx.fillStyle = fondo; ctx.fill(); }
+      if (borde) { ctx.strokeStyle = borde; ctx.lineWidth = grosor || 2; ctx.stroke(); }
+    }
+
+    function textoCentrado(texto, x, y, fuente, color, maxAncho) {
+      ctx.font = fuente;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (!maxAncho) {
+        ctx.fillText(texto, x, y);
+        return;
+      }
+
+      const palabras = texto.split(' ');
+      const lineas = [];
+      let lineaActual = '';
+      palabras.forEach(p => {
+        const prueba = lineaActual ? lineaActual + ' ' + p : p;
+        if (ctx.measureText(prueba).width > maxAncho && lineaActual) {
+          lineas.push(lineaActual);
+          lineaActual = p;
+        } else {
+          lineaActual = prueba;
+        }
+      });
+      if (lineaActual) lineas.push(lineaActual);
+
+      const altoLinea = parseInt(fuente.match(/(\d+)px/)[1], 10) * 1.2;
+      const inicioY = y - ((lineas.length - 1) * altoLinea) / 2;
+
+      lineas.forEach((linea, i) => {
+        ctx.fillText(linea, x, inicioY + i * altoLinea);
+      });
+    }
+
+    function linea(x1, y1, x2, y2, color, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = grosor || 2;
+      ctx.stroke();
+    }
+
+    function flechaHorizontal(x1, y1, x2, y2, color) {
+      linea(x1, y1, x2, y2, color, 2);
+      const angulo = Math.atan2(y2 - y1, x2 - x1);
+      const tam = 7;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - tam * Math.cos(angulo - Math.PI/6), y2 - tam * Math.sin(angulo - Math.PI/6));
+      ctx.lineTo(x2 - tam * Math.cos(angulo + Math.PI/6), y2 - tam * Math.sin(angulo + Math.PI/6));
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function flechaVertical(x, y1, y2, color) {
+      linea(x, y1, x, y2, color, 2);
+      const tam = 6;
+      ctx.beginPath();
+      ctx.moveTo(x, y2);
+      ctx.lineTo(x - tam, y2 - tam);
+      ctx.lineTo(x + tam, y2 - tam);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // Fondo
+    ctx.fillStyle = COLOR.blanco;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // ============================================================
+    // ENCABEZADOS DE LAS DOS COLUMNAS
+    // ============================================================
+    const colIzqX = 240; // Estado de Resultados
+    const colDerX = 660; // Balance General
+
+    // Encabezado Estado de Resultados
+    cajaRedondeada(colIzqX - 150, 15, 300, 40, 8, COLOR.azulProfundo, null);
+    textoCentrado('ESTADO DE RESULTADOS', colIzqX, 35, 'bold 13px system-ui', COLOR.blanco);
+
+    // Encabezado Balance General
+    cajaRedondeada(colDerX - 150, 15, 300, 40, 8, COLOR.azulProfundo, null);
+    textoCentrado('BALANCE GENERAL', colDerX, 35, 'bold 13px system-ui', COLOR.blanco);
+
+    // ============================================================
+    // PUNTO DE CONTACTO 1: INVENTARIO FINAL
+    // ============================================================
+    const pc1Y = 110;
+
+    // Caja izquierda (ER)
+    cajaRedondeada(colIzqX - 170, pc1Y - 35, 340, 70, 8, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('PUNTO DE CONTACTO 1', colIzqX, pc1Y - 18, 'bold 10px system-ui', COLOR.ambarTexto);
+    textoCentrado('Inventario final', colIzqX, pc1Y + 2, 'bold 13px system-ui', COLOR.azulProfundo);
+    textoCentrado('Deducido en el costo de lo vendido', colIzqX, pc1Y + 22, '11px system-ui', COLOR.textoSuave);
+
+    // Caja derecha (BG)
+    cajaRedondeada(colDerX - 170, pc1Y - 35, 340, 70, 8, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('PUNTO DE CONTACTO 1', colDerX, pc1Y - 18, 'bold 10px system-ui', COLOR.ambarTexto);
+    textoCentrado('Almacén de artículos terminados', colDerX, pc1Y + 2, 'bold 13px system-ui', COLOR.azulProfundo);
+    textoCentrado('Activo circulante', colDerX, pc1Y + 22, '11px system-ui', COLOR.textoSuave);
+
+    // Flecha que cruza de ER a BG
+    flechaHorizontal(colIzqX + 170, pc1Y, colDerX - 170, pc1Y, COLOR.ambar);
+    // Etiqueta de la flecha
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillStyle = COLOR.ambarTexto;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('$84,000', 450, pc1Y - 12);
+
+    // Etiqueta "COINCIDEN"
+    ctx.font = 'bold 10px system-ui';
+    ctx.fillStyle = COLOR.ambarTexto;
+    ctx.fillText('✓ COINCIDEN', 450, pc1Y + 12);
+
+    // ============================================================
+    // PUNTO DE CONTACTO 2: UTILIDAD NETA
+    // ============================================================
+    const pc2Y = 260;
+
+    // Caja izquierda (ER)
+    cajaRedondeada(colIzqX - 170, pc2Y - 35, 340, 70, 8, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('PUNTO DE CONTACTO 2', colIzqX, pc2Y - 18, 'bold 10px system-ui', COLOR.ambarTexto);
+    textoCentrado('Utilidad neta del ejercicio', colIzqX, pc2Y + 2, 'bold 13px system-ui', COLOR.azulProfundo);
+    textoCentrado('Última línea del Estado de Resultados', colIzqX, pc2Y + 22, '11px system-ui', COLOR.textoSuave);
+
+    // Caja derecha (BG)
+    cajaRedondeada(colDerX - 170, pc2Y - 35, 340, 70, 8, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('PUNTO DE CONTACTO 2', colDerX, pc2Y - 18, 'bold 10px system-ui', COLOR.ambarTexto);
+    textoCentrado('Utilidad neta del ejercicio', colDerX, pc2Y + 2, 'bold 13px system-ui', COLOR.azulProfundo);
+    textoCentrado('Dentro del Capital Contable', colDerX, pc2Y + 22, '11px system-ui', COLOR.textoSuave);
+
+    // Flecha que cruza de ER a BG
+    flechaHorizontal(colIzqX + 170, pc2Y, colDerX - 170, pc2Y, COLOR.ambar);
+    // Etiqueta de la flecha
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillStyle = COLOR.ambarTexto;
+    ctx.fillText('$39,655', 450, pc2Y - 12);
+
+    // Etiqueta "COINCIDEN"
+    ctx.font = 'bold 10px system-ui';
+    ctx.fillText('✓ COINCIDEN', 450, pc2Y + 12);
+
+    // ============================================================
+    // MENSAJE FINAL
+    // ============================================================
+    const finalY = 375;
+
+    cajaRedondeada(100, finalY - 30, 700, 60, 8, COLOR.azulClaro, COLOR.azulProfundo, 2);
+    textoCentrado(
+      'Si las cifras no coinciden entre ambos estados, la contabilidad está descuadrada.',
+      450, finalY,
+      'bold 13px system-ui',
+      COLOR.azulProfundo,
+      680
+    );
+
+    // Leyenda inferior
+    ctx.font = '11px system-ui';
+    ctx.fillStyle = COLOR.textoSuave;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Las flechas ámbar representan el cruce de cifras entre los dos estados financieros.', 450, 440);
   }
 };
 
