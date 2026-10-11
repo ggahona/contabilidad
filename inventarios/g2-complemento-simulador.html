@@ -267,6 +267,12 @@ body {
   background: var(--cian-claro);
 }
 
+.tabla-resultado .operacion {
+  font-size: 0.8rem;
+  color: var(--azul-medio);
+  line-height: 1.4;
+}
+
 .tabla-resultado tbody tr.fila-total {
   background: var(--azul-claro);
   font-weight: 700;
@@ -274,6 +280,10 @@ body {
 
 .tabla-resultado tbody tr.fila-total td {
   border-top: 2px solid var(--azul-profundo);
+}
+
+.tabla-resultado tbody tr.fila-paso {
+  background: #f8fafc;
 }
 
 .panel-resultado {
@@ -721,6 +731,7 @@ body {
   .resultado-examen__porcentaje { font-size: 3rem; }
   .tabla-decision th.col-decision { width: 90px; }
   .decision-boton { padding: 0.28rem 0.4rem; font-size: 0.65rem; }
+  .tabla-resultado .operacion { font-size: 0.72rem; }
 }
 </style>
 </head>
@@ -997,48 +1008,61 @@ const Simulador = {
     const utilidadBruta = valorVenta - costoVentas;
 
     cont.innerHTML = `
-      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">Cuenta Mercancías generales</h3>
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-sm);">Cuenta Mercancías generales</h3>
+      <p style="font-size:0.85rem;color:var(--azul-medio);margin-bottom:var(--espacio-md);line-height:1.5;">
+        La cuenta <em>Mercancías generales</em> del Procedimiento Global acumula <strong>todos los movimientos mezclados</strong>:
+        las compras y el inventario inicial se cargan (Debe), las ventas se abonan (Haber) y al cierre se hace un ajuste
+        para separar el inventario final. La columna <strong>"Operación contable"</strong> explica qué se hace en cada paso.
+      </p>
       <table class="tabla-resultado">
         <thead>
           <tr>
-            <th>Concepto</th>
-            <th class="monto">Debe (costo)</th>
-            <th class="monto">Haber (venta)</th>
+            <th style="width: 22%;">Concepto</th>
+            <th style="width: 38%;">Operación contable</th>
+            <th class="monto" style="width: 20%;">Debe (costo)</th>
+            <th class="monto" style="width: 20%;">Haber (venta)</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="cuenta">Inventario inicial</td>
+          <tr class="fila-paso">
+            <td class="cuenta"><strong>1. Inventario inicial</strong></td>
+            <td class="operacion">Se <strong>carga</strong> la cuenta por el valor del inventario al inicio del periodo.</td>
             <td class="monto">${fmt(valorInvIni)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
-            <td class="cuenta">Compras del periodo</td>
+          <tr class="fila-paso">
+            <td class="cuenta"><strong>2. Compras del periodo</strong></td>
+            <td class="operacion">Se <strong>cargan</strong> las compras realizadas durante el periodo (a precio de costo).</td>
             <td class="monto">${fmt(valorCompra)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
-            <td class="cuenta">Ventas del periodo</td>
+          <tr class="fila-paso">
+            <td class="cuenta"><strong>3. Ventas del periodo</strong></td>
+            <td class="operacion">Se <strong>abonan</strong> las ventas realizadas durante el periodo (a precio de venta).</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorVenta)}</td>
           </tr>
           <tr class="fila-total">
-            <td>Sumas antes del ajuste</td>
+            <td><strong>4. Sumas antes del ajuste</strong></td>
+            <td class="operacion">Suma del Debe y del Haber antes de cualquier ajuste de cierre.</td>
             <td class="monto">${fmt(sumaDebe)}</td>
             <td class="monto">${fmt(sumaHaber)}</td>
           </tr>
-          <tr>
-            <td class="cuenta">Saldo mixto (antes del ajuste)</td>
+          <tr class="fila-paso">
+            <td class="cuenta"><strong>5. Saldo mixto</strong></td>
+            <td class="operacion">Diferencia entre el Debe y el Haber. Es <strong>mixto</strong>: mezcla costo y precio de venta.</td>
             <td class="monto">${fmt(saldoMixto)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
-            <td class="cuenta">Ajuste por inventario final</td>
+          <tr class="fila-paso">
+            <td class="cuenta"><strong>6. Ajuste por inventario final</strong></td>
+            <td class="operacion">Se <strong>abona</strong> la cuenta por el valor del inventario final para separarlo del saldo mixto.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorInvFin)}</td>
           </tr>
           <tr class="fila-total">
-            <td>Saldo final (utilidad bruta)</td>
+            <td><strong>7. Saldo final (utilidad bruta)</strong></td>
+            <td class="operacion">Lo que queda en la cuenta tras el ajuste es la <strong>utilidad bruta</strong> del periodo.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(utilidadBruta)}</td>
           </tr>
