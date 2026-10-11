@@ -247,6 +247,7 @@ body {
 .tabla-resultado td {
   padding: 0.6rem 0.6rem;
   border-bottom: 1px solid var(--azul-claro);
+  vertical-align: top;
 }
 
 .tabla-resultado .monto {
@@ -271,6 +272,7 @@ body {
   font-size: 0.8rem;
   color: var(--azul-medio);
   line-height: 1.4;
+  font-family: var(--fuente-base);
 }
 
 .tabla-resultado tbody tr.fila-total {
@@ -732,6 +734,8 @@ body {
   .tabla-decision th.col-decision { width: 90px; }
   .decision-boton { padding: 0.28rem 0.4rem; font-size: 0.65rem; }
   .tabla-resultado .operacion { font-size: 0.72rem; }
+  .tabla-resultado { font-size: 0.75rem; }
+  .tabla-resultado th, .tabla-resultado td { padding: 0.4rem 0.3rem; }
 }
 </style>
 </head>
@@ -768,7 +772,9 @@ body {
         <div class="instruccion">
           <strong>Instrucción:</strong> Ajusta los valores del caso y observa cómo se comportan
           los tres procedimientos (Global, Analítico y Perpetuos). Los tres llegan al mismo
-          resultado final, pero organizan la información de manera distinta.
+          resultado final, pero organizan la información de manera distinta. Cada tabla incluye
+          una columna <strong>"Operación contable"</strong> que explica qué se hace en cada paso
+          y cómo se llega a la utilidad bruta.
         </div>
 
         <div class="barra-acciones">
@@ -1000,6 +1006,9 @@ const Simulador = {
     }
   },
 
+  /* ============================================================
+     PROCEDIMIENTO GLOBAL
+     ============================================================ */
   renderGlobal(cont, valorInvIni, valorCompra, valorVenta, valorInvFin) {
     const sumaDebe = valorInvIni + valorCompra;
     const sumaHaber = valorVenta;
@@ -1011,8 +1020,9 @@ const Simulador = {
       <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-sm);">Cuenta Mercancías generales</h3>
       <p style="font-size:0.85rem;color:var(--azul-medio);margin-bottom:var(--espacio-md);line-height:1.5;">
         La cuenta <em>Mercancías generales</em> del Procedimiento Global acumula <strong>todos los movimientos mezclados</strong>:
-        las compras y el inventario inicial se cargan (Debe), las ventas se abonan (Haber) y al cierre se hace un ajuste
-        para separar el inventario final. La columna <strong>"Operación contable"</strong> explica qué se hace en cada paso.
+        el inventario inicial y las compras se cargan (Debe), las ventas se abonan (Haber), y al cierre se hace un ajuste
+        para separar el inventario final. La columna <strong>"Operación contable"</strong> explica qué se hace en cada paso
+        y cómo se llega a la utilidad bruta.
       </p>
       <table class="tabla-resultado">
         <thead>
@@ -1044,7 +1054,7 @@ const Simulador = {
           </tr>
           <tr class="fila-total">
             <td><strong>4. Sumas antes del ajuste</strong></td>
-            <td class="operacion">Suma del Debe y del Haber antes de cualquier ajuste de cierre.</td>
+            <td class="operacion">Se suman el Debe y el Haber antes de cualquier ajuste de cierre.</td>
             <td class="monto">${fmt(sumaDebe)}</td>
             <td class="monto">${fmt(sumaHaber)}</td>
           </tr>
@@ -1068,6 +1078,35 @@ const Simulador = {
           </tr>
         </tbody>
       </table>
+
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-md) 0 var(--espacio-sm);">¿Cómo se llegó a la utilidad bruta?</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Paso</th>
+            <th style="width: 50%;">Operación</th>
+            <th class="monto" style="width: 20%;">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="fila-paso">
+            <td><strong>A. Costo de ventas</strong></td>
+            <td class="operacion">Total de mercancías (${fmt(sumaDebe)}) − Inventario final (${fmt(valorInvFin)}).</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+          </tr>
+          <tr class="fila-paso">
+            <td><strong>B. Ventas netas</strong></td>
+            <td class="operacion">Valor de las ventas del periodo (a precio de venta).</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+          <tr class="fila-total">
+            <td><strong>C. Utilidad bruta</strong></td>
+            <td class="operacion">Ventas netas (${fmt(valorVenta)}) − Costo de ventas (${fmt(costoVentas)}).</td>
+            <td class="monto">${fmt(utilidadBruta)}</td>
+          </tr>
+        </tbody>
+      </table>
+
       <div class="panel-resultado">
         <div class="panel-resultado__titulo">Resultado del Procedimiento Global</div>
         <div class="panel-resultado__linea"><span>Costo de ventas</span><span>${fmt(costoVentas)}</span></div>
@@ -1082,114 +1121,179 @@ const Simulador = {
     `;
   },
 
+  /* ============================================================
+     PROCEDIMIENTO ANALÍTICO
+     ============================================================ */
   renderAnalitico(cont, valorInvIni, valorCompra, valorVenta, valorInvFin) {
-    const costoVentas = valorInvIni + valorCompra - valorInvFin;
+    const totalMercancias = valorInvIni + valorCompra;
+    const costoVentas = totalMercancias - valorInvFin;
     const utilidadBruta = valorVenta - costoVentas;
 
     cont.innerHTML = `
-      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">Asientos y ajustes del Procedimiento Analítico</h3>
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-sm);">Asientos del Procedimiento Analítico</h3>
+      <p style="font-size:0.85rem;color:var(--azul-medio);margin-bottom:var(--espacio-md);line-height:1.5;">
+        En el Procedimiento Analítico se abre <strong>una cuenta particular para cada concepto</strong> del movimiento
+        de mercancías. Al cierre, se aplican <strong>cuatro asientos de ajuste (A-1 a A-4)</strong> que convierten
+        las cuentas transitorias en <strong>costo de ventas y utilidad bruta</strong>. La columna
+        <strong>"Operación contable"</strong> explica qué hace cada asiento.
+      </p>
       <table class="tabla-resultado">
         <thead>
           <tr>
-            <th>Asiento / Concepto</th>
-            <th class="monto">Debe</th>
-            <th class="monto">Haber</th>
+            <th style="width: 22%;">Asiento / Cuenta</th>
+            <th style="width: 38%;">Operación contable</th>
+            <th class="monto" style="width: 20%;">Debe</th>
+            <th class="monto" style="width: 20%;">Haber</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="cuenta-principal" colspan="3">1. Apertura</td>
+            <td class="cuenta-principal" colspan="4">1. Apertura del ejercicio</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Inventarios</td>
+            <td class="operacion">Se <strong>carga</strong> para registrar el inventario inicial del periodo.</td>
             <td class="monto">${fmt(valorInvIni)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Capital social</td>
+            <td class="operacion">Se <strong>abona</strong> como contrapartida del inventario inicial.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorInvIni)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">2. Compras</td>
+            <td class="cuenta-principal" colspan="4">2. Compras del periodo</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Compras</td>
+            <td class="operacion">Se <strong>cargan</strong> las compras del periodo en cuenta separada.</td>
             <td class="monto">${fmt(valorCompra)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Bancos</td>
+            <td class="operacion">Se <strong>abona</strong> porque las compras se pagaron con cheque.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorCompra)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">3. Ventas</td>
+            <td class="cuenta-principal" colspan="4">3. Ventas del periodo</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Bancos</td>
+            <td class="operacion">Se <strong>carga</strong> porque las ventas se cobraron.</td>
             <td class="monto">${fmt(valorVenta)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Ventas</td>
+            <td class="operacion">Se <strong>abonan</strong> los ingresos por venta en cuenta separada.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorVenta)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">A-1. Adición del inventario inicial a compras</td>
+            <td class="cuenta-principal" colspan="4">A-1. Adición del inventario inicial a compras</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Compras</td>
+            <td class="operacion">Se <strong>carga</strong> para sumar el inventario inicial a las compras.</td>
             <td class="monto">${fmt(valorInvIni)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Inventarios</td>
+            <td class="operacion">Se <strong>abona</strong> para saldar la cuenta de Inventarios.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorInvIni)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">A-2. Deducción del inventario final</td>
+            <td class="cuenta-principal" colspan="4">A-2. Deducción del inventario final</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Inventarios</td>
+            <td class="operacion">Se <strong>carga</strong> para reactivar la cuenta por el inventario final.</td>
             <td class="monto">${fmt(valorInvFin)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Compras</td>
+            <td class="operacion">Se <strong>abona</strong> para restar el inventario final del total de mercancías.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorInvFin)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">A-3. Traspaso del costo de ventas a Ventas</td>
+            <td class="cuenta-principal" colspan="4">A-3. Traspaso del costo de ventas a Ventas</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Ventas</td>
+            <td class="operacion">Se <strong>carga</strong> para acumular el costo de lo vendido en la cuenta de Ventas.</td>
             <td class="monto">${fmt(costoVentas)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Compras</td>
+            <td class="operacion">Se <strong>abona</strong> para saldar la cuenta de Compras.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(costoVentas)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">A-4. Traspaso de utilidad bruta a Pérdidas y ganancias</td>
+            <td class="cuenta-principal" colspan="4">A-4. Traspaso de la utilidad bruta a Pérdidas y ganancias</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Ventas</td>
+            <td class="operacion">Se <strong>carga</strong> para saldar la cuenta de Ventas.</td>
             <td class="monto">${fmt(utilidadBruta)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Pérdidas y ganancias</td>
+            <td class="operacion">Se <strong>abona</strong> para registrar la utilidad bruta del periodo.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(utilidadBruta)}</td>
           </tr>
         </tbody>
       </table>
+
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-md) 0 var(--espacio-sm);">¿Cómo se llegó a la utilidad bruta?</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Paso</th>
+            <th style="width: 50%;">Operación</th>
+            <th class="monto" style="width: 20%;">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="fila-paso">
+            <td><strong>A. Total de mercancías</strong></td>
+            <td class="operacion">Inventario inicial (${fmt(valorInvIni)}) + Compras (${fmt(valorCompra)}).</td>
+            <td class="monto">${fmt(totalMercancias)}</td>
+          </tr>
+          <tr class="fila-paso">
+            <td><strong>B. Costo de ventas</strong></td>
+            <td class="operacion">Total de mercancías (${fmt(totalMercancias)}) − Inventario final (${fmt(valorInvFin)}).</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+          </tr>
+          <tr class="fila-paso">
+            <td><strong>C. Ventas netas</strong></td>
+            <td class="operacion">Valor de las ventas del periodo.</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+          <tr class="fila-total">
+            <td><strong>D. Utilidad bruta</strong></td>
+            <td class="operacion">Ventas netas (${fmt(valorVenta)}) − Costo de ventas (${fmt(costoVentas)}).</td>
+            <td class="monto">${fmt(utilidadBruta)}</td>
+          </tr>
+        </tbody>
+      </table>
+
       <div class="panel-resultado">
         <div class="panel-resultado__titulo">Resultado del Procedimiento Analítico</div>
         <div class="panel-resultado__linea"><span>Costo de ventas</span><span>${fmt(costoVentas)}</span></div>
@@ -1204,6 +1308,9 @@ const Simulador = {
     `;
   },
 
+  /* ============================================================
+     PROCEDIMIENTO DE PERPETUOS
+     ============================================================ */
   renderPerpetuos(cont, valorInvIni, valorCompra, valorVenta, costoUnitarioSalida) {
     const ventaU = this.leerNumero('s-venta-u');
     const costoVentas = ventaU * costoUnitarioSalida;
@@ -1215,99 +1322,149 @@ const Simulador = {
     const utilidadBruta = valorVenta - costoVentas;
 
     cont.innerHTML = `
-      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">Asientos del Procedimiento de Perpetuos</h3>
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-sm);">Asientos del Procedimiento de Perpetuos</h3>
+      <p style="font-size:0.85rem;color:var(--azul-medio);margin-bottom:var(--espacio-md);line-height:1.5;">
+        En el Procedimiento de Perpetuos se usan <strong>tres cuentas principales</strong> (Almacén, Costo de ventas y Ventas)
+        que se mantienen actualizadas en todo momento. Cada venta genera <strong>dos asientos simultáneos</strong>:
+        uno a precio de venta (3a) y otro a precio de costo (3b). La columna <strong>"Operación contable"</strong>
+        explica cada movimiento y cómo se llega a la utilidad bruta.
+      </p>
       <table class="tabla-resultado">
         <thead>
           <tr>
-            <th>Asiento / Concepto</th>
-            <th class="monto">Debe</th>
-            <th class="monto">Haber</th>
+            <th style="width: 22%;">Asiento / Cuenta</th>
+            <th style="width: 38%;">Operación contable</th>
+            <th class="monto" style="width: 20%;">Debe</th>
+            <th class="monto" style="width: 20%;">Haber</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="cuenta-principal" colspan="3">1. Apertura</td>
+            <td class="cuenta-principal" colspan="4">1. Apertura del ejercicio</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Almacén</td>
+            <td class="operacion">Se <strong>carga</strong> para registrar el inventario inicial a precio de costo.</td>
             <td class="monto">${fmt(valorInvIni)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Capital social</td>
+            <td class="operacion">Se <strong>abona</strong> como contrapartida del inventario inicial.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorInvIni)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">2. Compra del periodo</td>
+            <td class="cuenta-principal" colspan="4">2. Compras del periodo</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Almacén</td>
+            <td class="operacion">Se <strong>carga</strong> para aumentar el inventario por las compras del periodo.</td>
             <td class="monto">${fmt(valorCompra)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Bancos</td>
+            <td class="operacion">Se <strong>abona</strong> porque las compras se pagaron con cheque.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorCompra)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">3a. Venta a precio comercial</td>
+            <td class="cuenta-principal" colspan="4">3a. Venta a precio comercial</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Bancos</td>
+            <td class="operacion">Se <strong>carga</strong> porque las ventas se cobraron.</td>
             <td class="monto">${fmt(valorVenta)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Ventas</td>
+            <td class="operacion">Se <strong>abonan</strong> los ingresos por venta (a precio de venta).</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(valorVenta)}</td>
           </tr>
+
           <tr>
-            <td class="cuenta-principal" colspan="3">3b. Salida de mercancía a costo</td>
+            <td class="cuenta-principal" colspan="4">3b. Salida de mercancía a costo</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Costo de ventas</td>
+            <td class="operacion">Se <strong>carga</strong> para acumular el costo de la mercancía vendida.</td>
             <td class="monto">${fmt(costoVentas)}</td>
             <td class="monto">—</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Almacén</td>
+            <td class="operacion">Se <strong>abona</strong> para reducir el inventario por la salida de mercancía.</td>
             <td class="monto">—</td>
             <td class="monto">${fmt(costoVentas)}</td>
           </tr>
         </tbody>
       </table>
 
-      <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-md) 0;">Saldos de Mayor</h3>
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-md) 0 var(--espacio-sm);">Saldos de Mayor resultantes</h3>
       <table class="tabla-resultado">
         <thead>
           <tr>
-            <th>Cuenta</th>
-            <th class="monto">Debe</th>
-            <th class="monto">Haber</th>
-            <th class="monto">Saldo</th>
+            <th style="width: 28%;">Cuenta</th>
+            <th class="monto" style="width: 15%;">Debe</th>
+            <th class="monto" style="width: 15%;">Haber</th>
+            <th class="monto" style="width: 20%;">Saldo</th>
+            <th style="width: 22%;">Significado</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Almacén</td>
             <td class="monto">${fmt(almacenDebe)}</td>
             <td class="monto">${fmt(almacenHaber)}</td>
             <td class="monto">${fmt(almacenSaldo)}</td>
+            <td class="operacion" style="font-size:0.75rem;">Inventario final en libros</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Costo de ventas</td>
             <td class="monto">${fmt(costoVentas)}</td>
             <td class="monto">$0.00</td>
             <td class="monto">${fmt(costoVentas)}</td>
+            <td class="operacion" style="font-size:0.75rem;">Costo de lo vendido</td>
           </tr>
-          <tr>
+          <tr class="fila-paso">
             <td class="cuenta">Ventas</td>
             <td class="monto">$0.00</td>
             <td class="monto">${fmt(valorVenta)}</td>
             <td class="monto">${fmt(valorVenta)}</td>
+            <td class="operacion" style="font-size:0.75rem;">Ingresos por venta</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-md) 0 var(--espacio-sm);">¿Cómo se llegó a la utilidad bruta?</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Paso</th>
+            <th style="width: 50%;">Operación</th>
+            <th class="monto" style="width: 20%;">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="fila-paso">
+            <td><strong>A. Costo de ventas</strong></td>
+            <td class="operacion">Saldo de la cuenta Costo de ventas (${ventaU} u. × ${fmt(costoUnitarioSalida)}).</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+          </tr>
+          <tr class="fila-paso">
+            <td><strong>B. Ventas netas</strong></td>
+            <td class="operacion">Saldo de la cuenta Ventas.</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+          <tr class="fila-total">
+            <td><strong>C. Utilidad bruta</strong></td>
+            <td class="operacion">Ventas netas (${fmt(valorVenta)}) − Costo de ventas (${fmt(costoVentas)}).</td>
+            <td class="monto">${fmt(utilidadBruta)}</td>
           </tr>
         </tbody>
       </table>
@@ -1803,6 +1960,8 @@ const Modal = {
           <li><strong>Analítico:</strong> cuentas separadas (Inventarios, Compras, Ventas). Cuatro asientos de ajuste al cierre.</li>
           <li><strong>Perpetuos:</strong> tres cuentas (Almacén, Costo de ventas, Ventas). Doble asiento por venta.</li>
         </ul>
+        <h3>Columna "Operación contable"</h3>
+        <p>Cada tabla incluye una columna que explica <strong>qué se hace en cada paso</strong> y cómo se llega a la utilidad bruta. Además, se agrega una tabla auxiliar "¿Cómo se llegó a la utilidad bruta?" con el desglose del cálculo.</p>
         <h3>Cifras del caso</h3>
         <ul>
           <li>Inventario inicial: 100 u. × $1,000 = $100,000</li>
