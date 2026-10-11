@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 3 — Fórmulas de Asignación del Costo | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #1a3a6b;
+  --azul-medio: #2c5aa0;
+  --azul-claro: #d6e4f5;
+  --azul-muy-claro: #eef4fb;
+
+  --fondo: #f7f9fc;
+  --superficie: #ffffff;
+  --texto: #1a2b45;
+  --texto-suave: #5a6b82;
+  --borde: #c5d5e8;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  --sombra-sm: 0 1px 2px rgba(26,58,107,0.06);
+  --sombra-md: 0 4px 6px rgba(26,58,107,0.10);
+  --sombra-lg: 0 10px 15px rgba(26,58,107,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.barra-progreso {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--borde);
+  z-index: 1000;
+}
+
+.barra-progreso__relleno {
+  height: 100%;
+  background: var(--azul-medio);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.contenedor-slides {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-lg);
+  padding-top: 2rem;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  background: var(--superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-lg);
+  padding: var(--espacio-xl) var(--espacio-lg);
+  animation: fadeIn 0.5s ease;
+  min-height: 70vh;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.slide.activo { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide__numero {
+  display: inline-block;
+  background: var(--azul-profundo);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.slide__titulo {
+  font-size: 2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.2;
+}
+
+.slide__subtitulo {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.slide__cuerpo { font-size: 1rem; }
+
+.navegacion {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espacio-md) var(--espacio-lg);
+  z-index: 999;
+  box-shadow: 0 -2px 10px rgba(26,58,107,0.05);
+}
+
+.navegacion__boton {
+  background: var(--azul-profundo);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radio-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__boton:hover { background: var(--azul-medio); }
+.navegacion__boton:active { transform: scale(0.97); }
+.navegacion__boton:disabled {
+  background: var(--borde);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+.navegacion__contador {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.navegacion__indice {
+  background: transparent;
+  border: 2px solid var(--azul-profundo);
+  color: var(--azul-profundo);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__indice:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.indice {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: var(--superficie);
+  box-shadow: -4px 0 20px rgba(26,58,107,0.15);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: var(--espacio-lg);
+}
+
+.indice.abierto { right: 0; }
+
+.indice__titulo {
+  font-size: 1.2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 2px solid var(--borde);
+}
+
+.indice__lista { list-style: none; }
+
+.indice__item {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--texto);
+  transition: background 0.2s;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.indice__item:hover { background: var(--azul-muy-claro); }
+.indice__item.activo {
+  background: var(--azul-profundo);
+  color: #fff;
+  font-weight: 600;
+}
+
+.indice__item-num {
+  font-weight: 700;
+  font-size: 0.8rem;
+  min-width: 1.5rem;
+}
+
+.indice__cerrar {
+  position: absolute;
+  top: var(--espacio-md);
+  right: var(--espacio-md);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+  line-height: 1;
+  font-family: var(--fuente-base);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26,58,107,0.4);
+  z-index: 1000;
+  display: none;
+}
+
+.overlay.visible { display: block; }
+
+.caja-concepto {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-concepto__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-concepto__texto {
+  font-size: 1rem;
+  color: var(--texto);
+  line-height: 1.7;
+}
+
+.caja-concepto__texto strong { color: var(--azul-profundo); }
+
+.caja-ejemplo {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-ejemplo__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-ejemplo__texto {
+  font-size: 0.95rem;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+.caja-resultado {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.caja-resultado__linea {
+  font-size: 0.95rem;
+  color: var(--texto);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__linea--utilidad {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  background: var(--azul-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__nota {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+}
+
+.alerta {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.exito {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-datos thead { background: var(--azul-medio); color: #fff; }
+
+.tabla-datos th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.tabla-datos td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-datos tbody tr:hover { background: var(--fondo); }
+.tabla-datos tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-datos .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+}
+
+.tabla-datos .centro { text-align: center; }
+
+.tabla-kardex {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.78rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-kardex thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-kardex th {
+  padding: 0.55rem 0.35rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.tabla-kardex td {
+  padding: 0.45rem 0.35rem;
+  border-bottom: 1px solid var(--borde);
+  text-align: center;
+  font-family: var(--fuente-mono);
+  font-size: 0.76rem;
+}
+
+.tabla-kardex td.texto {
+  font-family: var(--fuente-base);
+  text-align: left;
+}
+
+.tabla-kardex tbody tr:hover { background: var(--fondo); }
+.tabla-kardex tbody tr.fila-destacada {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-kardex tbody tr.fila-venta {
+  background: #fef3c7;
+  font-weight: 600;
+}
+
+.tabla-kardex tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-kardex .monto { text-align: right; }
+
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.tarjeta {
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-md);
+}
+
+.tarjeta__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+}
+
+.tarjeta__texto {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.mapa-conceptual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.mapa-nodo {
+  background: var(--superficie);
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  text-align: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.mapa-nodo:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.mapa-nodo__texto {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .slide {
+    padding: var(--espacio-lg) var(--espacio-md);
+    min-height: 80vh;
+  }
+  .slide__titulo { font-size: 1.4rem; }
+  .slide__subtitulo { font-size: 0.95rem; }
+  .navegacion { padding: var(--espacio-sm) var(--espacio-md); }
+  .navegacion__boton { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
+  .tabla-datos, .tabla-kardex { font-size: 0.72rem; }
+  .grid-tarjetas { grid-template-columns: 1fr; }
+  .indice { width: 300px; right: -300px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="barra-progreso">
+    <div class="barra-progreso__relleno" id="progreso"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="indice" id="indice">
+    <button class="indice__cerrar" id="cerrarIndice" aria-label="Cerrar índice">Cerrar</button>
+    <h2 class="indice__titulo">Índice — Punto 3</h2>
+    <ul class="indice__lista" id="listaIndice"></ul>
+  </aside>
+
+  <main class="contenedor-slides" id="contenedorSlides">
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide activo" data-titulo="Portada">
+      <span class="slide__numero">Punto 3 de 6</span>
+      <h1 class="slide__titulo">Fórmulas de Asignación del Costo</h1>
+      <p class="slide__subtitulo">PEPS y Costo Promedio Móvil — Caso: "Bicicletas del Norte, S.A. de C.V." — NIF C-4</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿De qué trata este punto?</div>
+          <div class="caja-concepto__texto">
+            En el Punto 2 aprendiste <strong>cómo registrar las compras y ventas</strong> de mercancías
+            con los tres procedimientos contables. Ahora toca responder una pregunta distinta:
+            <strong>¿a qué costo salen las mercancías cuando se venden?</strong>
+            <br><br>
+            Cuando una empresa compra el mismo producto a <strong>precios distintos</strong> a lo largo
+            del tiempo, necesita una regla para decidir <strong>qué costo asignar a lo que sale</strong>
+            y <strong>qué costo dejar en el inventario final</strong>. La NIF C-4 reconoce dos fórmulas
+            principales: <strong>PEPS</strong> y <strong>Costo Promedio Móvil</strong>.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Operaciones del periodo (enero de 2026)</div>
+          <div class="caja-ejemplo__texto">
+            <strong>01/Ene (Saldo inicial):</strong> 100 bicicletas a $1,000 = $100,000<br>
+            <strong>10/Ene (Compra 1):</strong> 50 bicicletas a $1,300 = $65,000<br>
+            <strong>15/Ene (Venta 1):</strong> 80 bicicletas a $2,000 = $160,000<br>
+            <strong>20/Ene (Compra 2):</strong> 30 bicicletas a $1,500 = $45,000<br>
+            <strong>28/Ene (Venta 2):</strong> 40 bicicletas a $2,200 = $88,000
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Este punto es fundamentalmente conceptual. Las actividades
+          prácticas (calculadora de kardex, ejercicio de detección de errores y examen final)
+          están en el complemento del Punto 3.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: CONCEPTO Y MARCO NORMATIVO -->
+    <section class="slide" data-titulo="Concepto y marco normativo">
+      <span class="slide__numero">Slide 2</span>
+      <h1 class="slide__titulo">Concepto y marco normativo</h1>
+      <p class="slide__subtitulo">¿Por qué se necesitan fórmulas de asignación del costo?</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">El problema central</div>
+          <div class="caja-concepto__texto">
+            Cuando una empresa adquiere mercancías a <strong>diferentes precios</strong> a lo largo
+            del tiempo, surge una pregunta técnica: al vender, <strong>¿cuál de todos esos costos
+            se asigna a la mercancía que sale?</strong> Y en consecuencia, <strong>¿con qué costo
+            queda valuado el inventario final?</strong>
+            <br><br>
+            La respuesta depende de la <strong>fórmula de asignación del costo</strong> que la
+            entidad elija. La <strong>NIF C-4</strong> y el <strong>Capítulo 18</strong> de Elías
+            Lara Flores reconocen dos fórmulas de uso generalizado:
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">1. PEPS</div>
+            <div class="tarjeta__texto">
+              <strong>Primeras Entradas, Primeras Salidas.</strong> Asume que los primeros
+              artículos que entraron al almacén son los primeros en salir. El
+              <strong>costo de ventas absorbe los costos más antiguos</strong>, mientras
+              que el <strong>inventario final queda valuado a los costos más recientes</strong>.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">2. Costo Promedio Móvil</div>
+            <div class="tarjeta__texto">
+              Cada vez que se compra a un costo distinto, se recalcula un
+              <strong>nuevo costo promedio unitario</strong> dividiendo el saldo acumulado
+              en dinero entre las unidades en existencia. Las ventas posteriores salen
+              a ese costo promedio hasta que ingrese una nueva compra que lo modifique.
+            </div>
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Control auxiliar: la Tarjeta de Almacén o Kardex</div>
+          <div class="caja-ejemplo__texto">
+            Para aplicar cualquiera de las dos fórmulas se utiliza el
+            <strong>Mayor Auxiliar de Almacén</strong> (también llamado <em>tarjeta de almacén</em>
+            o <em>kardex</em>). En esa tarjeta se registran, movimiento por movimiento:
+            fecha, concepto, unidades de entrada, unidades de salida, existencia resultante,
+            costo unitario y valores en dinero (debe, haber y saldo).
+            <br><br>
+            La suma de los saldos de todas las tarjetas auxiliares debe coincidir con el saldo
+            de la cuenta colectiva de <strong>Almacén</strong> en el libro mayor.
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> Ambas fórmulas parten de las mismas compras y venden las
+          mismas unidades. Sin embargo, producen <strong>resultados financieros distintos</strong>
+          cuando los precios cambian.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: PEPS -->
+    <section class="slide" data-titulo="PEPS">
+      <span class="slide__numero">Slide 3</span>
+      <h1 class="slide__titulo">PEPS: Primeras Entradas, Primeras Salidas</h1>
+      <p class="slide__subtitulo">Los primeros artículos que entran son los primeros en salir</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            En PEPS se lleva un <strong>estricto control por lotes o "capas" de compra</strong>.
+            Cuando se vende mercancía, primero se agotan las unidades del lote más antiguo,
+            luego las del siguiente lote, y así sucesivamente.
+            <br><br>
+            • El <strong>costo de ventas</strong> queda valuado a los <strong>costos más antiguos</strong>.<br>
+            • El <strong>inventario final</strong> queda valuado a los <strong>costos más recientes</strong>.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Analogía cualitativa</div>
+          <div class="caja-ejemplo__texto">
+            Es como un <strong>anaquel de refrescos</strong> donde el encargado siempre coloca
+            los más nuevos al fondo y despacha los más viejos primero. Así se asegura de que
+            la mercancía no se envejezca. En contabilidad, PEPS refleja exactamente ese
+            comportamiento físico.
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1rem;">
+          Tarjeta de Almacén (Kardex) — Método PEPS
+        </h3>
+
+        <table class="tabla-kardex">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th>Entradas (u)</th>
+              <th>Salidas (u)</th>
+              <th>Existencia (u)</th>
+              <th>Costo unit.</th>
+              <th>Debe ($)</th>
+              <th>Haber ($)</th>
+              <th>Saldo ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="fila-destacada">
+              <td>01/Ene</td>
+              <td class="texto">Inventario inicial</td>
+              <td>100</td>
+              <td>—</td>
+              <td>100</td>
+              <td>$1,000.00</td>
+              <td>$100,000.00</td>
+              <td>—</td>
+              <td>$100,000.00</td>
+            </tr>
+            <tr>
+              <td>10/Ene</td>
+              <td class="texto">Compra (Fac. 101)</td>
+              <td>50</td>
+              <td>—</td>
+              <td>150</td>
+              <td>$1,300.00</td>
+              <td>$65,000.00</td>
+              <td>—</td>
+              <td>$165,000.00</td>
+            </tr>
+            <tr class="fila-venta">
+              <td>15/Ene</td>
+              <td class="texto">Venta 1 — lote inicial</td>
+              <td>—</td>
+              <td>80</td>
+              <td>70</td>
+              <td>$1,000.00</td>
+              <td>—</td>
+              <td>$80,000.00</td>
+              <td>$85,000.00</td>
+            </tr>
+            <tr>
+              <td>20/Ene</td>
+              <td class="texto">Compra (Fac. 102)</td>
+              <td>30</td>
+              <td>—</td>
+              <td>100</td>
+              <td>$1,500.00</td>
+              <td>$45,000.00</td>
+              <td>—</td>
+              <td>$130,000.00</td>
+            </tr>
+            <tr class="fila-venta">
+              <td>28/Ene</td>
+              <td class="texto">Venta 2a — 20 u. restantes lote inicial</td>
+              <td>—</td>
+              <td>20</td>
+              <td>80</td>
+              <td>$1,000.00</td>
+              <td>—</td>
+              <td>$20,000.00</td>
+              <td>$110,000.00</td>
+            </tr>
+            <tr class="fila-venta">
+              <td>28/Ene</td>
+              <td class="texto">Venta 2b — 20 u. de la compra del 10/Ene</td>
+              <td>—</td>
+              <td>20</td>
+              <td>60</td>
+              <td>$1,300.00</td>
+              <td>—</td>
+              <td>$26,000.00</td>
+              <td>$84,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Resultado del Método PEPS</div>
+          <div class="caja-resultado__linea">
+            <strong>Costo de ventas:</strong> $80,000 + $46,000 = $126,000.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Ventas totales:</strong> $160,000 + $88,000 = $248,000.00
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>UTILIDAD BRUTA = $248,000 − $126,000 = $122,000.00</strong>
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Inventario final:</strong> $84,000.00 (60 u. a costos recientes)
+          </div>
+          <div class="caja-resultado__nota">
+            En PEPS, el costo de ventas absorbe los costos más antiguos y baratos, por lo que
+            la utilidad bruta resulta mayor. El inventario final queda valuado a los costos
+            más recientes.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: COSTO PROMEDIO MÓVIL -->
+    <section class="slide" data-titulo="Costo Promedio Móvil">
+      <span class="slide__numero">Slide 4</span>
+      <h1 class="slide__titulo">Costo Promedio Móvil</h1>
+      <p class="slide__subtitulo">Un nuevo costo unitario después de cada compra</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            En el Costo Promedio Móvil <strong>no se separan lotes</strong>. Cada vez que se
+            realiza una compra a un costo distinto, se calcula de inmediato un
+            <strong>nuevo costo promedio unitario</strong> dividiendo el saldo acumulado
+            en dinero entre el número de unidades en existencia:
+            <br><br>
+            <strong>Costo promedio = Saldo en dinero ÷ Existencia en unidades</strong>
+            <br><br>
+            Las ventas posteriores salen a ese costo promedio hasta que ingrese una nueva
+            compra que modifique el valor.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Analogía cualitativa</div>
+          <div class="caja-ejemplo__texto">
+            Es como <strong>mezclar todas las monedas de una alcancía</strong> en un solo
+            monto: no se distingue cuál moneda entró primero ni cuánto costaba cada una.
+            Al sacar dinero, se asigna el mismo valor promedio a todas las unidades.
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1rem;">
+          Tarjeta de Almacén (Kardex) — Costo Promedio Móvil
+        </h3>
+
+        <table class="tabla-kardex">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th>Entradas (u)</th>
+              <th>Salidas (u)</th>
+              <th>Existencia (u)</th>
+              <th>Costo unit.</th>
+              <th>Costo prom.</th>
+              <th>Debe ($)</th>
+              <th>Haber ($)</th>
+              <th>Saldo ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="fila-destacada">
+              <td>01/Ene</td>
+              <td class="texto">Inventario inicial</td>
+              <td>100</td>
+              <td>—</td>
+              <td>100</td>
+              <td>$1,000.00</td>
+              <td>$1,000.00</td>
+              <td>$100,000.00</td>
+              <td>—</td>
+              <td>$100,000.00</td>
+            </tr>
+            <tr>
+              <td>10/Ene</td>
+              <td class="texto">Compra (Fac. 101)</td>
+              <td>50</td>
+              <td>—</td>
+              <td>150</td>
+              <td>$1,300.00</td>
+              <td><strong>$1,100.00</strong></td>
+              <td>$65,000.00</td>
+              <td>—</td>
+              <td>$165,000.00</td>
+            </tr>
+            <tr class="fila-venta">
+              <td>15/Ene</td>
+              <td class="texto">Venta 1 (Fac. 01)</td>
+              <td>—</td>
+              <td>80</td>
+              <td>70</td>
+              <td>—</td>
+              <td>$1,100.00</td>
+              <td>—</td>
+              <td>$88,000.00</td>
+              <td>$77,000.00</td>
+            </tr>
+            <tr>
+              <td>20/Ene</td>
+              <td class="texto">Compra (Fac. 102)</td>
+              <td>30</td>
+              <td>—</td>
+              <td>100</td>
+              <td>$1,500.00</td>
+              <td><strong>$1,220.00</strong></td>
+              <td>$45,000.00</td>
+              <td>—</td>
+              <td>$122,000.00</td>
+            </tr>
+            <tr class="fila-venta">
+              <td>28/Ene</td>
+              <td class="texto">Venta 2 (Fac. 02)</td>
+              <td>—</td>
+              <td>40</td>
+              <td>60</td>
+              <td>—</td>
+              <td>$1,220.00</td>
+              <td>—</td>
+              <td>$48,800.00</td>
+              <td>$73,200.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Resultado del Método Costo Promedio Móvil</div>
+          <div class="caja-resultado__linea">
+            <strong>Costo de ventas:</strong> $88,000 + $48,800 = $136,800.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Ventas totales:</strong> $160,000 + $88,000 = $248,000.00
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>UTILIDAD BRUTA = $248,000 − $136,800 = $111,200.00</strong>
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Inventario final:</strong> $73,200.00 (60 u. a costo promedio)
+          </div>
+          <div class="caja-resultado__nota">
+            El Costo Promedio Móvil suaviza las variaciones de precio. Genera una utilidad
+            más conservadora que PEPS y un inventario final valuado a un costo intermedio.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: COMPARACIÓN -->
+    <section class="slide" data-titulo="Comparación PEPS vs Promedio Móvil">
+      <span class="slide__numero">Slide 5</span>
+      <h1 class="slide__titulo">Comparación de métodos y efectos financieros</h1>
+      <p class="slide__subtitulo">Mismos hechos, dos resultados distintos</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">La idea central</div>
+          <div class="caja-concepto__texto">
+            Ambos métodos partieron de las <strong>mismas compras</strong> y vendieron la
+            <strong>misma cantidad de unidades (120)</strong>. Sin embargo, producen
+            <strong>resultados financieros notablemente distintos</strong> cuando los precios
+            cambian. La diferencia de $10,800 es el efecto directo de asignar costos de
+            manera diferente.
+          </div>
+        </div>
+
+        <table class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Concepto financiero</th>
+              <th class="centro">Método PEPS</th>
+              <th class="centro">Costo Promedio Móvil</th>
+              <th class="centro">Diferencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ventas totales netas</strong></td>
+              <td class="monto">$248,000.00</td>
+              <td class="monto">$248,000.00</td>
+              <td class="monto">$0.00</td>
+            </tr>
+            <tr>
+              <td><strong>Costo de ventas (120 u.)</strong></td>
+              <td class="monto">$126,000.00</td>
+              <td class="monto">$136,800.00</td>
+              <td class="monto">−$10,800.00</td>
+            </tr>
+            <tr class="fila-total">
+              <td><strong>Utilidad bruta</strong></td>
+              <td class="monto">$122,000.00</td>
+              <td class="monto">$111,200.00</td>
+              <td class="monto">+$10,800.00</td>
+            </tr>
+            <tr>
+              <td><strong>Inventario final (60 u.)</strong></td>
+              <td class="monto">$84,000.00</td>
+              <td class="monto">$73,200.00</td>
+              <td class="monto">+$10,800.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Comportamiento en inflación (precios al alza)</div>
+          <div class="caja-ejemplo__texto">
+            <strong>PEPS:</strong> Asigna al costo de ventas las mercancías más baratas (las
+            primeras que entraron). Genera un <strong>costo de ventas menor</strong> y una
+            <strong>utilidad bruta más alta</strong>. El inventario final queda a costos recientes.<br><br>
+            <strong>Costo Promedio Móvil:</strong> Suaviza los incrementos de precios al ponderar
+            los costos históricos con los recientes, reflejando una utilidad más conservadora
+            y un inventario final a un costo intermedio.
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">¿Qué método elegir?</div>
+            <div class="tarjeta__texto">
+              Depende del tipo de mercancía y de la política contable. Para artículos perecederos
+              o con fecha de caducidad conviene PEPS; para mercancía homogénea o a granel, el
+              Promedio Móvil es más práctico.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Efecto fiscal</div>
+            <div class="tarjeta__texto">
+              En PEPS, la utilidad bruta mayor puede generar mayor impuesto sobre la renta.
+              Por eso algunas empresas prefieren el Promedio Móvil para fines fiscales.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Consistencia</div>
+            <div class="tarjeta__texto">
+              La NIF C-4 exige aplicar el mismo método de manera consistente a lo largo del
+              tiempo para que la información sea comparable entre periodos.
+            </div>
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Conclusión:</strong> PEPS y Costo Promedio Móvil generan resultados distintos
+          en periodos inflacionarios. La diferencia de $10,800 en el caso es el efecto directo
+          de asignar costos de manera distinta.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: SÍNTESIS -->
+    <section class="slide" data-titulo="Síntesis del Punto 3">
+      <span class="slide__numero">Slide 6</span>
+      <h1 class="slide__titulo">Síntesis del Punto 3</h1>
+      <p class="slide__subtitulo">Mapa conceptual y cierre</p>
+
+      <div class="slide__cuerpo">
+        <div class="mapa-conceptual">
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Kardex o tarjeta de almacén</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">PEPS: primeros en entrar, primeros en salir</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Promedio Móvil: costo unitario recalculado</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">PEPS: utilidad $122,000 / inventario $84,000</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Promedio: utilidad $111,200 / inventario $73,200</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Diferencia total: $10,800</div>
+          </div>
+        </div>
+
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Tres fundamentos clave</div>
+          <div class="caja-concepto__texto">
+            <strong>1. Control por lotes en PEPS:</strong> cada venta agota primero el lote
+            más antiguo y así sucesivamente.<br><br>
+            <strong>2. Recalculo en Promedio Móvil:</strong> el costo unitario se recalcula
+            después de cada compra a precio distinto.<br><br>
+            <strong>3. Efecto en inflación:</strong> PEPS genera mayor utilidad y mayor inventario
+            final; Promedio Móvil suaviza ambos.
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Has completado el Punto 3.</strong> Ahora sabes aplicar las dos fórmulas
+          de asignación del costo (PEPS y Costo Promedio Móvil), interpretar sus resultados
+          y comparar sus efectos financieros aplicados al caso de Bicicletas del Norte.
+        </div>
+
+        <div class="alerta">
+          <strong>Práctica recomendada:</strong> Abre el complemento del Punto 3 para reforzar
+          las fórmulas con la calculadora de kardex, una actividad de detección de errores
+          y un examen final.
+        </div>
+
+        <div style="text-align: center; margin-top: var(--espacio-lg);">
+          <button class="navegacion__boton" onclick="abrirIndice()" style="padding: 0.8rem 2rem; font-size: 1rem;">
+            Volver al índice
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="navegacion">
+    <button class="navegacion__boton" id="btnAnterior" onclick="Slides.anterior()">Anterior</button>
+    <div style="display: flex; align-items: center; gap: var(--espacio-md);">
+      <button class="navegacion__indice" onclick="abrirIndice()">Índice</button>
+      <span class="navegacion__contador" id="contador">1 / 6</span>
+    </div>
+    <button class="navegacion__boton" id="btnSiguiente" onclick="Slides.siguiente()">Siguiente</button>
+  </nav>
+
+</div>
+
+<script>
+const Slides = {
+  actual: 0,
+  slides: [],
+  total: 0,
+
+  init() {
+    this.slides = document.querySelectorAll('.slide');
+    this.total = this.slides.length;
+    this.render();
+    this.bindKeys();
+    this.bindHash();
+    this.construirIndice();
+  },
+
+  ir(n) {
+    if (n < 0 || n >= this.total) return;
+    this.slides[this.actual].classList.remove('activo');
+    this.actual = n;
+    this.slides[this.actual].classList.add('activo');
+    this.render();
+  },
+
+  siguiente() { this.ir(this.actual + 1); },
+  anterior() { this.ir(this.actual - 1); },
+
+  render() {
+    document.getElementById('contador').textContent = (this.actual + 1) + ' / ' + this.total;
+    document.getElementById('btnAnterior').disabled = this.actual === 0;
+    document.getElementById('btnSiguiente').disabled = this.actual === this.total - 1;
+    const pct = ((this.actual + 1) / this.total) * 100;
+    document.getElementById('progreso').style.width = pct + '%';
+    document.querySelectorAll('.indice__item').forEach((item, i) => {
+      item.classList.toggle('activo', i === this.actual);
+    });
+    history.replaceState(null, '', '#slide-' + (this.actual + 1));
+    this.slides[this.actual].scrollTop = 0;
+  },
+
+  bindKeys() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        this.siguiente();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.anterior();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        this.ir(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        this.ir(this.total - 1);
+      }
+    });
+  },
+
+  bindHash() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#slide-')) {
+      const n = parseInt(hash.replace('#slide-', '')) - 1;
+      if (n >= 0 && n < this.total) {
+        this.ir(n);
+      }
+    }
+  },
+
+  construirIndice() {
+    const lista = document.getElementById('listaIndice');
+    lista.innerHTML = '';
+    this.slides.forEach((slide, i) => {
+      const titulo = slide.dataset.titulo || ('Slide ' + (i + 1));
+      const li = document.createElement('li');
+      li.className = 'indice__item' + (i === this.actual ? ' activo' : '');
+      li.innerHTML = '<span class="indice__item-num">' + (i + 1) + '.</span> ' + titulo;
+      li.onclick = () => {
+        this.ir(i);
+        cerrarIndice();
+      };
+      lista.appendChild(li);
+    });
+  }
+};
+
+function abrirIndice() {
+  document.getElementById('indice').classList.add('abierto');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function cerrarIndice() {
+  document.getElementById('indice').classList.remove('abierto');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+document.getElementById('cerrarIndice').onclick = cerrarIndice;
+document.getElementById('overlay').onclick = cerrarIndice;
+
+document.addEventListener('DOMContentLoaded', () => {
+  Slides.init();
+});
+</script>
+
+</body>
+</html>

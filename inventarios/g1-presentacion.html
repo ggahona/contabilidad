@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 1 — Definición, Naturaleza y Clasificación | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #1a3a6b;
+  --azul-medio: #2c5aa0;
+  --azul-claro: #d6e4f5;
+  --azul-muy-claro: #eef4fb;
+
+  --fondo: #f7f9fc;
+  --superficie: #ffffff;
+  --texto: #1a2b45;
+  --texto-suave: #5a6b82;
+  --borde: #c5d5e8;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  --sombra-sm: 0 1px 2px rgba(26,58,107,0.06);
+  --sombra-md: 0 4px 6px rgba(26,58,107,0.10);
+  --sombra-lg: 0 10px 15px rgba(26,58,107,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.barra-progreso {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--borde);
+  z-index: 1000;
+}
+
+.barra-progreso__relleno {
+  height: 100%;
+  background: var(--azul-medio);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.contenedor-slides {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-lg);
+  padding-top: 2rem;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  background: var(--superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-lg);
+  padding: var(--espacio-xl) var(--espacio-lg);
+  animation: fadeIn 0.5s ease;
+  min-height: 70vh;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.slide.activo {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide__numero {
+  display: inline-block;
+  background: var(--azul-profundo);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.slide__titulo {
+  font-size: 2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.2;
+}
+
+.slide__subtitulo {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.slide__cuerpo {
+  font-size: 1rem;
+}
+
+.navegacion {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espacio-md) var(--espacio-lg);
+  z-index: 999;
+  box-shadow: 0 -2px 10px rgba(26,58,107,0.05);
+}
+
+.navegacion__boton {
+  background: var(--azul-profundo);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radio-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__boton:hover {
+  background: var(--azul-medio);
+}
+
+.navegacion__boton:active {
+  transform: scale(0.97);
+}
+
+.navegacion__boton:disabled {
+  background: var(--borde);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+.navegacion__contador {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.navegacion__indice {
+  background: transparent;
+  border: 2px solid var(--azul-profundo);
+  color: var(--azul-profundo);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__indice:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.indice {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: var(--superficie);
+  box-shadow: -4px 0 20px rgba(26,58,107,0.15);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: var(--espacio-lg);
+}
+
+.indice.abierto {
+  right: 0;
+}
+
+.indice__titulo {
+  font-size: 1.2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 2px solid var(--borde);
+}
+
+.indice__lista {
+  list-style: none;
+}
+
+.indice__item {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--texto);
+  transition: background 0.2s;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.indice__item:hover {
+  background: var(--azul-muy-claro);
+}
+
+.indice__item.activo {
+  background: var(--azul-profundo);
+  color: #fff;
+  font-weight: 600;
+}
+
+.indice__item-num {
+  font-weight: 700;
+  font-size: 0.8rem;
+  min-width: 1.5rem;
+}
+
+.indice__cerrar {
+  position: absolute;
+  top: var(--espacio-md);
+  right: var(--espacio-md);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+  line-height: 1;
+  font-family: var(--fuente-base);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26,58,107,0.4);
+  z-index: 1000;
+  display: none;
+}
+
+.overlay.visible {
+  display: block;
+}
+
+.caja-concepto {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-concepto__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-concepto__texto {
+  font-size: 1rem;
+  color: var(--texto);
+  line-height: 1.7;
+}
+
+.caja-concepto__texto strong {
+  color: var(--azul-profundo);
+}
+
+.caja-ejemplo {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-ejemplo__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-ejemplo__texto {
+  font-size: 0.95rem;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+.alerta {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.exito {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-datos thead {
+  background: var(--azul-medio);
+  color: #fff;
+}
+
+.tabla-datos th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.tabla-datos td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-datos tbody tr:hover {
+  background: var(--fondo);
+}
+
+.tabla-datos tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-datos .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+}
+
+.tabla-datos .centro {
+  text-align: center;
+}
+
+.tabla-contable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-contable thead {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.tabla-contable th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-contable td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-contable tbody tr:hover {
+  background: var(--fondo);
+}
+
+.tabla-contable tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-contable tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+}
+
+.tabla-contable .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-contable .folio {
+  text-align: center;
+  color: var(--texto-suave);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.tabla-contable .cuenta {
+  font-weight: 500;
+}
+
+.tabla-contable .cuenta-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.grid-tarjetas--mini {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+}
+
+.tarjeta {
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-md);
+}
+
+.tarjeta__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+}
+
+.tarjeta__texto {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.timeline {
+  display: flex;
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+  overflow-x: auto;
+  padding-bottom: var(--espacio-sm);
+}
+
+.timeline__item {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  position: relative;
+}
+
+.timeline__item::after {
+  content: '\2192';
+  position: absolute;
+  right: -1rem;
+  top: 30%;
+  color: var(--borde);
+  font-size: 1.2rem;
+}
+
+.timeline__item:last-child::after {
+  display: none;
+}
+
+.timeline__circulo {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: var(--azul-profundo);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 auto var(--espacio-sm);
+  box-shadow: var(--sombra-md);
+}
+
+.timeline__titulo {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+}
+
+.timeline__texto {
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+}
+
+.mapa-conceptual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.mapa-nodo {
+  background: var(--superficie);
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  text-align: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.mapa-nodo:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.mapa-nodo__texto {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.separador {
+  height: 1px;
+  background: var(--borde);
+  margin: var(--espacio-lg) 0;
+}
+
+@media (max-width: 768px) {
+  .slide {
+    padding: var(--espacio-lg) var(--espacio-md);
+    min-height: 80vh;
+  }
+  .slide__titulo {
+    font-size: 1.4rem;
+  }
+  .slide__subtitulo {
+    font-size: 0.95rem;
+  }
+  .navegacion {
+    padding: var(--espacio-sm) var(--espacio-md);
+  }
+  .navegacion__boton {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+  }
+  .tabla-contable, .tabla-datos {
+    font-size: 0.75rem;
+  }
+  .grid-tarjetas, .grid-tarjetas--mini {
+    grid-template-columns: 1fr;
+  }
+  .timeline {
+    flex-direction: column;
+  }
+  .timeline__item::after {
+    content: '\2193';
+    right: 50%;
+    top: auto;
+    bottom: -1rem;
+  }
+  .indice {
+    width: 300px;
+    right: -300px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="barra-progreso">
+    <div class="barra-progreso__relleno" id="progreso"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="indice" id="indice">
+    <button class="indice__cerrar" id="cerrarIndice" aria-label="Cerrar índice">Cerrar</button>
+    <h2 class="indice__titulo">Índice — Punto 1</h2>
+    <ul class="indice__lista" id="listaIndice"></ul>
+  </aside>
+
+  <main class="contenedor-slides" id="contenedorSlides">
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide activo" data-titulo="Portada">
+      <span class="slide__numero">Punto 1 de 6</span>
+      <h1 class="slide__titulo">Definición, Naturaleza y Clasificación de los Inventarios</h1>
+      <p class="slide__subtitulo">Caso: "Bicicletas del Norte, S.A. de C.V." — NIF C-4</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Objetivo de aprendizaje</div>
+          <div class="caja-concepto__texto">
+            Al terminar esta presentación podrás <strong>definir los inventarios según la NIF C-4</strong>,
+            <strong>justificar su clasificación en el Activo Circulante</strong> y
+            <strong>distinguir las 6 clases normativas</strong> aplicándolas al caso de Bicicletas del Norte, S.A. de C.V.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Contexto del caso</div>
+          <div class="caja-ejemplo__texto">
+            <strong>Giro:</strong> Empresa dedicada al ensamble y comercialización de bicicletas.<br>
+            <strong>Fecha de inicio del ejercicio:</strong> 1 de enero de 2026.<br>
+            <strong>Moneda:</strong> Pesos mexicanos ($).
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Este punto es fundamentalmente conceptual. Las actividades
+          prácticas y los ejercicios de clasificación están en el complemento del Punto 1.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: CONCEPTO Y CLASIFICACIÓN -->
+    <section class="slide" data-titulo="Concepto y clasificación">
+      <span class="slide__numero">Slide 2</span>
+      <h1 class="slide__titulo">Concepto y clasificación en el Balance</h1>
+      <p class="slide__subtitulo">¿Qué son los inventarios y por qué van en el Activo Circulante?</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Definición NIF C-4</div>
+          <div class="caja-concepto__texto">
+            Los inventarios son <strong>activos no monetarios</strong> sobre los cuales la entidad tiene
+            los <strong>riesgos y beneficios</strong>, adquiridos para su <strong>venta</strong> en el curso
+            normal de las operaciones o para ser <strong>consumidos en el proceso de producción</strong>
+            de bienes que posteriormente serán vendidos.
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Activos no monetarios</div>
+            <div class="tarjeta__texto">
+              No son efectivo ni equivalentes. Su valor se recupera mediante la venta o el consumo.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Riesgos y beneficios</div>
+            <div class="tarjeta__texto">
+              La entidad asume las pérdidas por deterioro, robo o merma, y recibe las ganancias por la venta.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Para venta o consumo productivo</div>
+            <div class="tarjeta__texto">
+              Se adquieren para venderse directamente o para consumirse en la producción de bienes que luego se venderán.
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.1rem;">
+          Ciclo financiero a corto plazo
+        </h3>
+
+        <div class="timeline">
+          <div class="timeline__item">
+            <div class="timeline__circulo">1</div>
+            <div class="timeline__titulo">Compra</div>
+            <div class="timeline__texto">Se adquieren mercancías</div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__circulo">2</div>
+            <div class="timeline__titulo">Almacenaje</div>
+            <div class="timeline__texto">Se mantienen en inventario</div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__circulo">3</div>
+            <div class="timeline__titulo">Venta</div>
+            <div class="timeline__texto">Se venden a los clientes</div>
+          </div>
+          <div class="timeline__item">
+            <div class="timeline__circulo">4</div>
+            <div class="timeline__titulo">Cobro</div>
+            <div class="timeline__texto">Se recupera el efectivo</div>
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Aplicación cualitativa al caso</div>
+          <div class="caja-ejemplo__texto">
+            En <strong>Bicicletas del Norte</strong>:
+            <br>• Las <strong>bicicletas Alpinista</strong> listas para venta son inventarios para venta.
+            <br>• Los <strong>cuadros de aluminio, rines y pedales</strong> son inventarios para consumo productivo.
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Conclusión:</strong> Los inventarios son activos circulantes porque se espera
+          convertirlos en efectivo (o consumirlos) dentro del ciclo normal de operaciones, que
+          generalmente es menor a un año.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: LAS 6 CLASES DE INVENTARIO -->
+    <section class="slide" data-titulo="Las 6 clases de inventario">
+      <span class="slide__numero">Slide 3</span>
+      <h1 class="slide__titulo">Clases de Inventario (NIF C-4)</h1>
+      <p class="slide__subtitulo">Las 6 categorías normativas con ejemplos cualitativos del caso</p>
+
+      <div class="slide__cuerpo">
+        <div class="grid-tarjetas">
+
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">1. Materias primas y materiales</div>
+            <div class="tarjeta__texto">
+              Componentes adquiridos para transformarse en productos terminados.
+              <br><br><strong>Caso:</strong> Cuadros de aluminio, rines y pedales para ensamble.
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">2. Producción en proceso</div>
+            <div class="tarjeta__texto">
+              Productos no terminados que acumulan materia prima, mano de obra directa
+              y gastos indirectos de fabricación.
+              <br><br><strong>Caso:</strong> 40 cuadros en taller con mano de obra y soldadura acumulada.
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">3. Artículos terminados</div>
+            <div class="tarjeta__texto">
+              Bienes producidos listos para su comercialización.
+              <br><br><strong>Caso:</strong> Bicicletas Modelo Alpinista armadas y etiquetadas en el almacén.
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">4. Artículos en consignación o demostración</div>
+            <div class="tarjeta__texto">
+              Bienes entregados a terceros para su venta o exhibición, conservando la entidad
+              los riesgos y beneficios.
+              <br><br><strong>Caso:</strong> Bicicletas entregadas a prueba en Tiendas Deportivas El Rally.
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">5. Mercancías en tránsito</div>
+            <div class="tarjeta__texto">
+              Compras en camino de las cuales ya se tienen los riesgos y beneficios.
+              <br><br><strong>Caso:</strong> Lote de bicicletas comprado en Monterrey que viene en camino a la empresa.
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">6. Refacciones, suministros y herramentales</div>
+            <div class="tarjeta__texto">
+              Artículos auxiliares para el mantenimiento, reparación u operación.
+              <br><br><strong>Caso:</strong> Lubricantes, grasa y llantas de repuesto para el taller.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Las 6 clases son las establecidas por la NIF C-4.
+          No todas las empresas tienen las 6; dependen de su giro y operaciones.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: INVENTARIO Y BALANCE DE APERTURA -->
+    <section class="slide" data-titulo="Inventario y balance de apertura">
+      <span class="slide__numero">Slide 4</span>
+      <h1 class="slide__titulo">Inventario y balance de apertura al 1 de enero de 2026</h1>
+      <p class="slide__subtitulo">Las 6 categorías NIF C-4 y el resto de los activos y pasivos de arranque</p>
+
+      <div class="slide__cuerpo">
+        <h3 style="color: var(--azul-profundo); margin-bottom: var(--espacio-md); font-size: 1.05rem;">
+          Inventario inicial
+        </h3>
+
+        <table class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Categoría NIF C-4</th>
+              <th>Descripción Física del Lote</th>
+              <th class="monto">Importe ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Artículos terminados</strong></td>
+              <td>Bicicletas de montaña <em>Modelo Alpinista</em> listas para venta</td>
+              <td class="monto">$100,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>2. Materias primas</strong></td>
+              <td>Cuadros de aluminio, rines y pedales para ensamble</td>
+              <td class="monto">$60,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>3. Producción en proceso</strong></td>
+              <td>40 cuadros en taller con mano de obra y soldadura acumulada</td>
+              <td class="monto">$40,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>4. Mercancías en tránsito</strong></td>
+              <td>Lote de 50 bicicletas comprado en Monterrey que viene en camino</td>
+              <td class="monto">$50,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>5. Artículos en consignación</strong></td>
+              <td>10 bicicletas entregadas a prueba en <em>Tiendas Deportivas El Rally</em></td>
+              <td class="monto">$10,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>6. Refacciones y suministros</strong></td>
+              <td>Lubricantes, grasa y llantas de repuesto para taller</td>
+              <td class="monto">$15,000.00</td>
+            </tr>
+            <tr class="fila-total">
+              <td colspan="2"><strong>TOTAL INVENTARIOS INICIALES</strong></td>
+              <td class="monto"><strong>$275,000.00</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Otros activos y pasivos de arranque
+        </h3>
+
+        <div class="grid-tarjetas--mini">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Bancos</div>
+            <div class="tarjeta__texto">$225,000.00</div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Mobiliario y Equipo</div>
+            <div class="tarjeta__texto">$50,000.00</div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Proveedores</div>
+            <div class="tarjeta__texto">$50,000.00</div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Capital Social</div>
+            <div class="tarjeta__texto">$500,000.00</div>
+          </div>
+        </div>
+
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Comprobación de la partida doble</div>
+          <div class="caja-concepto__texto">
+            <strong>Activo total:</strong> Inventarios $275,000.00 + Bancos $225,000.00 + Mobiliario $50,000.00 = <strong>$550,000.00</strong><br>
+            <strong>Pasivo + Capital:</strong> Proveedores $50,000.00 + Capital Social $500,000.00 = <strong>$550,000.00</strong><br>
+            La igualdad fundamental <strong>Activo = Pasivo + Capital</strong> se cumple exactamente.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: ASIENTO DE APERTURA -->
+    <section class="slide" data-titulo="Asiento de apertura">
+      <span class="slide__numero">Slide 5</span>
+      <h1 class="slide__titulo">Registro contable: Asiento de apertura</h1>
+      <p class="slide__subtitulo">Libro Diario Continental — 1 de enero de 2026</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Regla de la partida doble</div>
+          <div class="caja-concepto__texto">
+            Toda cuenta de activo debe iniciar con una anotación en la columna del
+            <strong>Debe (Cargo)</strong>. Las cuentas de pasivo y capital se anotan en el
+            <strong>Haber (Abono)</strong>. La suma del Debe debe igualar la del Haber.
+          </div>
+        </div>
+
+        <table class="tabla-contable">
+          <thead>
+            <tr>
+              <th>Cuenta / Concepto</th>
+              <th class="folio">Folio</th>
+              <th class="monto">Debe</th>
+              <th class="monto">Haber</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cuenta-principal">ACTIVO CIRCULANTE</td>
+              <td class="folio"></td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Bancos</td>
+              <td class="folio">1</td>
+              <td class="monto">$225,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Almacén de Artículos Terminados</td>
+              <td class="folio">2</td>
+              <td class="monto">$100,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Almacén de Materias Primas</td>
+              <td class="folio">3</td>
+              <td class="monto">$60,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Producción en Proceso</td>
+              <td class="folio">4</td>
+              <td class="monto">$40,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Mercancías en Tránsito (Fac. 451 Monterrey)</td>
+              <td class="folio">5</td>
+              <td class="monto">$50,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Mercancías en Consignación</td>
+              <td class="folio">6</td>
+              <td class="monto">$10,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Almacén de Suministros y Refacciones</td>
+              <td class="folio">7</td>
+              <td class="monto">$15,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta-principal">ACTIVO FIJO</td>
+              <td class="folio"></td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Mobiliario y Equipo de Oficina</td>
+              <td class="folio">8</td>
+              <td class="monto">$50,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta-principal">PASIVO A CORTO PLAZO</td>
+              <td class="folio"></td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Proveedores</td>
+              <td class="folio">9</td>
+              <td class="monto"></td>
+              <td class="monto">$50,000.00</td>
+            </tr>
+            <tr>
+              <td class="cuenta-principal">CAPITAL CONTABLE</td>
+              <td class="folio"></td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Capital Social</td>
+              <td class="folio">10</td>
+              <td class="monto"></td>
+              <td class="monto">$500,000.00</td>
+            </tr>
+            <tr class="fila-total">
+              <td><strong>SUMAS IGUALES</strong></td>
+              <td class="folio"></td>
+              <td class="monto"><strong>$550,000.00</strong></td>
+              <td class="monto"><strong>$550,000.00</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Las subcuentas de inventarios suman <strong>$275,000.00</strong>,
+          que coincide con el total del inventario inicial del slide anterior. Toda cuenta de
+          activo se carga; toda cuenta de pasivo o capital se abona.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: SÍNTESIS -->
+    <section class="slide" data-titulo="Síntesis del Punto 1">
+      <span class="slide__numero">Slide 6</span>
+      <h1 class="slide__titulo">Síntesis del Punto 1</h1>
+      <p class="slide__subtitulo">Mapa conceptual, razonamiento clave y cierre</p>
+
+      <div class="slide__cuerpo">
+        <div class="mapa-conceptual">
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">NIF C-4: activos no monetarios</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Activo Circulante: ciclo a corto plazo</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">6 clases normativas</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Naturaleza deudora</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Cuenta colectiva + auxiliares</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Total inicial: $275,000.00</div>
+          </div>
+        </div>
+
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Tres fundamentos clave</div>
+          <div class="caja-concepto__texto">
+            <strong>1. Naturaleza deudora:</strong> todas las subcuentas de inventario se cargan
+            porque representan recursos controlados por la entidad.<br><br>
+            <strong>2. Clasificación en el Activo Circulante:</strong> se ubican ahí porque forman
+            parte del ciclo financiero a corto plazo (Capítulo 4 de Elías Lara Flores).<br><br>
+            <strong>3. Control por auxiliares:</strong> la cuenta colectiva del mayor resume el
+            rubro, y las tarjetas auxiliares detallan cada artículo.
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Has completado el Punto 1.</strong> Ahora sabes qué son los inventarios según
+          la NIF C-4, por qué van en el Activo Circulante, cuáles son las 6 clases normativas
+          y cómo se registra el asiento de apertura de Bicicletas del Norte, S.A. de C.V.
+        </div>
+
+        <div class="alerta">
+          <strong>Práctica recomendada:</strong> Abre el complemento del Punto 1 para reforzar
+          la clasificación de inventarios con actividades interactivas y ejercicios de selección
+          múltiple.
+        </div>
+
+        <div style="text-align: center; margin-top: var(--espacio-lg);">
+          <button class="navegacion__boton" onclick="abrirIndice()" style="padding: 0.8rem 2rem; font-size: 1rem;">
+            Volver al índice
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="navegacion">
+    <button class="navegacion__boton" id="btnAnterior" onclick="Slides.anterior()">Anterior</button>
+    <div style="display: flex; align-items: center; gap: var(--espacio-md);">
+      <button class="navegacion__indice" onclick="abrirIndice()">Índice</button>
+      <span class="navegacion__contador" id="contador">1 / 6</span>
+    </div>
+    <button class="navegacion__boton" id="btnSiguiente" onclick="Slides.siguiente()">Siguiente</button>
+  </nav>
+
+</div>
+
+<script>
+const Slides = {
+  actual: 0,
+  slides: [],
+  total: 0,
+
+  init() {
+    this.slides = document.querySelectorAll('.slide');
+    this.total = this.slides.length;
+    this.render();
+    this.bindKeys();
+    this.bindHash();
+    this.construirIndice();
+  },
+
+  ir(n) {
+    if (n < 0 || n >= this.total) return;
+    this.slides[this.actual].classList.remove('activo');
+    this.actual = n;
+    this.slides[this.actual].classList.add('activo');
+    this.render();
+  },
+
+  siguiente() { this.ir(this.actual + 1); },
+  anterior() { this.ir(this.actual - 1); },
+
+  render() {
+    document.getElementById('contador').textContent = (this.actual + 1) + ' / ' + this.total;
+    document.getElementById('btnAnterior').disabled = this.actual === 0;
+    document.getElementById('btnSiguiente').disabled = this.actual === this.total - 1;
+    const pct = ((this.actual + 1) / this.total) * 100;
+    document.getElementById('progreso').style.width = pct + '%';
+    document.querySelectorAll('.indice__item').forEach((item, i) => {
+      item.classList.toggle('activo', i === this.actual);
+    });
+    history.replaceState(null, '', '#slide-' + (this.actual + 1));
+    this.slides[this.actual].scrollTop = 0;
+  },
+
+  bindKeys() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        this.siguiente();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.anterior();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        this.ir(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        this.ir(this.total - 1);
+      }
+    });
+  },
+
+  bindHash() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#slide-')) {
+      const n = parseInt(hash.replace('#slide-', '')) - 1;
+      if (n >= 0 && n < this.total) {
+        this.ir(n);
+      }
+    }
+  },
+
+  construirIndice() {
+    const lista = document.getElementById('listaIndice');
+    lista.innerHTML = '';
+    this.slides.forEach((slide, i) => {
+      const titulo = slide.dataset.titulo || ('Slide ' + (i + 1));
+      const li = document.createElement('li');
+      li.className = 'indice__item' + (i === this.actual ? ' activo' : '');
+      li.innerHTML = '<span class="indice__item-num">' + (i + 1) + '.</span> ' + titulo;
+      li.onclick = () => {
+        this.ir(i);
+        cerrarIndice();
+      };
+      lista.appendChild(li);
+    });
+  }
+};
+
+function abrirIndice() {
+  document.getElementById('indice').classList.add('abierto');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function cerrarIndice() {
+  document.getElementById('indice').classList.remove('abierto');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+document.getElementById('cerrarIndice').onclick = cerrarIndice;
+document.getElementById('overlay').onclick = cerrarIndice;
+
+document.addEventListener('DOMContentLoaded', () => {
+  Slides.init();
+});
+</script>
+
+</body>
+</html>

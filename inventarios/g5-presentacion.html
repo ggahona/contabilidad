@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 5 — Relación con el Estado de Resultados | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #1a3a6b;
+  --azul-medio: #2c5aa0;
+  --azul-claro: #d6e4f5;
+  --azul-muy-claro: #eef4fb;
+
+  --fondo: #f7f9fc;
+  --superficie: #ffffff;
+  --texto: #1a2b45;
+  --texto-suave: #5a6b82;
+  --borde: #c5d5e8;
+
+  --ambar-fondo: #fef3c7;
+  --ambar-borde: #F59E0B;
+  --ambar-texto: #92400e;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  --sombra-sm: 0 1px 2px rgba(26,58,107,0.06);
+  --sombra-md: 0 4px 6px rgba(26,58,107,0.10);
+  --sombra-lg: 0 10px 15px rgba(26,58,107,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.barra-progreso {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--borde);
+  z-index: 1000;
+}
+
+.barra-progreso__relleno {
+  height: 100%;
+  background: var(--azul-medio);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.contenedor-slides {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-lg);
+  padding-top: 2rem;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  background: var(--superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-lg);
+  padding: var(--espacio-xl) var(--espacio-lg);
+  animation: fadeIn 0.5s ease;
+  min-height: 70vh;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.slide.activo { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide__numero {
+  display: inline-block;
+  background: var(--azul-profundo);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.slide__titulo {
+  font-size: 2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.2;
+}
+
+.slide__subtitulo {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.slide__cuerpo { font-size: 1rem; }
+
+.navegacion {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espacio-md) var(--espacio-lg);
+  z-index: 999;
+  box-shadow: 0 -2px 10px rgba(26,58,107,0.05);
+}
+
+.navegacion__boton {
+  background: var(--azul-profundo);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radio-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__boton:hover { background: var(--azul-medio); }
+.navegacion__boton:active { transform: scale(0.97); }
+.navegacion__boton:disabled {
+  background: var(--borde);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+.navegacion__contador {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.navegacion__indice {
+  background: transparent;
+  border: 2px solid var(--azul-profundo);
+  color: var(--azul-profundo);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__indice:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.indice {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: var(--superficie);
+  box-shadow: -4px 0 20px rgba(26,58,107,0.15);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: var(--espacio-lg);
+}
+
+.indice.abierto { right: 0; }
+
+.indice__titulo {
+  font-size: 1.2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 2px solid var(--borde);
+}
+
+.indice__lista { list-style: none; }
+
+.indice__item {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--texto);
+  transition: background 0.2s;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.indice__item:hover { background: var(--azul-muy-claro); }
+.indice__item.activo {
+  background: var(--azul-profundo);
+  color: #fff;
+  font-weight: 600;
+}
+
+.indice__item-num {
+  font-weight: 700;
+  font-size: 0.8rem;
+  min-width: 1.5rem;
+}
+
+.indice__cerrar {
+  position: absolute;
+  top: var(--espacio-md);
+  right: var(--espacio-md);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+  line-height: 1;
+  font-family: var(--fuente-base);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26,58,107,0.4);
+  z-index: 1000;
+  display: none;
+}
+
+.overlay.visible { display: block; }
+
+.caja-concepto {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-concepto__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-concepto__texto {
+  font-size: 1rem;
+  color: var(--texto);
+  line-height: 1.7;
+}
+
+.caja-concepto__texto strong { color: var(--azul-profundo); }
+
+.caja-ejemplo {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-ejemplo__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-ejemplo__texto {
+  font-size: 0.95rem;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+.caja-resultado {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.caja-resultado__linea {
+  font-size: 0.95rem;
+  color: var(--texto);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__linea--utilidad {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  background: var(--azul-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__nota {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+}
+
+.alerta {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.exito {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.nota-contacto {
+  background: var(--ambar-fondo);
+  border-left: 4px solid var(--ambar-borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.92rem;
+  color: var(--ambar-texto);
+}
+
+.nota-contacto strong {
+  color: var(--ambar-texto);
+  font-weight: 700;
+}
+
+.badge-contacto {
+  display: inline-block;
+  background: var(--ambar-borde);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  font-family: var(--fuente-base);
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-datos thead { background: var(--azul-medio); color: #fff; }
+
+.tabla-datos th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.tabla-datos td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-datos tbody tr:hover { background: var(--fondo); }
+.tabla-datos tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-datos .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+}
+
+.tabla-datos .centro { text-align: center; }
+
+.tabla-resultados {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.88rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-resultados thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-resultados th {
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-resultados td {
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-resultados .concepto { font-weight: 500; }
+
+.tabla-resultados .concepto-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  background: var(--azul-muy-claro);
+}
+
+.tabla-resultados .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-resultados .monto-parcial {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  color: var(--texto-suave);
+}
+
+.tabla-resultados .fila-utilidad-bruta {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-resultados .fila-utilidad-bruta td {
+  border-top: 2px solid var(--azul-profundo);
+  border-bottom: 2px solid var(--azul-profundo);
+  font-size: 0.95rem;
+}
+
+.tabla-resultados .fila-utilidad-neta {
+  background: var(--azul-claro);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.tabla-resultados .fila-utilidad-neta td {
+  border-top: 2px solid var(--azul-profundo);
+  border-bottom: 2px solid var(--azul-profundo);
+}
+
+.tabla-resultados .fila-punto-contacto {
+  background: var(--ambar-fondo);
+  font-weight: 700;
+  border-left: 4px solid var(--ambar-borde);
+}
+
+.tabla-resultados .fila-punto-contacto td {
+  border-top: 1px solid var(--ambar-borde);
+  border-bottom: 1px solid var(--ambar-borde);
+}
+
+.tabla-resultados .fila-punto-contacto .monto {
+  color: var(--ambar-texto);
+  font-weight: 700;
+}
+
+.tabla-puntos-contacto {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-md);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-puntos-contacto thead {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.tabla-puntos-contacto th {
+  padding: 0.75rem 0.75rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-puntos-contacto th.monto {
+  text-align: right;
+}
+
+.tabla-puntos-contacto td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-puntos-contacto td.monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+  color: var(--azul-profundo);
+}
+
+.tabla-puntos-contacto tbody tr:hover {
+  background: var(--fondo);
+}
+
+.tabla-puntos-contacto tbody tr.fila-punto {
+  background: var(--ambar-fondo);
+  font-weight: 700;
+  border-left: 4px solid var(--ambar-borde);
+}
+
+.tabla-puntos-contacto tbody tr.fila-punto td.monto {
+  color: var(--ambar-texto);
+}
+
+.estado-badge {
+  display: inline-block;
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.estado-badge--base {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.estado-badge--ajuste {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.mapa-conceptual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.mapa-nodo {
+  background: var(--superficie);
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  text-align: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.mapa-nodo:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.mapa-nodo__texto {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.formula-destacada {
+  background: var(--azul-claro);
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+  text-align: center;
+  font-family: var(--fuente-mono);
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.tarjeta {
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-md);
+}
+
+.tarjeta__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+}
+
+.tarjeta__texto {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .slide {
+    padding: var(--espacio-lg) var(--espacio-md);
+    min-height: 80vh;
+  }
+  .slide__titulo { font-size: 1.4rem; }
+  .slide__subtitulo { font-size: 0.95rem; }
+  .navegacion { padding: var(--espacio-sm) var(--espacio-md); }
+  .navegacion__boton { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
+  .tabla-resultados, .tabla-datos, .tabla-puntos-contacto { font-size: 0.72rem; }
+  .grid-tarjetas { grid-template-columns: 1fr; }
+  .indice { width: 300px; right: -300px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="barra-progreso">
+    <div class="barra-progreso__relleno" id="progreso"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="indice" id="indice">
+    <button class="indice__cerrar" id="cerrarIndice" aria-label="Cerrar índice">Cerrar</button>
+    <h2 class="indice__titulo">Índice — Punto 5</h2>
+    <ul class="indice__lista" id="listaIndice"></ul>
+  </aside>
+
+  <main class="contenedor-slides" id="contenedorSlides">
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide activo" data-titulo="Portada">
+      <span class="slide__numero">Punto 5 de 5</span>
+      <h1 class="slide__titulo">Relación con el Estado de Resultados</h1>
+      <p class="slide__subtitulo">Los dos puntos de contacto entre el Balance y los Resultados — Caso: "Bicicletas del Norte, S.A. de C.V." — NIF C-4</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿De qué trata este punto?</div>
+          <div class="caja-concepto__texto">
+            En los puntos anteriores aprendiste a <strong>clasificar</strong> los inventarios,
+            <strong>registrarlos</strong> con tres procedimientos, <strong>asignarles un costo</strong>
+            con PEPS o Promedio Móvil, <strong>manejar</strong> mercancías en tránsito y
+            <strong>ajustar</strong> el inventario físico.
+            <br><br>
+            Ahora toca cerrar el recorrido: <strong>¿cómo se conecta todo esto con los estados
+            financieros?</strong> En particular, ¿cómo se articula el inventario entre el
+            <strong>Estado de Resultados</strong> y el <strong>Balance General</strong>?
+            <br><br>
+            El Capítulo 9 de Elías Lara Flores establece una regla fundamental: los únicos
+            <strong>dos puntos de contacto directo</strong> entre ambos estados son
+            <strong>el inventario final</strong> y <strong>la utilidad del ejercicio</strong>.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Lo que aprenderás</div>
+          <div class="caja-ejemplo__texto">
+            • <strong>Comprender</strong> por qué el inventario final es un punto de contacto directo.<br>
+            • <strong>Calcular</strong> el costo de lo vendido con la fórmula de mercancías.<br>
+            • <strong>Elaborar</strong> el Estado de Resultados completo del caso.<br>
+            • <strong>Elaborar</strong> el Balance General al cierre.<br>
+            • <strong>Comprobar</strong> que la utilidad y el inventario coinciden en ambos estados.
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Este es el último punto de la clase. Combina teoría con datos del
+          caso. La actividad interactiva (conciliador ER ↔ BG) está en el complemento del Punto 5.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: LOS DOS PUNTOS DE CONTACTO (SOLO CONCEPTO) -->
+    <section class="slide" data-titulo="Los dos puntos de contacto">
+      <span class="slide__numero">Slide 2</span>
+      <h1 class="slide__titulo">Los dos puntos de contacto directo</h1>
+      <p class="slide__subtitulo">Cómo se articulan el Balance General y el Estado de Resultados</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Regla fundamental (Capítulo 9)</div>
+          <div class="caja-concepto__texto">
+            El inventario es uno de los <strong>dos únicos puntos de contacto directo</strong>
+            entre el <strong>Balance General</strong> y el <strong>Estado de Resultados</strong>
+            (junto con la utilidad del ejercicio). Esto significa que existen dos cifras que
+            <strong>aparecen simultáneamente en ambos estados</strong> y deben coincidir
+            exactamente.
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">1. El Inventario Final de Mercancías</div>
+            <div class="tarjeta__texto">
+              Aparece en el <strong>Estado de Resultados</strong> como parte del cálculo del costo
+              de lo vendido, y en el <strong>Balance General</strong> como activo circulante.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">2. La Utilidad Neta del Ejercicio</div>
+            <div class="tarjeta__texto">
+              Aparece en el <strong>Estado de Resultados</strong> como renglón final, y en el
+              <strong>Balance General</strong> dentro del Capital Contable.
+            </div>
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Analogía cualitativa</div>
+          <div class="caja-ejemplo__texto">
+            Imagina que el Estado de Resultados y el Balance General son dos habitaciones
+            contiguas. Están conectadas por <strong>dos puertas</strong>: por una pasa el
+            <strong>inventario final</strong> (que sale del estado de resultados y entra al balance
+            como activo) y por la otra pasa la <strong>utilidad del ejercicio</strong>
+            (que sale del estado de resultados y entra al balance como parte del capital).
+            Todo lo demás es exclusivo de cada habitación.
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Importante:</strong> Si el inventario final no coincide entre ambos estados,
+          la contabilidad está descuadrada. Lo mismo ocurre con la utilidad del ejercicio.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: COSTO DE LO VENDIDO (SIN MENCIONES AL PUNTO DE CONTACTO) -->
+    <section class="slide" data-titulo="Costo de lo vendido">
+      <span class="slide__numero">Slide 3</span>
+      <h1 class="slide__titulo">Primera parte del Estado de Resultados: el costo de lo vendido</h1>
+      <p class="slide__subtitulo">Cómo se determina el costo de lo vendido con la fórmula de mercancías</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Fórmula fundamental</div>
+          <div class="caja-concepto__texto">
+            En la primera parte del Estado de Resultados se analiza la compraventa de mercancías
+            hasta calcular la utilidad bruta. La fórmula es:
+          </div>
+        </div>
+
+        <div class="formula-destacada">
+          Inventario Inicial + Compras Netas = Total de Mercancías<br>
+          Total de Mercancías − Inventario Final = Costo de lo Vendido<br>
+          Ventas Netas − Costo de lo Vendido = Utilidad Bruta
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Aplicación al caso con los datos acumulados de los puntos anteriores
+        </h3>
+
+        <table class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="monto">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Inventario Inicial</strong> (Punto 1: 100 bicicletas a $1,000)</td>
+              <td class="monto">$100,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>Compras Netas</strong> (Punto 3: Compra 1 + Compra 2)</td>
+              <td class="monto">$110,000.00</td>
+            </tr>
+            <tr class="fila-total">
+              <td><strong>Total de mercancías disponibles</strong> (180 unidades)</td>
+              <td class="monto">$210,000.00</td>
+            </tr>
+            <tr>
+              <td>Menos: <strong>Inventario Final</strong> (PEPS: 60 unidades)</td>
+              <td class="monto">$84,000.00</td>
+            </tr>
+            <tr class="fila-total">
+              <td><strong>Costo de lo Vendido</strong> (120 bicicletas vendidas)</td>
+              <td class="monto">$126,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Resultado del costo de lo vendido</div>
+          <div class="caja-resultado__linea">
+            <strong>Total de mercancías disponibles:</strong> $210,000.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Menos inventario final:</strong> $84,000.00
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>COSTO DE LO VENDIDO = $126,000.00</strong>
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Ventas netas:</strong> $248,000.00
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>UTILIDAD BRUTA = $122,000.00</strong>
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Los datos del inventario final ($84,000) provienen del método PEPS
+          aplicado en el Punto 3. Si se hubiera elegido Costo Promedio Móvil, el costo de lo
+          vendido sería $136,800 y la utilidad bruta $111,200. La fórmula es la misma, solo
+          cambia el valor del inventario final.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: ESTADO DE RESULTADOS COMPLETO -->
+    <section class="slide" data-titulo="Estado de Resultados completo">
+      <span class="slide__numero">Slide 4</span>
+      <h1 class="slide__titulo">Estado de Resultados completo del periodo</h1>
+      <p class="slide__subtitulo">Del costo de lo vendido a la utilidad neta del ejercicio</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Estructura completa</div>
+          <div class="caja-concepto__texto">
+            Después de la utilidad bruta, el Estado de Resultados se complementa con los
+            <strong>gastos de operación</strong> (venta y administración), los
+            <strong>otros productos y gastos</strong>, y las <strong>provisiones de ISR y PTU</strong>.
+            El renglón final es la <strong>utilidad neta del ejercicio</strong>.
+          </div>
+        </div>
+
+        <table class="tabla-resultados">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="monto">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="concepto">Ventas totales (netas)</td>
+              <td class="monto">$248,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Inventario inicial</td>
+              <td class="monto-parcial">$100,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Compras netas</td>
+              <td class="monto-parcial">$110,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Suma o total de mercancías</td>
+              <td class="monto">$210,000.00</td>
+            </tr>
+            <tr class="fila-punto-contacto">
+              <td class="concepto">Menos: Inventario final <span class="badge-contacto">Punto de contacto</span></td>
+              <td class="monto">$84,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Costo de lo vendido</td>
+              <td class="monto-parcial">$126,000.00</td>
+            </tr>
+            <tr class="fila-utilidad-bruta">
+              <td>UTILIDAD BRUTA</td>
+              <td class="monto">$122,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto-principal">Gastos de operación</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Gastos de venta (incluye merma del Punto 4)</td>
+              <td class="monto-parcial">$22,400.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Gastos de administración</td>
+              <td class="monto-parcial">$28,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Total gastos de operación</td>
+              <td class="monto">$50,400.00</td>
+            </tr>
+            <tr class="fila-utilidad-bruta">
+              <td>UTILIDAD DE OPERACIÓN</td>
+              <td class="monto">$71,600.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Más: Otros productos netos (sobrante del Punto 4)</td>
+              <td class="monto">$500.00</td>
+            </tr>
+            <tr class="fila-utilidad-bruta">
+              <td>UTILIDAD ANTES DE ISR Y PTU</td>
+              <td class="monto">$72,100.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Menos: ISR (35%)</td>
+              <td class="monto-parcial">$25,235.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Menos: PTU (10%)</td>
+              <td class="monto-parcial">$7,210.00</td>
+            </tr>
+            <tr class="fila-punto-contacto">
+              <td>UTILIDAD NETA DEL EJERCICIO <span class="badge-contacto">Punto de contacto</span></td>
+              <td class="monto">$39,655.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="nota-contacto">
+          <strong>Los dos renglones destacados en ámbar son los puntos de contacto:</strong>
+          el inventario final ($84,000) y la utilidad neta ($39,655). Estos mismos valores
+          aparecen en el Balance General.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: BALANCE GENERAL -->
+    <section class="slide" data-titulo="Balance General al cierre">
+      <span class="slide__numero">Slide 5</span>
+      <h1 class="slide__titulo">Balance General al cierre</h1>
+      <p class="slide__subtitulo">Cómo se reflejan el inventario final y la utilidad neta en el balance</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Estructura del Balance</div>
+          <div class="caja-concepto__texto">
+            El Balance General al 31 de enero de 2026 recoge los saldos finales de todas las
+            cuentas de activo, pasivo y capital. Los dos renglones destacados en ámbar
+            son los <strong>puntos de contacto</strong> con el Estado de Resultados.
+          </div>
+        </div>
+
+        <table class="tabla-resultados">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="monto">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="concepto-principal">ACTIVO</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="concepto-principal">Activo Circulante</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Bancos</td>
+              <td class="monto">$311,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Deudores diversos (Punto 4)</td>
+              <td class="monto">$1,400.00</td>
+            </tr>
+            <tr>
+              <td class="concepto-principal">&nbsp;&nbsp;INVENTARIOS</td>
+              <td class="monto"></td>
+            </tr>
+            <tr class="fila-punto-contacto">
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Almacén de artículos terminados (cifra base) <span class="badge-contacto">Punto de contacto</span></td>
+              <td class="monto">$84,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Menos: Merma normal (Punto 4)</td>
+              <td class="monto-parcial">−$1,400.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Menos: Faltante injustificado (Punto 4)</td>
+              <td class="monto-parcial">−$1,400.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Almacén de artículos terminados (ajustado)</td>
+              <td class="monto">$81,200.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Almacén de materias primas</td>
+              <td class="monto">$60,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Producción en proceso</td>
+              <td class="monto">$40,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Mercancías en consignación</td>
+              <td class="monto">$10,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Suministros y refacciones (con sobrante del Punto 4)</td>
+              <td class="monto">$15,500.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;&nbsp;&nbsp;Mercancías recibidas de Monterrey</td>
+              <td class="monto">$53,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Total de inventarios</td>
+              <td class="monto">$259,700.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">Total Activo Circulante</td>
+              <td class="monto">$572,100.00</td>
+            </tr>
+            <tr>
+              <td class="concepto-principal">Activo Fijo</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Mobiliario y equipo de oficina</td>
+              <td class="monto">$50,000.00</td>
+            </tr>
+            <tr class="fila-utilidad-bruta">
+              <td>TOTAL ACTIVO</td>
+              <td class="monto">$622,100.00</td>
+            </tr>
+            <tr>
+              <td class="concepto-principal">PASIVO</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Proveedores</td>
+              <td class="monto">$50,000.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;ISR por pagar</td>
+              <td class="monto">$25,235.00</td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;PTU por pagar</td>
+              <td class="monto">$7,210.00</td>
+            </tr>
+            <tr class="fila-utilidad-bruta">
+              <td>TOTAL PASIVO</td>
+              <td class="monto">$82,445.00</td>
+            </tr>
+            <tr>
+              <td class="concepto-principal">CAPITAL CONTABLE</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="concepto">&nbsp;&nbsp;Capital social</td>
+              <td class="monto">$500,000.00</td>
+            </tr>
+            <tr class="fila-punto-contacto">
+              <td class="concepto">&nbsp;&nbsp;Utilidad neta del ejercicio <span class="badge-contacto">Punto de contacto</span></td>
+              <td class="monto">$39,655.00</td>
+            </tr>
+            <tr class="fila-utilidad-bruta">
+              <td>TOTAL CAPITAL CONTABLE</td>
+              <td class="monto">$539,655.00</td>
+            </tr>
+            <tr class="fila-utilidad-neta">
+              <td>SUMA DEL PASIVO Y EL CAPITAL CONTABLE</td>
+              <td class="monto">$622,100.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="nota-contacto">
+          <strong>Los dos puntos de contacto están destacados en ámbar:</strong> el
+          <strong>inventario final de artículos terminados</strong> (cifra base $84,000) y la
+          <strong>utilidad neta del ejercicio</strong> ($39,655). La cifra ajustada de $81,200
+          refleja el resultado de los ajustes por recuento físico del Punto 4.
+        </div>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Comprobación de la igualdad fundamental</div>
+          <div class="caja-resultado__linea">
+            <strong>Total Activo:</strong> $622,100.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Total Pasivo + Capital:</strong> $82,445.00 + $539,655.00 = $622,100.00
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>A = P + C → $622,100.00 = $622,100.00 (CUADRADO)</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: COMPROBACIÓN Y SÍNTESIS -->
+    <section class="slide" data-titulo="Comprobación y síntesis">
+      <span class="slide__numero">Slide 6</span>
+      <h1 class="slide__titulo">Comprobación de los puntos de contacto y cierre</h1>
+      <p class="slide__subtitulo">Verificación final y síntesis de la clase</p>
+
+      <div class="slide__cuerpo">
+        <h3 style="color: var(--azul-profundo); margin-bottom: var(--espacio-md); font-size: 1.05rem;">
+          Los dos puntos de contacto lado a lado
+        </h3>
+
+        <table class="tabla-puntos-contacto">
+          <thead>
+            <tr>
+              <th>Punto de contacto</th>
+              <th>Estado de Resultados</th>
+              <th class="monto">Importe (ER)</th>
+              <th>Balance General</th>
+              <th class="monto">Importe (BG)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="fila-punto">
+              <td>Inventario final</td>
+              <td>Deducido en el costo de lo vendido</td>
+              <td class="monto">$84,000.00</td>
+              <td>Almacén de artículos terminados (cifra base)</td>
+              <td class="monto">$84,000.00</td>
+            </tr>
+            <tr class="fila-punto">
+              <td>Utilidad neta del ejercicio</td>
+              <td>Última línea del ER</td>
+              <td class="monto">$39,655.00</td>
+              <td>Dentro del Capital Contable</td>
+              <td class="monto">$39,655.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="nota-contacto">
+          <strong>Comprobación:</strong> los dos puntos de contacto coinciden exactamente en
+          ambos estados. El inventario final y la utilidad neta aparecen con el mismo valor
+          en el Estado de Resultados y en el Balance General. Si alguno no coincidiera, la
+          contabilidad estaría descuadrada.
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Tres fundamentos clave
+        </h3>
+
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Resumen del Punto 5</div>
+          <div class="caja-concepto__texto">
+            <strong>1. Inventario final:</strong> el mismo valor deducido en el Estado de
+            Resultados aparece como activo circulante en el Balance General.<br><br>
+
+            <strong>2. Utilidad neta:</strong> el renglón final del Estado de Resultados se
+            traslada íntegro al Capital Contable del Balance.<br><br>
+
+            <strong>3. Verificación del circuito:</strong> si alguno de los dos puntos de
+            contacto no coincide entre ambos estados, la contabilidad está descuadrada.
+          </div>
+        </div>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Recorrido completo de la clase</div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 1:</strong> Definición, naturaleza y clasificación (NIF C-4)
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 2:</strong> Procedimientos de registro contable (Global, Analítico, Perpetuos)
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 3:</strong> Fórmulas de asignación del costo (PEPS y Promedio Móvil)
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 4:</strong> Mercancías en tránsito y ajustes por inventario físico
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>Punto 5: Relación con el Estado de Resultados</strong>
+          </div>
+          <div class="caja-resultado__nota">
+            Los cinco puntos conforman el ciclo contable completo de los inventarios.
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Has completado el Punto 5 y con ello la clase.</strong> Ahora dominas el ciclo
+          contable completo de los inventarios bajo NIF C-4, aplicado al caso de Bicicletas del
+          Norte, S.A. de C.V.
+        </div>
+
+        <div class="alerta">
+          <strong>Práctica recomendada:</strong> Abre el complemento del Punto 5 para reforzar
+          la conciliación con el conciliador interactivo, la actividad de ubicación de conceptos
+          y el examen final.
+        </div>
+
+        <div style="text-align: center; margin-top: var(--espacio-lg);">
+          <button class="navegacion__boton" onclick="abrirIndice()" style="padding: 0.8rem 2rem; font-size: 1rem;">
+            Volver al índice
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="navegacion">
+    <button class="navegacion__boton" id="btnAnterior" onclick="Slides.anterior()">Anterior</button>
+    <div style="display: flex; align-items: center; gap: var(--espacio-md);">
+      <button class="navegacion__indice" onclick="abrirIndice()">Índice</button>
+      <span class="navegacion__contador" id="contador">1 / 6</span>
+    </div>
+    <button class="navegacion__boton" id="btnSiguiente" onclick="Slides.siguiente()">Siguiente</button>
+  </nav>
+
+</div>
+
+<script>
+const Slides = {
+  actual: 0,
+  slides: [],
+  total: 0,
+
+  init() {
+    this.slides = document.querySelectorAll('.slide');
+    this.total = this.slides.length;
+    this.render();
+    this.bindKeys();
+    this.bindHash();
+    this.construirIndice();
+  },
+
+  ir(n) {
+    if (n < 0 || n >= this.total) return;
+    this.slides[this.actual].classList.remove('activo');
+    this.actual = n;
+    this.slides[this.actual].classList.add('activo');
+    this.render();
+  },
+
+  siguiente() { this.ir(this.actual + 1); },
+  anterior() { this.ir(this.actual - 1); },
+
+  render() {
+    document.getElementById('contador').textContent = (this.actual + 1) + ' / ' + this.total;
+    document.getElementById('btnAnterior').disabled = this.actual === 0;
+    document.getElementById('btnSiguiente').disabled = this.actual === this.total - 1;
+    const pct = ((this.actual + 1) / this.total) * 100;
+    document.getElementById('progreso').style.width = pct + '%';
+    document.querySelectorAll('.indice__item').forEach((item, i) => {
+      item.classList.toggle('activo', i === this.actual);
+    });
+    history.replaceState(null, '', '#slide-' + (this.actual + 1));
+    this.slides[this.actual].scrollTop = 0;
+  },
+
+  bindKeys() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        this.siguiente();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.anterior();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        this.ir(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        this.ir(this.total - 1);
+      }
+    });
+  },
+
+  bindHash() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#slide-')) {
+      const n = parseInt(hash.replace('#slide-', '')) - 1;
+      if (n >= 0 && n < this.total) {
+        this.ir(n);
+      }
+    }
+  },
+
+  construirIndice() {
+    const lista = document.getElementById('listaIndice');
+    lista.innerHTML = '';
+    this.slides.forEach((slide, i) => {
+      const titulo = slide.dataset.titulo || ('Slide ' + (i + 1));
+      const li = document.createElement('li');
+      li.className = 'indice__item' + (i === this.actual ? ' activo' : '');
+      li.innerHTML = '<span class="indice__item-num">' + (i + 1) + '.</span> ' + titulo;
+      li.onclick = () => {
+        this.ir(i);
+        cerrarIndice();
+      };
+      lista.appendChild(li);
+    });
+  }
+};
+
+function abrirIndice() {
+  document.getElementById('indice').classList.add('abierto');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function cerrarIndice() {
+  document.getElementById('indice').classList.remove('abierto');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+document.getElementById('cerrarIndice').onclick = cerrarIndice;
+document.getElementById('overlay').onclick = cerrarIndice;
+
+document.addEventListener('DOMContentLoaded', () => {
+  Slides.init();
+});
+</script>
+
+</body>
+</html>

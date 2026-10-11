@@ -1,0 +1,2301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 3 — Complemento: Calculadora de Kardex, detección de errores y examen | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: var(--espacio-lg);
+}
+
+.contenedor { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--sombra-lg);
+  flex-wrap: wrap;
+}
+
+.header__titulo { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.header__subtitulo { font-size: 0.8rem; opacity: 0.8; font-weight: 400; }
+.header__acciones { display: flex; gap: var(--espacio-sm); flex-wrap: wrap; }
+
+.boton {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.boton--primario { background: var(--azul-brillante); color: #fff; }
+.boton--primario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--secundario { background: transparent; color: #fff; border: 2px solid var(--cian); }
+.boton--secundario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--terciario { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.boton--terciario:hover { background: rgba(255,255,255,0.1); }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  min-width: 200px;
+}
+
+.tab:hover { background: var(--cian-claro); }
+.tab--activa {
+  color: var(--azul-profundo);
+  border-bottom-color: var(--azul-brillante);
+  background: var(--azul-claro);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  overflow: hidden;
+}
+
+.panel__header {
+  background: var(--azul-medio);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.panel__cuerpo { padding: var(--espacio-lg); }
+
+.instruccion {
+  background: var(--cian-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  font-size: 0.9rem;
+}
+
+.instruccion strong { color: var(--azul-profundo); }
+
+.barra-acciones {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-accion {
+  background: var(--azul-brillante);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boton-accion:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton-accion--reiniciar { background: var(--ambar); color: #fff; }
+.boton-accion--reiniciar:hover { background: #d97706; color: #fff; }
+.boton-accion--agregar { background: var(--azul-profundo); color: #fff; }
+.boton-accion--agregar:hover { background: var(--azul-medio); }
+
+.aviso {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: var(--espacio-md);
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.aviso.visible { display: block; }
+
+.aviso--error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid var(--rojo-error);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.selector-metodo {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.selector-metodo__boton {
+  padding: 0.6rem 1.4rem;
+  border: 2px solid var(--azul-brillante);
+  background: #fff;
+  color: var(--azul-brillante);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.selector-metodo__boton:hover { background: var(--cian-claro); }
+.selector-metodo__boton--activo { background: var(--azul-brillante); color: #fff; }
+
+.tabla-operaciones {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-operaciones thead { background: var(--azul-medio); color: #fff; }
+
+.tabla-operaciones th {
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-operaciones td {
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid var(--azul-claro);
+  font-size: 0.85rem;
+}
+
+.tabla-operaciones tbody tr:hover { background: var(--blanco-gris); }
+.tabla-operaciones tr.fila-con-error { background: #fee2e2; }
+.tabla-operaciones tr.fila-con-error td { border-bottom-color: var(--rojo-error); }
+
+.tabla-operaciones input,
+.tabla-operaciones select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente-mono);
+  font-size: 0.82rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  background: #fff;
+}
+
+.tabla-operaciones input:focus,
+.tabla-operaciones select:focus { outline: none; border-color: var(--azul-brillante); }
+
+.tabla-operaciones input[type="date"] { font-family: var(--fuente-base); font-size: 0.82rem; }
+.tabla-operaciones input[type="number"] { -moz-appearance: textfield; }
+.tabla-operaciones input[type="number"]::-webkit-outer-spin-button,
+.tabla-operaciones input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.tabla-operaciones select { font-family: var(--fuente-base); }
+
+.tabla-operaciones tr.fila-con-error input,
+.tabla-operaciones tr.fila-con-error select { border-color: var(--rojo-error); }
+
+.boton-eliminar {
+  background: var(--rojo-error);
+  color: #fff;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boton-eliminar:hover { background: #b91c1c; transform: scale(1.05); }
+
+.error-celda {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--rojo-error);
+  font-weight: 700;
+  font-family: var(--fuente-base);
+  margin-top: 0.15rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.tabla-kardex {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.8rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-kardex thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-kardex th {
+  padding: 0.6rem 0.35rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.tabla-kardex td {
+  padding: 0.5rem 0.35rem;
+  border-bottom: 1px solid var(--azul-claro);
+  text-align: center;
+  font-family: var(--fuente-mono);
+  font-size: 0.78rem;
+}
+
+.tabla-kardex td.texto { font-family: var(--fuente-base); text-align: left; }
+.tabla-kardex tbody tr:hover { background: var(--blanco-gris); }
+.tabla-kardex tbody tr.fila-destacada { background: var(--azul-claro); font-weight: 700; }
+.tabla-kardex tbody tr.fila-venta { background: #fef3c7; font-weight: 600; }
+.tabla-kardex tbody tr.fila-promedio { background: var(--cian-claro); font-weight: 600; }
+
+.desglose-ventas {
+  margin-top: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+}
+
+.desglose-ventas__titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-xs);
+  border-bottom: 2px solid var(--azul-brillante);
+}
+
+.desglose-linea {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.88rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--azul-claro);
+  flex-wrap: wrap;
+}
+
+.desglose-linea:last-child { border-bottom: none; }
+
+.desglose-linea__etiqueta {
+  font-family: var(--fuente-base);
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+  min-width: 180px;
+}
+
+.desglose-linea__calculo {
+  color: var(--azul-medio);
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.desglose-linea__total {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+}
+
+.desglose-linea--total {
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  border-bottom: none;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+  padding: 0.6rem 0.75rem;
+}
+
+.desglose-linea--total .desglose-linea__total { font-size: 0.95rem; }
+
+.desglose-vacio {
+  text-align: center;
+  color: var(--azul-medio);
+  font-size: 0.9rem;
+  padding: 1rem;
+}
+
+.panel-resultado {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-md);
+}
+
+.panel-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.panel-resultado__linea {
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+}
+
+.panel-resultado__linea--utilidad {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+}
+
+.panel-resultado__nota {
+  font-size: 0.82rem;
+  color: var(--azul-medio);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+  font-family: var(--fuente-base);
+}
+
+.kardex-error {
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.kardex-error--resuelto { border-color: var(--verde-exito); background: #f0fdf4; }
+.kardex-error--fallado { border-color: var(--rojo-error); background: #fef2f2; }
+
+.kardex-error__titulo {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.kardex-error__instruccion {
+  font-size: 0.85rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-md);
+}
+
+.fila-seleccionable { cursor: pointer; transition: all 0.2s; position: relative; }
+.fila-seleccionable:hover { background: var(--cian-claro) !important; }
+.fila-seleccionable--seleccionada { background: var(--azul-brillante) !important; color: #fff !important; }
+.fila-seleccionable--correcta {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  border-left: 4px solid var(--verde-exito);
+}
+.fila-seleccionable--incorrecta {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border-left: 4px solid var(--rojo-error);
+}
+.fila-seleccionable--correcta::after {
+  content: '✓ Error aquí';
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--verde-exito);
+  background: #fff;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--verde-exito);
+}
+.fila-seleccionable--bloqueada { cursor: not-allowed; pointer-events: none; }
+
+.feedback-kardex {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.feedback-kardex.visible { display: block; }
+.feedback-kardex--correcto { background: #d1fae5; border-left: 4px solid var(--verde-exito); color: #065f46; }
+.feedback-kardex--incorrecto { background: #fee2e2; border-left: 4px solid var(--rojo-error); color: #991b1b; }
+
+.progreso-actividad {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.progreso-actividad__texto {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+}
+
+.progreso-actividad__barra {
+  flex: 1;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progreso-actividad__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.resultado-actividad {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+}
+
+.resultado-actividad.visible { display: block; }
+
+.resultado-actividad__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-actividad__puntaje {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-actividad__mensaje {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  line-height: 1.5;
+}
+
+.examen-progreso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.examen-progreso__texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.examen-progreso__barra {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.examen-progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.reactivo {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.reactivo--correcto { border-color: var(--verde-exito); background: #d1fae5; }
+.reactivo--incorrecto { border-color: var(--rojo-error); background: #fee2e2; }
+
+.reactivo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--azul-brillante);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reactivo--correcto .reactivo__numero { background: var(--verde-exito); }
+.reactivo--incorrecto .reactivo__numero { background: var(--rojo-error); }
+
+.reactivo__pregunta {
+  font-size: 0.92rem;
+  margin-bottom: var(--espacio-md);
+  color: var(--azul-profundo);
+  line-height: 1.5;
+}
+
+.reactivo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+}
+
+.reactivo__opcion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.reactivo__opcion.correcta { border-color: var(--verde-exito); background: #d1fae5; font-weight: 600; }
+.reactivo__opcion.incorrecta { border-color: var(--rojo-error); background: #fee2e2; opacity: 0.85; }
+.reactivo__opcion.bloqueada { cursor: not-allowed; pointer-events: none; }
+.reactivo__opcion input { accent-color: var(--azul-brillante); }
+
+.reactivo__feedback {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.reactivo__feedback.visible { display: block; }
+.reactivo__feedback--correcto { background: #d1fae5; border-left: 4px solid var(--verde-exito); color: #065f46; }
+.reactivo__feedback--incorrecto { background: #fee2e2; border-left: 4px solid var(--rojo-error); color: #991b1b; }
+
+.resultado-examen {
+  background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+  color: #fff;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+  text-align: center;
+}
+
+.resultado-examen.visible { display: block; animation: fadeIn 0.5s ease; }
+
+.resultado-examen__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.resultado-examen__porcentaje {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  line-height: 1;
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-examen__detalle {
+  font-size: 1rem;
+  margin-bottom: var(--espacio-md);
+  opacity: 0.9;
+}
+
+.resultado-examen__mensaje {
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.contenido-tab { display: none; }
+.contenido-tab--activo { display: block; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11,30,58,0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  max-width: 650px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-lg);
+}
+
+.modal__header {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  position: sticky;
+  top: 0;
+}
+
+.modal__titulo { font-size: 1rem; font-weight: 700; }
+
+.modal__cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+.modal__cuerpo { padding: var(--espacio-lg); }
+
+.modal__cuerpo h3 {
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  margin-top: var(--espacio-md);
+}
+
+.modal__cuerpo h3:first-child { margin-top: 0; }
+
+.modal__cuerpo p {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.6;
+}
+
+.modal__cuerpo ul { margin-left: var(--espacio-lg); margin-bottom: var(--espacio-sm); }
+
+.modal__cuerpo li {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin-bottom: 0.3rem;
+}
+
+.modal__cuerpo strong { color: var(--azul-profundo); }
+
+@media (max-width: 768px) {
+  body { padding: var(--espacio-md); }
+  .header { padding: var(--espacio-md); }
+  .header__titulo { font-size: 1rem; }
+  .panel__cuerpo { padding: var(--espacio-md); }
+  .tab { font-size: 0.78rem; padding: 0.7rem 0.5rem; min-width: 140px; }
+  .resultado-examen__porcentaje { font-size: 3rem; }
+  .tabla-kardex, .tabla-operaciones { font-size: 0.68rem; }
+  .tabla-kardex th, .tabla-kardex td,
+  .tabla-operaciones th, .tabla-operaciones td { padding: 0.35rem 0.25rem; }
+  .desglose-linea { font-size: 0.78rem; }
+  .desglose-linea__etiqueta { min-width: 120px; font-size: 0.82rem; }
+  .desglose-linea__calculo { font-size: 0.76rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <header class="header">
+    <div>
+      <div class="header__titulo">Punto 3 — Complemento: Calculadora, detección de errores y examen</div>
+      <div class="header__subtitulo">Bicicletas del Norte, S.A. de C.V. — NIF C-4</div>
+    </div>
+    <div class="header__acciones">
+      <button class="boton boton--primario" onclick="App.cargarCaso()">Cargar caso</button>
+      <button class="boton boton--secundario" onclick="Modal.abrir()">¿Cómo funciona?</button>
+      <button class="boton boton--terciario" onclick="App.limpiar()">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab tab--activa" data-tab="calculadora" onclick="App.cambiarTab('calculadora')">Actividad 1: Calculadora de Kardex</button>
+    <button class="tab" data-tab="errores" onclick="App.cambiarTab('errores')">Actividad 2: Detecta el error</button>
+    <button class="tab" data-tab="examen" onclick="App.cambiarTab('examen')">Examen final</button>
+  </div>
+
+  <!-- PESTAÑA CALCULADORA -->
+  <div class="contenido-tab contenido-tab--activo" id="tab-calculadora">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 1 — Calculadora de Kardex interactiva</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Edita, agrega o elimina operaciones. El kardex se recalcula
+          en tiempo real con cada cambio. Cambia entre PEPS y Costo Promedio Móvil para comparar
+          cómo se asigna el costo a cada venta. <strong>No se permite vender más unidades que la
+          existencia disponible al momento de la venta.</strong>
+        </div>
+
+        <div class="aviso aviso--error" id="avisoError"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Kardex.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="selector-metodo">
+          <button class="selector-metodo__boton selector-metodo__boton--activo" data-metodo="peps" onclick="Kardex.cambiarMetodo('peps')">
+            Método PEPS
+          </button>
+          <button class="selector-metodo__boton" data-metodo="promedio" onclick="Kardex.cambiarMetodo('promedio')">
+            Costo Promedio Móvil
+          </button>
+        </div>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-sm);">
+          Operaciones del periodo (editables)
+        </h3>
+
+        <table class="tabla-operaciones">
+          <thead>
+            <tr>
+              <th style="width: 14%;">Fecha</th>
+              <th style="width: 30%;">Concepto</th>
+              <th style="width: 16%;">Tipo</th>
+              <th style="width: 14%;">Unidades</th>
+              <th style="width: 18%;">Costo / Precio ($)</th>
+              <th style="width: 8%;"></th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoOperaciones"></tbody>
+        </table>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--agregar" onclick="Kardex.agregarOperacion()">
+            + Agregar operación
+          </button>
+        </div>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-lg) 0 var(--espacio-sm);">
+          Kardex calculado
+        </h3>
+
+        <div id="contenedorKardex"></div>
+
+        <div class="desglose-ventas" id="desgloseVentas"></div>
+
+        <div class="panel-resultado" id="panelResultado">
+          <div class="panel-resultado__titulo" id="panelResultadoTitulo">Resultado</div>
+          <div class="panel-resultado__linea"><span>Costo de ventas total</span><span id="resCosto">$0.00</span></div>
+          <div class="panel-resultado__linea"><span>Ventas totales</span><span id="resVentas">$0.00</span></div>
+          <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>UTILIDAD BRUTA</span><span id="resUtilidad">$0.00</span></div>
+          <div class="panel-resultado__linea"><span>Inventario final</span><span id="resInventario">$0.00</span></div>
+          <div class="panel-resultado__nota" id="resNota"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA ERRORES -->
+  <div class="contenido-tab" id="tab-errores">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 2 — Detecta el error en el kardex</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> En cada kardex hay <strong>una sola fila con un error</strong>.
+          Haz clic sobre la fila que creas incorrecta. Recibirás retroalimentación inmediata.
+          Cada reinicio baraja el orden de los kardex.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Errores.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="progreso-actividad">
+          <div class="progreso-actividad__texto" id="progresoErrores">0 / 3 resueltos</div>
+          <div class="progreso-actividad__barra">
+            <div class="progreso-actividad__relleno" id="progresoErroresRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorErrores"></div>
+
+        <div class="resultado-actividad" id="resultadoErrores">
+          <div class="resultado-actividad__titulo">Resultado de la actividad</div>
+          <div class="resultado-actividad__puntaje" id="erroresPuntaje">0 / 3</div>
+          <div class="resultado-actividad__mensaje" id="erroresMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA EXAMEN -->
+  <div class="contenido-tab" id="tab-examen">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Examen final — 10 reactivos de opción múltiple</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada reactivo se califica en cuanto haces clic en una opción.
+          Después de responder, la opción correcta se marca en verde y la tuya (si es incorrecta)
+          en rojo. El reactivo queda bloqueado. Al responder el último, aparece automáticamente
+          tu <strong>calificación global</strong>. Cada reinicio genera un examen distinto.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Examen.reiniciar()">
+            Reiniciar examen
+          </button>
+        </div>
+
+        <div class="examen-progreso">
+          <div class="examen-progreso__texto" id="examenProgresoTexto">0 / 10 respondidas</div>
+          <div class="examen-progreso__barra">
+            <div class="examen-progreso__relleno" id="examenProgresoRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorExamen"></div>
+
+        <div class="resultado-examen" id="resultadoExamen">
+          <div class="resultado-examen__titulo">Calificación final</div>
+          <div class="resultado-examen__porcentaje" id="examenPorcentaje">0%</div>
+          <div class="resultado-examen__detalle" id="examenDetalle">0 aciertos de 10</div>
+          <div class="resultado-examen__mensaje" id="examenMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__titulo" id="modalTitulo">¿Cómo funciona el complemento?</div>
+      <button class="modal__cerrar" onclick="Modal.cerrar()">Cerrar</button>
+    </div>
+    <div class="modal__cuerpo" id="modalCuerpo"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fechaISOaCorta(iso) {
+  if (!iso) return '';
+  const [anio, mes, dia] = iso.split('-');
+  const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  const m = parseInt(mes, 10) - 1;
+  return `${dia}/${meses[m]}`;
+}
+
+function compararFechas(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
+/* ============================================================
+   ACTIVIDAD 1 — CALCULADORA DE KARDEX EDITABLE
+   ============================================================ */
+const OperacionesIniciales = [
+  { fecha: '2026-01-01', concepto: 'Inventario inicial', tipo: 'inicial', unidades: 100, valor: 1000 },
+  { fecha: '2026-01-10', concepto: 'Compra (Fac. 101)', tipo: 'compra', unidades: 50, valor: 1300 },
+  { fecha: '2026-01-15', concepto: 'Venta 1 (Fac. 01)', tipo: 'venta', unidades: 80, valor: 2000 },
+  { fecha: '2026-01-20', concepto: 'Compra (Fac. 102)', tipo: 'compra', unidades: 30, valor: 1500 },
+  { fecha: '2026-01-28', concepto: 'Venta 2 (Fac. 02)', tipo: 'venta', unidades: 40, valor: 2200 }
+];
+
+const Kardex = {
+  metodo: 'peps',
+  operaciones: [],
+
+  init() {
+    this.metodo = 'peps';
+    this.operaciones = JSON.parse(JSON.stringify(OperacionesIniciales));
+    document.querySelectorAll('.selector-metodo__boton').forEach(b => {
+      b.classList.toggle('selector-metodo__boton--activo', b.dataset.metodo === 'peps');
+    });
+    this.ocultarAviso();
+    this.renderOperaciones();
+    this.calcular();
+  },
+
+  reiniciar() { this.init(); },
+
+  cambiarMetodo(m) {
+    this.metodo = m;
+    document.querySelectorAll('.selector-metodo__boton').forEach(b => {
+      b.classList.toggle('selector-metodo__boton--activo', b.dataset.metodo === m);
+    });
+    this.calcular();
+  },
+
+  mostrarAviso(texto) {
+    const aviso = document.getElementById('avisoError');
+    aviso.textContent = texto;
+    aviso.classList.add('visible');
+  },
+
+  ocultarAviso() {
+    const aviso = document.getElementById('avisoError');
+    aviso.classList.remove('visible');
+    aviso.textContent = '';
+  },
+
+  validarExistencia(operaciones) {
+    let existencia = 0;
+    const errores = [];
+    operaciones.forEach((op, idx) => {
+      const unidades = Number(op.unidades) || 0;
+      if (op.tipo === 'inicial' || op.tipo === 'compra') {
+        existencia += unidades;
+      } else if (op.tipo === 'venta') {
+        if (unidades > existencia) {
+          errores.push({ indice: idx, exceso: unidades - existencia, existencia });
+        } else {
+          existencia -= unidades;
+        }
+      }
+    });
+    return errores;
+  },
+
+  renderOperaciones() {
+    const tbody = document.getElementById('cuerpoOperaciones');
+    tbody.innerHTML = '';
+
+    const errores = this.validarExistencia(this.operaciones);
+    const erroresSet = new Set(errores.map(e => e.indice));
+
+    this.operaciones.forEach((op, i) => {
+      const tr = document.createElement('tr');
+      const conError = erroresSet.has(i);
+      if (conError) tr.classList.add('fila-con-error');
+
+      const errorInfo = errores.find(e => e.indice === i);
+      const mensajeError = errorInfo
+        ? `<span class="error-celda">Excede existencia por ${errorInfo.exceso} u.</span>`
+        : '';
+
+      tr.innerHTML = `
+        <td><input type="date" value="${op.fecha}" onchange="Kardex.actualizarFecha(${i}, this.value)"></td>
+        <td><input type="text" value="${op.concepto}" oninput="Kardex.actualizarTexto(${i}, this.value)"></td>
+        <td>
+          <select onchange="Kardex.actualizarTipo(${i}, this.value)">
+            <option value="inicial" ${op.tipo === 'inicial' ? 'selected' : ''}>Inicial</option>
+            <option value="compra" ${op.tipo === 'compra' ? 'selected' : ''}>Compra</option>
+            <option value="venta" ${op.tipo === 'venta' ? 'selected' : ''}>Venta</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" value="${op.unidades}" min="0" step="1" oninput="Kardex.actualizarNumero(${i}, 'unidades', this.value)">
+          ${mensajeError}
+        </td>
+        <td><input type="number" value="${op.valor}" min="0" step="0.01" oninput="Kardex.actualizarNumero(${i}, 'valor', this.value)"></td>
+        <td style="text-align:center;">
+          <button class="boton-eliminar" onclick="Kardex.eliminar(${i})" title="Eliminar operación">×</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  },
+
+  actualizarNumero(i, campo, valor) {
+    if (valor === '' || valor === null || valor === undefined) {
+      this.operaciones[i][campo] = 0;
+    } else {
+      const num = parseFloat(valor);
+      this.operaciones[i][campo] = isNaN(num) ? 0 : num;
+    }
+    this.calcular();
+    this.actualizarErrorFila(i);
+  },
+
+  actualizarTexto(i, valor) { this.operaciones[i].concepto = valor; },
+
+  actualizarFecha(i, valor) {
+    this.operaciones[i].fecha = valor;
+    this.reordenarPorFecha();
+    this.renderOperaciones();
+    this.calcular();
+  },
+
+  actualizarTipo(i, valor) {
+    this.operaciones[i].tipo = valor;
+    this.renderOperaciones();
+    this.calcular();
+  },
+
+  actualizarErrorFila(i) {
+    const errores = this.validarExistencia(this.operaciones);
+    const erroresSet = new Set(errores.map(e => e.indice));
+
+    this.operaciones.forEach((op, idx) => {
+      const tr = document.getElementById('cuerpoOperaciones').children[idx];
+      if (!tr) return;
+      if (erroresSet.has(idx)) tr.classList.add('fila-con-error');
+      else tr.classList.remove('fila-con-error');
+
+      const celdaU = tr.children[3];
+      const msgViejo = celdaU.querySelector('.error-celda');
+      if (msgViejo) msgViejo.remove();
+      const info = errores.find(e => e.indice === idx);
+      if (info) {
+        const span = document.createElement('span');
+        span.className = 'error-celda';
+        span.textContent = `Excede existencia por ${info.exceso} u.`;
+        celdaU.appendChild(span);
+      }
+    });
+  },
+
+  reordenarPorFecha() {
+    this.operaciones.sort((a, b) => compararFechas(a.fecha, b.fecha));
+  },
+
+  agregarOperacion() {
+    let fechaNueva = '2026-01-29';
+    if (this.operaciones.length > 0) {
+      const ultimas = this.operaciones.map(o => o.fecha).sort();
+      const ultima = ultimas[ultimas.length - 1];
+      const d = new Date(ultima + 'T12:00:00');
+      d.setDate(d.getDate() + 1);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      fechaNueva = `${yyyy}-${mm}-${dd}`;
+    }
+
+    this.operaciones.push({
+      fecha: fechaNueva,
+      concepto: 'Nueva operación',
+      tipo: 'compra',
+      unidades: 0,
+      valor: 0
+    });
+    this.reordenarPorFecha();
+    this.renderOperaciones();
+    this.calcular();
+  },
+
+  eliminar(i) {
+    if (this.operaciones.length <= 1) {
+      alert('Debe quedar al menos una operación en el kardex.');
+      return;
+    }
+    this.operaciones.splice(i, 1);
+    this.renderOperaciones();
+    this.calcular();
+  },
+
+  calcular() {
+    const errores = this.validarExistencia(this.operaciones);
+
+    if (errores.length > 0) {
+      const totalErrores = errores.length;
+      const primerError = errores[0];
+      const op = this.operaciones[primerError.indice];
+      this.mostrarAviso(`Hay ${totalErrores} venta(s) que exceden la existencia disponible. Por ejemplo, en "${op.concepto}" se intentan vender ${op.unidades} unidades cuando solo hay ${primerError.existencia}. Corrige las unidades para continuar.`);
+    } else {
+      this.ocultarAviso();
+    }
+
+    if (this.metodo === 'peps') {
+      this.calcularPEPS(errores);
+    } else {
+      this.calcularPromedio(errores);
+    }
+  },
+
+  calcularPEPS(errores) {
+    const cont = document.getElementById('contenedorKardex');
+    const contDesglose = document.getElementById('desgloseVentas');
+
+    let lotes = [];
+    let existencia = 0;
+    let saldoTotal = 0;
+    let costoVentasTotal = 0;
+    let ventasTotal = 0;
+    const erroresSet = new Set(errores.map(e => e.indice));
+
+    let html = `
+      <table class="tabla-kardex">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Entradas (u)</th>
+            <th>Salidas (u)</th>
+            <th>Existencia (u)</th>
+            <th>Costo unit.</th>
+            <th>Debe ($)</th>
+            <th>Haber ($)</th>
+            <th>Saldo ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    let desglosesLineas = [];
+
+    this.operaciones.forEach((op, idx) => {
+      const unidades = Number(op.unidades) || 0;
+      const valor = Number(op.valor) || 0;
+      const fechaCorta = fechaISOaCorta(op.fecha);
+
+      if (op.tipo === 'inicial') {
+        lotes.push({ unidades: unidades, costo: valor });
+        existencia += unidades;
+        saldoTotal += unidades * valor;
+
+        html += `
+          <tr class="fila-destacada">
+            <td>${fechaCorta}</td>
+            <td class="texto">${op.concepto}</td>
+            <td>${unidades}</td>
+            <td>—</td>
+            <td>${existencia}</td>
+            <td>${fmt(valor)}</td>
+            <td>${fmt(unidades * valor)}</td>
+            <td>—</td>
+            <td>${fmt(saldoTotal)}</td>
+          </tr>
+        `;
+      } else if (op.tipo === 'compra') {
+        lotes.push({ unidades: unidades, costo: valor });
+        existencia += unidades;
+        saldoTotal += unidades * valor;
+
+        html += `
+          <tr>
+            <td>${fechaCorta}</td>
+            <td class="texto">${op.concepto}</td>
+            <td>${unidades}</td>
+            <td>—</td>
+            <td>${existencia}</td>
+            <td>${fmt(valor)}</td>
+            <td>${fmt(unidades * valor)}</td>
+            <td>—</td>
+            <td>${fmt(saldoTotal)}</td>
+          </tr>
+        `;
+      } else if (op.tipo === 'venta') {
+        if (erroresSet.has(idx)) {
+          html += `
+            <tr class="fila-venta" style="opacity:0.5;background:#fee2e2;">
+              <td>${fechaCorta}</td>
+              <td class="texto">${op.concepto} — <strong>venta inválida</strong></td>
+              <td>—</td>
+              <td>—</td>
+              <td>${existencia}</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>${fmt(saldoTotal)}</td>
+            </tr>
+          `;
+          return;
+        }
+
+        let porVender = unidades;
+        let tempLotes = lotes.map(l => ({ ...l }));
+        let pasos = [];
+        let costoVenta = 0;
+
+        while (porVender > 0 && tempLotes.length > 0) {
+          const lote = tempLotes[0];
+          const toma = Math.min(lote.unidades, porVender);
+          const costoParcial = toma * lote.costo;
+          costoVenta += costoParcial;
+          pasos.push({ unidades: toma, costoUnitario: lote.costo, costoParcial });
+          lote.unidades -= toma;
+          porVender -= toma;
+          if (lote.unidades === 0) tempLotes.shift();
+        }
+
+        porVender = unidades;
+        let costoVentaAplicado = 0;
+
+        while (porVender > 0 && lotes.length > 0) {
+          const lote = lotes[0];
+          const toma = Math.min(lote.unidades, porVender);
+          const costoParcial = toma * lote.costo;
+          costoVentaAplicado += costoParcial;
+          existencia -= toma;
+          saldoTotal -= costoParcial;
+
+          html += `
+            <tr class="fila-venta">
+              <td>${fechaCorta}</td>
+              <td class="texto">${op.concepto} — ${toma} u. × ${fmt(lote.costo)}</td>
+              <td>—</td>
+              <td>${toma}</td>
+              <td>${existencia}</td>
+              <td>${fmt(lote.costo)}</td>
+              <td>—</td>
+              <td>${fmt(costoParcial)}</td>
+              <td>${fmt(saldoTotal)}</td>
+            </tr>
+          `;
+
+          lote.unidades -= toma;
+          porVender -= toma;
+          if (lote.unidades === 0) lotes.shift();
+        }
+
+        costoVentasTotal += costoVentaAplicado;
+        ventasTotal += unidades * valor;
+
+        const formulaTexto = pasos.map(p => `${p.unidades} × ${fmt(p.costoUnitario)}`).join(' + ');
+        desglosesLineas.push({
+          etiqueta: `${op.concepto} (${fechaCorta})`,
+          calculo: formulaTexto,
+          total: costoVenta
+        });
+      }
+    });
+
+    html += `</tbody></table>`;
+    cont.innerHTML = html;
+
+    if (desglosesLineas.length === 0) {
+      contDesglose.innerHTML = '<div class="desglose-vacio">Agrega al menos una venta válida para ver el desglose del costo.</div>';
+    } else {
+      let desgloseHTML = `<div class="desglose-ventas__titulo">Desglose del costo de cada venta</div>`;
+      desglosesLineas.forEach(d => {
+        desgloseHTML += `
+          <div class="desglose-linea">
+            <span class="desglose-linea__etiqueta">${d.etiqueta}:</span>
+            <span class="desglose-linea__calculo">${d.calculo}</span>
+            <span class="desglose-linea__total">= ${fmt(d.total)}</span>
+          </div>
+        `;
+      });
+      desgloseHTML += `
+        <div class="desglose-linea desglose-linea--total">
+          <span class="desglose-linea__etiqueta">Costo total de ventas:</span>
+          <span class="desglose-linea__calculo"></span>
+          <span class="desglose-linea__total">${fmt(costoVentasTotal)}</span>
+        </div>
+      `;
+      contDesglose.innerHTML = desgloseHTML;
+    }
+
+    const utilidadBruta = ventasTotal - costoVentasTotal;
+
+    document.getElementById('panelResultadoTitulo').textContent = 'Resultado del Método PEPS';
+    document.getElementById('resCosto').textContent = fmt(costoVentasTotal);
+    document.getElementById('resVentas').textContent = fmt(ventasTotal);
+    document.getElementById('resUtilidad').textContent = fmt(utilidadBruta);
+    document.getElementById('resInventario').textContent = fmt(saldoTotal);
+    document.getElementById('resNota').textContent = 'En PEPS, el costo de ventas absorbe los costos más antiguos. Cada venta puede combinar unidades de varios lotes. El inventario final queda valuado a los costos más recientes.';
+  },
+
+  calcularPromedio(errores) {
+    const cont = document.getElementById('contenedorKardex');
+    const contDesglose = document.getElementById('desgloseVentas');
+
+    let existencia = 0;
+    let saldoTotal = 0;
+    let costoPromedio = 0;
+    let costoVentasTotal = 0;
+    let ventasTotal = 0;
+    const erroresSet = new Set(errores.map(e => e.indice));
+
+    let html = `
+      <table class="tabla-kardex">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Entradas (u)</th>
+            <th>Salidas (u)</th>
+            <th>Existencia (u)</th>
+            <th>Costo unit.</th>
+            <th>Costo prom.</th>
+            <th>Debe ($)</th>
+            <th>Haber ($)</th>
+            <th>Saldo ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    let desglosesLineas = [];
+
+    this.operaciones.forEach((op, idx) => {
+      const unidades = Number(op.unidades) || 0;
+      const valor = Number(op.valor) || 0;
+      const fechaCorta = fechaISOaCorta(op.fecha);
+
+      if (op.tipo === 'inicial') {
+        existencia = unidades;
+        saldoTotal = unidades * valor;
+        costoPromedio = valor;
+
+        html += `
+          <tr class="fila-destacada">
+            <td>${fechaCorta}</td>
+            <td class="texto">${op.concepto}</td>
+            <td>${unidades}</td>
+            <td>—</td>
+            <td>${existencia}</td>
+            <td>${fmt(valor)}</td>
+            <td>${fmt(costoPromedio)}</td>
+            <td>${fmt(saldoTotal)}</td>
+            <td>—</td>
+            <td>${fmt(saldoTotal)}</td>
+          </tr>
+        `;
+      } else if (op.tipo === 'compra') {
+        existencia += unidades;
+        saldoTotal += unidades * valor;
+        const nuevoPromedio = existencia > 0 ? saldoTotal / existencia : 0;
+
+        html += `
+          <tr class="fila-promedio">
+            <td>${fechaCorta}</td>
+            <td class="texto">${op.concepto}</td>
+            <td>${unidades}</td>
+            <td>—</td>
+            <td>${existencia}</td>
+            <td>${fmt(valor)}</td>
+            <td><strong>${fmt(nuevoPromedio)}</strong></td>
+            <td>${fmt(unidades * valor)}</td>
+            <td>—</td>
+            <td>${fmt(saldoTotal)}</td>
+          </tr>
+        `;
+
+        costoPromedio = nuevoPromedio;
+      } else if (op.tipo === 'venta') {
+        if (erroresSet.has(idx)) {
+          html += `
+            <tr class="fila-venta" style="opacity:0.5;background:#fee2e2;">
+              <td>${fechaCorta}</td>
+              <td class="texto">${op.concepto} — <strong>venta inválida</strong></td>
+              <td>—</td>
+              <td>—</td>
+              <td>${existencia}</td>
+              <td>—</td>
+              <td>${fmt(costoPromedio)}</td>
+              <td>—</td>
+              <td>—</td>
+              <td>${fmt(saldoTotal)}</td>
+            </tr>
+          `;
+          return;
+        }
+
+        const costoUnitarioVenta = costoPromedio;
+        const costoVenta = unidades * costoUnitarioVenta;
+
+        existencia -= unidades;
+        saldoTotal -= costoVenta;
+        costoVentasTotal += costoVenta;
+        ventasTotal += unidades * valor;
+
+        html += `
+          <tr class="fila-venta">
+            <td>${fechaCorta}</td>
+            <td class="texto">${op.concepto}</td>
+            <td>—</td>
+            <td>${unidades}</td>
+            <td>${existencia}</td>
+            <td>—</td>
+            <td>${fmt(costoUnitarioVenta)}</td>
+            <td>—</td>
+            <td>${fmt(costoVenta)}</td>
+            <td>${fmt(saldoTotal)}</td>
+          </tr>
+        `;
+
+        desglosesLineas.push({
+          etiqueta: `${op.concepto} (${fechaCorta})`,
+          calculo: `${unidades} × ${fmt(costoUnitarioVenta)} (costo promedio)`,
+          total: costoVenta
+        });
+      }
+    });
+
+    html += `</tbody></table>`;
+    cont.innerHTML = html;
+
+    if (desglosesLineas.length === 0) {
+      contDesglose.innerHTML = '<div class="desglose-vacio">Agrega al menos una venta válida para ver el desglose del costo.</div>';
+    } else {
+      let desgloseHTML = `<div class="desglose-ventas__titulo">Desglose del costo de cada venta</div>`;
+      desglosesLineas.forEach(d => {
+        desgloseHTML += `
+          <div class="desglose-linea">
+            <span class="desglose-linea__etiqueta">${d.etiqueta}:</span>
+            <span class="desglose-linea__calculo">${d.calculo}</span>
+            <span class="desglose-linea__total">= ${fmt(d.total)}</span>
+          </div>
+        `;
+      });
+      desgloseHTML += `
+        <div class="desglose-linea desglose-linea--total">
+          <span class="desglose-linea__etiqueta">Costo total de ventas:</span>
+          <span class="desglose-linea__calculo"></span>
+          <span class="desglose-linea__total">${fmt(costoVentasTotal)}</span>
+        </div>
+      `;
+      contDesglose.innerHTML = desgloseHTML;
+    }
+
+    const utilidadBruta = ventasTotal - costoVentasTotal;
+
+    document.getElementById('panelResultadoTitulo').textContent = 'Resultado del Método Costo Promedio Móvil';
+    document.getElementById('resCosto').textContent = fmt(costoVentasTotal);
+    document.getElementById('resVentas').textContent = fmt(ventasTotal);
+    document.getElementById('resUtilidad').textContent = fmt(utilidadBruta);
+    document.getElementById('resInventario').textContent = fmt(saldoTotal);
+    document.getElementById('resNota').textContent = 'En Costo Promedio Móvil, el costo unitario se recalcula después de cada compra. Todas las unidades comparten el mismo costo promedio.';
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 2 — DETECTA EL ERROR EN EL KARDEX
+   ============================================================ */
+const KardexConError = [
+  {
+    id: 'k1',
+    metodo: 'PEPS',
+    titulo: 'Kardex PEPS — caso base',
+    filas: [
+      { fecha: '01/Ene', concepto: 'Inventario inicial', entradas: 100, salidas: '—', existencia: 100, costo: '$1,000.00', debe: '$100,000.00', haber: '—', saldo: '$100,000.00', error: false },
+      { fecha: '10/Ene', concepto: 'Compra (Fac. 101)', entradas: 50, salidas: '—', existencia: 150, costo: '$1,300.00', debe: '$65,000.00', haber: '—', saldo: '$165,000.00', error: false },
+      { fecha: '15/Ene', concepto: 'Venta 1 — lote inicial', entradas: '—', salidas: 80, existencia: 70, costo: '$1,000.00', debe: '—', haber: '$80,000.00', saldo: '$85,000.00', error: false },
+      { fecha: '20/Ene', concepto: 'Compra (Fac. 102)', entradas: 30, salidas: '—', existencia: 100, costo: '$1,500.00', debe: '$45,000.00', haber: '—', saldo: '$130,000.00', error: false },
+      { fecha: '28/Ene', concepto: 'Venta 2 — 40 u. del lote más antiguo', entradas: '—', salidas: 40, existencia: 60, costo: '$1,300.00', debe: '—', haber: '$40,000.00', saldo: '$90,000.00', error: true }
+    ],
+    explicacion: 'En PEPS, la Venta 2 (40 u.) debe agotar primero las 20 u. restantes del lote inicial a $1,000 y luego tomar 20 u. de la compra del 10/Ene a $1,300. El costo total sería $20,000 + $26,000 = $46,000. Además, el saldo final debe ser $84,000, no $90,000.'
+  },
+  {
+    id: 'k2',
+    metodo: 'Promedio Móvil',
+    titulo: 'Kardex Promedio Móvil — caso base',
+    filas: [
+      { fecha: '01/Ene', concepto: 'Inventario inicial', entradas: 100, salidas: '—', existencia: 100, costoProm: '$1,000.00', debe: '$100,000.00', haber: '—', saldo: '$100,000.00', error: false },
+      { fecha: '10/Ene', concepto: 'Compra (Fac. 101)', entradas: 50, salidas: '—', existencia: 150, costoProm: '$1,100.00', debe: '$65,000.00', haber: '—', saldo: '$165,000.00', error: false },
+      { fecha: '15/Ene', concepto: 'Venta 1 (80 u.)', entradas: '—', salidas: 80, existencia: 70, costoProm: '$1,100.00', debe: '—', haber: '$88,000.00', saldo: '$77,000.00', error: false },
+      { fecha: '20/Ene', concepto: 'Compra (Fac. 102)', entradas: 30, salidas: '—', existencia: 100, costoProm: '$1,220.00', debe: '$45,000.00', haber: '—', saldo: '$122,000.00', error: false },
+      { fecha: '28/Ene', concepto: 'Venta 2 (40 u.)', entradas: '—', salidas: 40, existencia: 60, costoProm: '$1,200.00', debe: '—', haber: '$48,000.00', saldo: '$74,000.00', error: true }
+    ],
+    explicacion: 'El costo promedio después de la compra del 20/Ene es $1,220, no $1,200. La salida de 40 u. debe ser a $1,220 = $48,800, y el saldo final debe ser $73,200, no $74,000.'
+  },
+  {
+    id: 'k3',
+    metodo: 'PEPS',
+    titulo: 'Kardex PEPS — variante',
+    filas: [
+      { fecha: '01/Ene', concepto: 'Inventario inicial', entradas: 100, salidas: '—', existencia: 100, costo: '$1,000.00', debe: '$100,000.00', haber: '—', saldo: '$100,000.00', error: false },
+      { fecha: '10/Ene', concepto: 'Compra (Fac. 101)', entradas: 50, salidas: '—', existencia: 150, costo: '$1,300.00', debe: '$65,000.00', haber: '—', saldo: '$165,000.00', error: false },
+      { fecha: '15/Ene', concepto: 'Venta 1 (80 u.) — lote inicial', entradas: '—', salidas: 80, existencia: 70, costo: '$1,000.00', debe: '—', haber: '$80,000.00', saldo: '$85,000.00', error: false },
+      { fecha: '20/Ene', concepto: 'Compra (Fac. 102)', entradas: 30, salidas: '—', existencia: 100, costo: '$1,500.00', debe: '$45,000.00', haber: '—', saldo: '$130,000.00', error: false },
+      { fecha: '28/Ene', concepto: 'Venta 2 (40 u.) — todo del lote del 20/Ene', entradas: '—', salidas: 40, existencia: 60, costo: '$1,500.00', debe: '—', haber: '$60,000.00', saldo: '$70,000.00', error: true }
+    ],
+    explicacion: 'En PEPS, la Venta 2 no puede salir íntegramente del lote más reciente. Primero debe agotar los lotes más antiguos: 20 u. del inventario inicial a $1,000 y 20 u. de la compra del 10/Ene a $1,300. El costo total debe ser $46,000, no $60,000.'
+  }
+];
+
+const Errores = {
+  kardex: [],
+  resueltos: 0,
+  aciertos: 0,
+
+  init() {
+    this.kardex = shuffle(KardexConError).map(k => ({
+      ...k,
+      seleccion: null,
+      resuelto: false,
+      acerto: null
+    }));
+    this.resueltos = 0;
+    this.aciertos = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  render() {
+    const cont = document.getElementById('contenedorErrores');
+    cont.innerHTML = '';
+
+    this.kardex.forEach((k, i) => {
+      const div = document.createElement('div');
+      div.className = 'kardex-error';
+      if (k.resuelto) {
+        div.classList.add(k.acerto ? 'kardex-error--resuelto' : 'kardex-error--fallado');
+      }
+
+      let html = `
+        <div class="kardex-error__titulo">
+          Kardex ${i + 1}: ${k.titulo}
+        </div>
+        <div class="kardex-error__instruccion">
+          Haz clic sobre la fila que contiene el error.
+        </div>
+        <table class="tabla-kardex">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th>Entradas (u)</th>
+              <th>Salidas (u)</th>
+              <th>Existencia (u)</th>
+              <th>${k.metodo === 'Promedio Móvil' ? 'Costo prom.' : 'Costo unit.'}</th>
+              <th>Debe ($)</th>
+              <th>Haber ($)</th>
+              <th>Saldo ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      k.filas.forEach((f, j) => {
+        let clases = 'fila-seleccionable';
+        if (k.resuelto) {
+          clases += ' fila-seleccionable--bloqueada';
+          if (f.error) clases += ' fila-seleccionable--correcta';
+          else if (k.seleccion === j) clases += ' fila-seleccionable--incorrecta';
+        } else if (k.seleccion === j) {
+          clases += ' fila-seleccionable--seleccionada';
+        }
+
+        const costoValor = k.metodo === 'Promedio Móvil' ? f.costoProm : f.costo;
+
+        html += `
+          <tr class="${clases}" onclick="Errores.seleccionar(${i}, ${j})">
+            <td>${f.fecha}</td>
+            <td class="texto">${f.concepto}</td>
+            <td>${f.entradas}</td>
+            <td>${f.salidas}</td>
+            <td>${f.existencia}</td>
+            <td>${costoValor}</td>
+            <td>${f.debe}</td>
+            <td>${f.haber}</td>
+            <td>${f.saldo}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table>`;
+
+      if (k.resuelto) {
+        const tipoFeedback = k.acerto ? 'feedback-kardex--correcto' : 'feedback-kardex--incorrecto';
+        const icono = k.acerto ? '¡Correcto!' : 'Incorrecto.';
+        html += `
+          <div class="feedback-kardex visible ${tipoFeedback}">
+            <strong>${icono}</strong><br>
+            ${k.explicacion}
+          </div>
+        `;
+      }
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  seleccionar(i, j) {
+    const k = this.kardex[i];
+    if (k.resuelto) return;
+
+    k.seleccion = j;
+    const filaSeleccionada = k.filas[j];
+    k.acerto = filaSeleccionada.error;
+    k.resuelto = true;
+
+    if (k.acerto) this.aciertos++;
+    this.resueltos++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.resueltos === this.kardex.length) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('progresoErrores').textContent = this.resueltos + ' / ' + this.kardex.length + ' resueltos';
+    const pct = (this.resueltos / this.kardex.length) * 100;
+    document.getElementById('progresoErroresRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const total = this.kardex.length;
+    const resultado = document.getElementById('resultadoErrores');
+    resultado.classList.add('visible');
+    document.getElementById('erroresPuntaje').textContent = this.aciertos + ' / ' + total;
+
+    let mensaje = '';
+    if (this.aciertos === total) {
+      mensaje = '¡Excelente! Detectaste correctamente los errores en los 3 kardex. Dominas el cálculo de PEPS y Promedio Móvil.';
+    } else if (this.aciertos >= 2) {
+      mensaje = 'Buen trabajo. Detectaste la mayoría de los errores. Revisa los kardex donde fallaste para reforzar el cálculo.';
+    } else {
+      mensaje = 'Te recomendamos repasar el cálculo del kardex antes de continuar. Recuerda: en PEPS se agotan primero los lotes más antiguos; en Promedio Móvil se recalcula el costo después de cada compra.';
+    }
+    document.getElementById('erroresMensaje').textContent = mensaje;
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoErrores').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   EXAMEN — banco de 20 reactivos conceptuales puros
+   Sin anexo, sin etiquetas, sin importes como respuesta.
+   ============================================================ */
+const BancoExamen = [
+  {
+    pregunta: '¿Qué significa la sigla PEPS?',
+    opciones: [
+      { texto: 'Precio de Entrada y Precio de Salida.', correcta: false },
+      { texto: 'Primeras Entradas, Primeras Salidas.', correcta: true },
+      { texto: 'Promedio de Entradas y Promedio de Salidas.', correcta: false },
+      { texto: 'Pérdidas y Entradas de Productos en Stock.', correcta: false }
+    ],
+    explicacion: 'PEPS = Primeras Entradas, Primeras Salidas.'
+  },
+  {
+    pregunta: 'En PEPS, el costo de ventas queda valuado a...',
+    opciones: [
+      { texto: 'Los costos más recientes.', correcta: false },
+      { texto: 'Los costos más antiguos.', correcta: true },
+      { texto: 'Un costo promedio ponderado.', correcta: false },
+      { texto: 'El costo unitario más alto.', correcta: false }
+    ],
+    explicacion: 'En PEPS, el costo de ventas absorbe los costos más antiguos.'
+  },
+  {
+    pregunta: 'En PEPS, el inventario final queda valuado a...',
+    opciones: [
+      { texto: 'Los costos más antiguos.', correcta: false },
+      { texto: 'Los costos más recientes.', correcta: true },
+      { texto: 'Un costo promedio.', correcta: false },
+      { texto: 'El costo del inventario inicial.', correcta: false }
+    ],
+    explicacion: 'En PEPS, el inventario final queda valuado a los costos más recientes.'
+  },
+  {
+    pregunta: 'En Costo Promedio Móvil, ¿cuándo se recalcula el costo promedio unitario?',
+    opciones: [
+      { texto: 'Al cierre del ejercicio.', correcta: false },
+      { texto: 'Después de cada compra a un precio distinto.', correcta: true },
+      { texto: 'Al inicio de cada mes.', correcta: false },
+      { texto: 'Solo cuando hay pérdidas.', correcta: false }
+    ],
+    explicacion: 'En Costo Promedio Móvil, se recalcula el costo unitario después de cada compra.'
+  },
+  {
+    pregunta: '¿Cómo se calcula el costo promedio unitario?',
+    opciones: [
+      { texto: 'Saldo en dinero ÷ Existencia en unidades.', correcta: true },
+      { texto: 'Unidades × Costo unitario.', correcta: false },
+      { texto: 'Existencia en unidades ÷ Saldo en dinero.', correcta: false },
+      { texto: 'Ventas ÷ Unidades vendidas.', correcta: false }
+    ],
+    explicacion: 'Costo promedio = Saldo en dinero ÷ Existencia en unidades.'
+  },
+  {
+    pregunta: '¿En qué método el costo de ventas refleja primero los lotes más antiguos?',
+    opciones: [
+      { texto: 'En Costo Promedio Móvil.', correcta: false },
+      { texto: 'En PEPS.', correcta: true },
+      { texto: 'En ambos por igual.', correcta: false },
+      { texto: 'En ninguno.', correcta: false }
+    ],
+    explicacion: 'En PEPS, cada venta agota primero el lote más antiguo disponible.'
+  },
+  {
+    pregunta: '¿En qué método todas las unidades en existencia comparten el mismo costo unitario?',
+    opciones: [
+      { texto: 'En PEPS.', correcta: false },
+      { texto: 'En Costo Promedio Móvil.', correcta: true },
+      { texto: 'En ambos por igual.', correcta: false },
+      { texto: 'En ninguno.', correcta: false }
+    ],
+    explicacion: 'En Costo Promedio Móvil, todas las unidades comparten el mismo costo promedio vigente.'
+  },
+  {
+    pregunta: 'En un periodo inflacionario (precios al alza), ¿cuál método genera mayor utilidad bruta?',
+    opciones: [
+      { texto: 'Costo Promedio Móvil.', correcta: false },
+      { texto: 'PEPS.', correcta: true },
+      { texto: 'Ambos por igual.', correcta: false },
+      { texto: 'Depende del giro.', correcta: false }
+    ],
+    explicacion: 'En inflación, PEPS asigna al costo de ventas los costos más baratos, generando mayor utilidad bruta.'
+  },
+  {
+    pregunta: 'En inflación, ¿cuál método produce un inventario final valuado a costos más altos?',
+    opciones: [
+      { texto: 'PEPS.', correcta: true },
+      { texto: 'Costo Promedio Móvil.', correcta: false },
+      { texto: 'Ambos por igual.', correcta: false },
+      { texto: 'Ninguno.', correcta: false }
+    ],
+    explicacion: 'En PEPS, el inventario final queda valuado a los costos más recientes (más altos en inflación).'
+  },
+  {
+    pregunta: '¿Qué documento auxiliar se utiliza para aplicar cualquiera de las dos fórmulas?',
+    opciones: [
+      { texto: 'El balance general.', correcta: false },
+      { texto: 'La tarjeta de almacén o kardex.', correcta: true },
+      { texto: 'El estado de resultados.', correcta: false },
+      { texto: 'El libro de actas.', correcta: false }
+    ],
+    explicacion: 'La tarjeta de almacén (kardex) registra movimiento por movimiento las entradas, salidas y saldos.'
+  },
+  {
+    pregunta: 'La suma de los saldos de todas las tarjetas auxiliares debe coincidir con...',
+    opciones: [
+      { texto: 'El saldo de la cuenta colectiva de Almacén en el mayor.', correcta: true },
+      { texto: 'El total de las ventas.', correcta: false },
+      { texto: 'El total del capital contable.', correcta: false },
+      { texto: 'El saldo del pasivo.', correcta: false }
+    ],
+    explicacion: 'La suma de los auxiliares debe coincidir con el saldo de la cuenta colectiva de Almacén.'
+  },
+  {
+    pregunta: 'En PEPS, si una venta requiere más unidades que las del lote más antiguo, ¿qué se hace?',
+    opciones: [
+      { texto: 'Se rechaza la venta.', correcta: false },
+      { texto: 'Se agota el lote antiguo y se continúa con el siguiente lote.', correcta: true },
+      { texto: 'Se vende al costo más alto.', correcta: false },
+      { texto: 'Se recalcula el costo promedio.', correcta: false }
+    ],
+    explicacion: 'En PEPS, cuando una venta supera el lote más antiguo, se agota ese lote y se continúa con el siguiente.'
+  },
+  {
+    pregunta: 'En un periodo inflacionario, ¿en cuál método el costo de ventas suele ser menor?',
+    opciones: [
+      { texto: 'En PEPS.', correcta: true },
+      { texto: 'En Costo Promedio Móvil.', correcta: false },
+      { texto: 'En ambos es igual.', correcta: false },
+      { texto: 'No se puede determinar.', correcta: false }
+    ],
+    explicacion: 'En inflación, PEPS asigna al costo de ventas los costos más antiguos y baratos, por lo que el costo de ventas suele ser menor.'
+  },
+  {
+    pregunta: 'En un periodo inflacionario, ¿en cuál método la utilidad bruta suele ser mayor?',
+    opciones: [
+      { texto: 'En PEPS.', correcta: true },
+      { texto: 'En Costo Promedio Móvil.', correcta: false },
+      { texto: 'En ambos es igual.', correcta: false },
+      { texto: 'No se puede determinar.', correcta: false }
+    ],
+    explicacion: 'En inflación, PEPS asigna al costo de ventas los costos más baratos, generando mayor utilidad bruta.'
+  },
+  {
+    pregunta: '¿Cuál método asigna un costo promedio ponderado a las salidas, generando normalmente un costo de ventas más alto en inflación?',
+    opciones: [
+      { texto: 'PEPS.', correcta: false },
+      { texto: 'Costo Promedio Móvil.', correcta: true },
+      { texto: 'Ambos por igual.', correcta: false },
+      { texto: 'Ninguno.', correcta: false }
+    ],
+    explicacion: 'El Costo Promedio Móvil pondera los costos históricos con los recientes, generando un costo de ventas más alto en inflación.'
+  },
+  {
+    pregunta: '¿Cuál método produce una utilidad bruta más conservadora en periodos inflacionarios?',
+    opciones: [
+      { texto: 'PEPS.', correcta: false },
+      { texto: 'Costo Promedio Móvil.', correcta: true },
+      { texto: 'Ambos producen la misma utilidad.', correcta: false },
+      { texto: 'No se puede determinar.', correcta: false }
+    ],
+    explicacion: 'En inflación, el Costo Promedio Móvil produce una utilidad bruta menor y más conservadora que PEPS.'
+  },
+  {
+    pregunta: '¿Cuál método valúa el inventario final a costos más cercanos a los actuales del mercado?',
+    opciones: [
+      { texto: 'PEPS.', correcta: true },
+      { texto: 'Costo Promedio Móvil.', correcta: false },
+      { texto: 'Ambos por igual.', correcta: false },
+      { texto: 'No se puede determinar.', correcta: false }
+    ],
+    explicacion: 'En PEPS, el inventario final queda valuado a los costos más recientes, por lo que se acerca más a los costos actuales del mercado.'
+  },
+  {
+    pregunta: 'En un periodo inflacionario, ¿cuál de las siguientes afirmaciones sobre PEPS y Promedio Móvil es correcta?',
+    opciones: [
+      { texto: 'PEPS genera mayor utilidad bruta y mayor inventario final que Promedio Móvil.', correcta: true },
+      { texto: 'Promedio Móvil genera mayor utilidad bruta y mayor inventario final que PEPS.', correcta: false },
+      { texto: 'Ambos métodos generan la misma utilidad bruta.', correcta: false },
+      { texto: 'El costo de ventas es mayor en PEPS que en Promedio Móvil.', correcta: false }
+    ],
+    explicacion: 'En inflación, PEPS genera mayor utilidad bruta y mayor inventario final que Promedio Móvil.'
+  },
+  {
+    pregunta: '¿Cuál método produce un inventario final valuado a un costo intermedio entre los más antiguos y los más recientes?',
+    opciones: [
+      { texto: 'PEPS.', correcta: false },
+      { texto: 'Costo Promedio Móvil.', correcta: true },
+      { texto: 'Ambos por igual.', correcta: false },
+      { texto: 'No se puede determinar.', correcta: false }
+    ],
+    explicacion: 'En Costo Promedio Móvil, el inventario final queda valuado a un costo promedio que combina los costos antiguos con los recientes.'
+  },
+  {
+    pregunta: 'En un periodo deflacionario (precios a la baja), ¿cuál método generaría mayor utilidad bruta?',
+    opciones: [
+      { texto: 'PEPS.', correcta: false },
+      { texto: 'Costo Promedio Móvil.', correcta: true },
+      { texto: 'Ambos por igual.', correcta: false },
+      { texto: 'Ninguno.', correcta: false }
+    ],
+    explicacion: 'En deflación (precios a la baja), el Costo Promedio Móvil suaviza los precios y suele producir mayor utilidad bruta que PEPS, porque PEPS asigna los costos más altos (los más antiguos) al costo de ventas.'
+  },
+  {
+    pregunta: 'Al elegir entre PEPS y Costo Promedio Móvil, ¿qué principio exige la NIF C-4?',
+    opciones: [
+      { texto: 'Cambiar de método cada año según convenga.', correcta: false },
+      { texto: 'Aplicar el mismo método de manera consistente a lo largo del tiempo.', correcta: true },
+      { texto: 'Usar siempre PEPS para cualquier giro.', correcta: false },
+      { texto: 'Usar siempre Costo Promedio Móvil para cualquier giro.', correcta: false }
+    ],
+    explicacion: 'La NIF C-4 exige aplicar el mismo método de manera consistente para que la información sea comparable entre periodos.'
+  }
+];
+
+const Examen = {
+  reactivos: [],
+  TOTAL: 10,
+  aciertos: 0,
+  respondidas: 0,
+
+  init() {
+    const seleccionados = shuffle(BancoExamen).slice(0, this.TOTAL);
+    this.reactivos = seleccionados.map(r => ({
+      pregunta: r.pregunta,
+      explicacion: r.explicacion,
+      opciones: shuffle(r.opciones),
+      eleccion: null,
+      verificada: false
+    }));
+    this.aciertos = 0;
+    this.respondidas = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  render() {
+    const cont = document.getElementById('contenedorExamen');
+    cont.innerHTML = '';
+
+    this.reactivos.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reactivo';
+      if (r.verificada) {
+        const correcta = r.eleccion !== null && r.opciones[r.eleccion].correcta;
+        div.classList.add(correcta ? 'reactivo--correcto' : 'reactivo--incorrecto');
+      }
+
+      let html = `
+        <div class="reactivo__titulo">
+          <span class="reactivo__numero">${i + 1}</span>
+          Reactivo ${i + 1} de ${this.reactivos.length}
+        </div>
+        <div class="reactivo__pregunta">${r.pregunta}</div>
+        <div class="reactivo__opciones">
+      `;
+
+      r.opciones.forEach((op, j) => {
+        const clases = ['reactivo__opcion'];
+        if (r.verificada) {
+          clases.push('bloqueada');
+          if (op.correcta) clases.push('correcta');
+          else if (r.eleccion === j) clases.push('incorrecta');
+        }
+        const checked = r.eleccion === j ? 'checked' : '';
+        html += `
+          <label class="${clases.join(' ')}">
+            <input type="radio" name="examen-${i}" value="${j}" ${checked} ${r.verificada ? 'disabled' : ''} onchange="Examen.responder(${i}, ${j})">
+            ${op.texto}
+          </label>
+        `;
+      });
+
+      html += `</div>`;
+
+      html += `<div class="reactivo__feedback ${r.verificada ? 'visible' : ''} ${r.verificada ? (r.opciones[r.eleccion].correcta ? 'reactivo__feedback--correcto' : 'reactivo__feedback--incorrecto') : ''}">`;
+      if (r.verificada) {
+        if (r.opciones[r.eleccion].correcta) {
+          html += `<strong>¡Correcto!</strong>`;
+        } else {
+          html += `<strong>Incorrecto.</strong> La respuesta correcta está marcada en verde.`;
+        }
+        html += `<br><br><strong>Explicación:</strong> ${r.explicacion}`;
+      }
+      html += `</div>`;
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const r = this.reactivos[i];
+    if (r.verificada) return;
+
+    r.eleccion = j;
+    r.verificada = true;
+
+    if (r.opciones[j].correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.TOTAL) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('examenProgresoTexto').textContent = this.respondidas + ' / ' + this.TOTAL + ' respondidas';
+    const pct = (this.respondidas / this.TOTAL) * 100;
+    document.getElementById('examenProgresoRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const porcentaje = Math.round((this.aciertos / this.TOTAL) * 100);
+
+    const cont = document.getElementById('resultadoExamen');
+    cont.classList.add('visible');
+    document.getElementById('examenPorcentaje').textContent = porcentaje + '%';
+    document.getElementById('examenDetalle').textContent = this.aciertos + ' aciertos de ' + this.TOTAL + ' reactivos';
+
+    let mensaje = '';
+    if (porcentaje >= 90) {
+      mensaje = '¡Excelente! Dominas PEPS y Costo Promedio Móvil. Estás lista para avanzar al Punto 4.';
+    } else if (porcentaje >= 70) {
+      mensaje = 'Buen trabajo. Tienes una base sólida. Repasa los reactivos donde fallaste.';
+    } else if (porcentaje >= 50) {
+      mensaje = 'Aprobaste con lo mínimo. Te recomendamos repasar la presentación del Punto 3 antes de continuar.';
+    } else {
+      mensaje = 'Es necesario reforzar los conceptos. Repasa la presentación y vuelve a intentar.';
+    }
+    document.getElementById('examenMensaje').textContent = mensaje;
+
+    setTimeout(() => {
+      cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoExamen').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  tabActiva: 'calculadora',
+
+  cargarCaso() {
+    Kardex.reiniciar();
+    Errores.reiniciar();
+    Examen.reiniciar();
+  },
+
+  limpiar() {
+    Kardex.reiniciar();
+    Errores.reiniciar();
+    Examen.reiniciar();
+  },
+
+  cambiarTab(tab) {
+    this.tabActiva = tab;
+    document.querySelectorAll('.tabs > .tab').forEach(t => {
+      if (t.dataset.tab) {
+        t.classList.toggle('tab--activa', t.dataset.tab === tab);
+      }
+    });
+    document.querySelectorAll('.contenido-tab').forEach(c => {
+      c.classList.toggle('contenido-tab--activo', c.id === 'tab-' + tab);
+    });
+  }
+};
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+const Modal = {
+  abrir() {
+    const tabActiva = App.tabActiva;
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    if (tabActiva === 'calculadora') {
+      titulo.textContent = '¿Cómo funciona la calculadora de Kardex?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Construir y explorar el kardex del caso bajo los dos métodos de asignación del costo.
+        La calculadora recalcula en tiempo real con cada cambio.</p>
+        <h3>Cómo usar la calculadora</h3>
+        <ul>
+          <li>Edita la <strong>fecha</strong> con el calendario nativo.</li>
+          <li>Edita concepto, tipo, unidades y costo/precio.</li>
+          <li>Agrega operaciones con el botón <strong>+ Agregar operación</strong>.</li>
+          <li>Elimina operaciones con el botón rojo ×.</li>
+          <li>Cambia entre <strong>PEPS</strong> y <strong>Costo Promedio Móvil</strong>.</li>
+        </ul>
+        <h3>Validación de existencia</h3>
+        <p>La app <strong>no permite vender más unidades que la existencia disponible</strong>
+        al momento de la venta. Si intentas hacerlo, la fila se marca en rojo y aparece un aviso.</p>
+        <h3>Desglose del costo de cada venta</h3>
+        <p>Debajo del kardex verás <strong>una línea compacta por venta</strong> con la fórmula
+        completa y el total, más el costo total de ventas.</p>
+      `;
+    } else if (tabActiva === 'errores') {
+      titulo.textContent = '¿Cómo funciona la actividad "Detecta el error"?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Identificar la fila incorrecta en un kardex pre-armado.</p>
+        <h3>Cómo usar la actividad</h3>
+        <ul>
+          <li>Cada kardex tiene <strong>una sola fila con error</strong>.</li>
+          <li>Haz clic sobre la fila que creas incorrecta.</li>
+          <li>Recibirás retroalimentación inmediata con la explicación.</li>
+          <li>Cada reinicio baraja el orden de los kardex.</li>
+        </ul>
+      `;
+    } else {
+      titulo.textContent = '¿Cómo funciona el examen final?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Evaluar la comprensión conceptual de PEPS y Costo Promedio Móvil.</p>
+        <h3>Estructura</h3>
+        <ul>
+          <li><strong>10 reactivos</strong> seleccionados al azar de un banco de 20.</li>
+          <li>Se <strong>aleatoriza</strong> el orden de los reactivos y de las opciones.</li>
+          <li>Cada reactivo tiene <strong>4 opciones</strong>, solo una correcta.</li>
+          <li>Todos los reactivos son <strong>conceptuales</strong>: no requieren consultar cifras ni hacer cálculos numéricos.</li>
+        </ul>
+        <h3>Calificación inmediata</h3>
+        <ul>
+          <li>Al hacer clic en una opción, el reactivo se califica al instante.</li>
+          <li>La opción correcta se marca en verde; tu elección incorrecta en rojo.</li>
+          <li>El reactivo queda bloqueado.</li>
+          <li>Al responder el último reactivo, aparece tu <strong>calificación en %</strong>.</li>
+        </ul>
+      `;
+    }
+
+    overlay.classList.add('visible');
+  },
+
+  cerrar() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+  }
+};
+
+document.getElementById('modalOverlay').onclick = (e) => {
+  if (e.target.id === 'modalOverlay') Modal.cerrar();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Modal.cerrar();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  Kardex.init();
+  Errores.init();
+  Examen.init();
+});
+</script>
+
+</body>
+</html>

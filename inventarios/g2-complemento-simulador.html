@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 2 — Complemento: Simulador, cuentas y examen | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: var(--espacio-lg);
+}
+
+.contenedor { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--sombra-lg);
+  flex-wrap: wrap;
+}
+
+.header__titulo { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.header__subtitulo { font-size: 0.8rem; opacity: 0.8; font-weight: 400; }
+.header__acciones { display: flex; gap: var(--espacio-sm); flex-wrap: wrap; }
+
+.boton {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.boton--primario { background: var(--azul-brillante); color: #fff; }
+.boton--primario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--secundario { background: transparent; color: #fff; border: 2px solid var(--cian); }
+.boton--secundario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--terciario { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.boton--terciario:hover { background: rgba(255,255,255,0.1); }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  min-width: 200px;
+}
+
+.tab:hover { background: var(--cian-claro); }
+.tab--activa {
+  color: var(--azul-profundo);
+  border-bottom-color: var(--azul-brillante);
+  background: var(--azul-claro);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  overflow: hidden;
+}
+
+.panel__header {
+  background: var(--azul-medio);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.panel__cuerpo { padding: var(--espacio-lg); }
+
+.instruccion {
+  background: var(--cian-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  font-size: 0.9rem;
+}
+
+.instruccion strong { color: var(--azul-profundo); }
+
+.barra-acciones {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-accion {
+  background: var(--azul-brillante);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boton-accion:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton-accion--reiniciar { background: var(--ambar); color: #fff; }
+.boton-accion--reiniciar:hover { background: #d97706; color: #fff; }
+.boton-accion--finalizar { background: var(--verde-exito); color: #fff; }
+.boton-accion--finalizar:hover { background: #059669; color: #fff; }
+
+/* ==== SIMULADOR ==== */
+.grid-entradas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.campo { display: flex; flex-direction: column; gap: var(--espacio-xs); }
+
+.campo__etiqueta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.campo__input {
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.campo__input:focus { outline: none; border-color: var(--azul-brillante); }
+
+.campo__ayuda {
+  font-size: 0.72rem;
+  color: var(--azul-medio);
+  font-style: italic;
+}
+
+.tabla-resultado {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.85rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-resultado thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-resultado th {
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-resultado td {
+  padding: 0.6rem 0.6rem;
+  border-bottom: 1px solid var(--azul-claro);
+}
+
+.tabla-resultado .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-resultado .cuenta { font-weight: 500; }
+
+.tabla-resultado .cuenta-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  background: var(--cian-claro);
+}
+
+.tabla-resultado tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-resultado tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+}
+
+.panel-resultado {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-md);
+}
+
+.panel-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.panel-resultado__linea {
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+}
+
+.panel-resultado__linea--utilidad {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+}
+
+.panel-resultado__nota {
+  font-size: 0.82rem;
+  color: var(--azul-medio);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+  font-family: var(--fuente-base);
+}
+
+/* ==== ACTIVIDAD 2: UBICA LA CUENTA ==== */
+.tabla-decision {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-decision thead {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.tabla-decision th {
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-decision th.col-decision {
+  text-align: center;
+  width: 110px;
+}
+
+.tabla-decision td {
+  padding: 0.65rem 0.6rem;
+  border-bottom: 1px solid var(--azul-claro);
+  font-size: 0.88rem;
+}
+
+.tabla-decision td.col-decision { text-align: center; }
+
+.tabla-decision tbody tr:hover { background: var(--blanco-gris); }
+.tabla-decision tbody tr.fila-correcta { background: #d1fae5; }
+.tabla-decision tbody tr.fila-incorrecta { background: #fee2e2; }
+
+.tabla-decision tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-decision tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.decision-grupo {
+  display: inline-flex;
+  gap: 0.35rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.decision-boton {
+  border: 2px solid var(--azul-claro);
+  background: #fff;
+  color: var(--azul-medio);
+  padding: 0.28rem 0.6rem;
+  border-radius: var(--radio-md);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.decision-boton:hover {
+  border-color: var(--azul-brillante);
+  background: var(--cian-claro);
+  color: var(--azul-profundo);
+}
+
+.decision-boton--activo {
+  background: var(--azul-brillante);
+  color: #fff;
+  border-color: var(--azul-brillante);
+}
+
+.decision-boton--correcto {
+  background: var(--verde-exito) !important;
+  color: #fff !important;
+  border-color: var(--verde-exito) !important;
+}
+
+.decision-boton--incorrecto {
+  background: var(--rojo-error) !important;
+  color: #fff !important;
+  border-color: var(--rojo-error) !important;
+}
+
+.decision-boton:disabled { cursor: not-allowed; opacity: 0.85; }
+
+.feedback-actividad {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.9rem;
+  display: none;
+}
+
+.feedback-actividad.visible { display: block; }
+
+.feedback-actividad--correcto {
+  background: #d1fae5;
+  border-left: 4px solid var(--verde-exito);
+  color: #065f46;
+}
+
+.feedback-actividad--incorrecto {
+  background: #fee2e2;
+  border-left: 4px solid var(--rojo-error);
+  color: #991b1b;
+}
+
+/* ==== EXAMEN ==== */
+.examen-progreso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.examen-progreso__texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.examen-progreso__barra {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.examen-progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.reactivo {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.reactivo--correcto { border-color: var(--verde-exito); background: #d1fae5; }
+.reactivo--incorrecto { border-color: var(--rojo-error); background: #fee2e2; }
+
+.reactivo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--azul-brillante);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reactivo--correcto .reactivo__numero { background: var(--verde-exito); }
+.reactivo--incorrecto .reactivo__numero { background: var(--rojo-error); }
+
+.reactivo__pregunta {
+  font-size: 0.92rem;
+  margin-bottom: var(--espacio-md);
+  color: var(--azul-profundo);
+  line-height: 1.5;
+}
+
+.reactivo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+}
+
+.reactivo__opcion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.reactivo__opcion.correcta {
+  border-color: var(--verde-exito);
+  background: #d1fae5;
+  font-weight: 600;
+}
+.reactivo__opcion.incorrecta {
+  border-color: var(--rojo-error);
+  background: #fee2e2;
+  opacity: 0.85;
+}
+.reactivo__opcion.bloqueada { cursor: not-allowed; pointer-events: none; }
+
+.reactivo__opcion input { accent-color: var(--azul-brillante); }
+
+.reactivo__feedback {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.reactivo__feedback.visible { display: block; }
+
+.reactivo__feedback--correcto {
+  background: #d1fae5;
+  border-left: 4px solid var(--verde-exito);
+  color: #065f46;
+}
+
+.reactivo__feedback--incorrecto {
+  background: #fee2e2;
+  border-left: 4px solid var(--rojo-error);
+  color: #991b1b;
+}
+
+.resultado-examen {
+  background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+  color: #fff;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+  text-align: center;
+}
+
+.resultado-examen.visible { display: block; animation: fadeIn 0.5s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.resultado-examen__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.resultado-examen__porcentaje {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  line-height: 1;
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-examen__detalle {
+  font-size: 1rem;
+  margin-bottom: var(--espacio-md);
+  opacity: 0.9;
+}
+
+.resultado-examen__mensaje {
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.contenido-tab { display: none; }
+.contenido-tab--activo { display: block; }
+
+/* ==== MODAL ==== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11,30,58,0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  max-width: 650px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-lg);
+}
+
+.modal__header {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  position: sticky;
+  top: 0;
+}
+
+.modal__titulo { font-size: 1rem; font-weight: 700; }
+
+.modal__cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+.modal__cuerpo { padding: var(--espacio-lg); }
+
+.modal__cuerpo h3 {
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  margin-top: var(--espacio-md);
+}
+
+.modal__cuerpo h3:first-child { margin-top: 0; }
+
+.modal__cuerpo p {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.6;
+}
+
+.modal__cuerpo ul { margin-left: var(--espacio-lg); margin-bottom: var(--espacio-sm); }
+
+.modal__cuerpo li {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin-bottom: 0.3rem;
+}
+
+.modal__cuerpo strong { color: var(--azul-profundo); }
+
+@media (max-width: 768px) {
+  body { padding: var(--espacio-md); }
+  .header { padding: var(--espacio-md); }
+  .header__titulo { font-size: 1rem; }
+  .panel__cuerpo { padding: var(--espacio-md); }
+  .tab { font-size: 0.78rem; padding: 0.7rem 0.5rem; min-width: 140px; }
+  .resultado-examen__porcentaje { font-size: 3rem; }
+  .tabla-decision th.col-decision { width: 90px; }
+  .decision-boton { padding: 0.28rem 0.4rem; font-size: 0.65rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <header class="header">
+    <div>
+      <div class="header__titulo">Punto 2 — Complemento: Simulador, cuentas y examen</div>
+      <div class="header__subtitulo">Bicicletas del Norte, S.A. de C.V. — NIF C-4</div>
+    </div>
+    <div class="header__acciones">
+      <button class="boton boton--primario" onclick="App.cargarCaso()">Cargar caso</button>
+      <button class="boton boton--secundario" onclick="Modal.abrir()">¿Cómo funciona?</button>
+      <button class="boton boton--terciario" onclick="App.limpiar()">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab tab--activa" data-tab="simulador" onclick="App.cambiarTab('simulador')">Actividad 1: Simulador</button>
+    <button class="tab" data-tab="cuentas" onclick="App.cambiarTab('cuentas')">Actividad 2: Ubica la cuenta</button>
+    <button class="tab" data-tab="examen" onclick="App.cambiarTab('examen')">Examen final</button>
+  </div>
+
+  <!-- PESTAÑA SIMULADOR -->
+  <div class="contenido-tab contenido-tab--activo" id="tab-simulador">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 1 — Simulador de los 3 procedimientos</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Ajusta los valores del caso y observa cómo se comportan
+          los tres procedimientos (Global, Analítico y Perpetuos). Los tres llegan al mismo
+          resultado final, pero organizan la información de manera distinta.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Simulador.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="tabs" style="margin-bottom: var(--espacio-md); box-shadow: none; border-radius: var(--radio-md);">
+          <button class="tab tab--activa" data-sim="global" onclick="Simulador.cambiarProcedimiento('global')">Global</button>
+          <button class="tab" data-sim="analitico" onclick="Simulador.cambiarProcedimiento('analitico')">Analítico</button>
+          <button class="tab" data-sim="perpetuos" onclick="Simulador.cambiarProcedimiento('perpetuos')">Perpetuos</button>
+        </div>
+
+        <div class="grid-entradas">
+          <div class="campo">
+            <label class="campo__etiqueta">Inventario inicial (unidades)</label>
+            <input type="number" class="campo__input" id="s-inv-ini-u" value="100" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Costo unitario inicial ($)</label>
+            <input type="number" class="campo__input" id="s-inv-ini-c" value="1000" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Compras (unidades)</label>
+            <input type="number" class="campo__input" id="s-compra-u" value="50" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Costo unitario compra ($)</label>
+            <input type="number" class="campo__input" id="s-compra-c" value="1000" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Ventas (unidades)</label>
+            <input type="number" class="campo__input" id="s-venta-u" value="80" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Precio de venta ($)</label>
+            <input type="number" class="campo__input" id="s-venta-p" value="1800" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Inventario final físico (unidades)</label>
+            <input type="number" class="campo__input" id="s-inv-fin-u" value="70" oninput="Simulador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Costo unitario inventario final ($)</label>
+            <input type="number" class="campo__input" id="s-inv-fin-c" value="1000" oninput="Simulador.calcular()">
+          </div>
+        </div>
+
+        <div id="simulador-contenido"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA ACTIVIDAD 2 -->
+  <div class="contenido-tab" id="tab-cuentas">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 2 — Ubica cada cuenta en el procedimiento correcto</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Para cada cuenta contable, decide a qué procedimiento
+          de registro pertenece: <strong>Global</strong>, <strong>Analítico</strong>,
+          <strong>Perpetuos</strong> o <strong>Ninguno</strong>. Cada reinicio baraja el orden de las cuentas.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="CuentasProcedimiento.reiniciar()">
+            Reiniciar actividad
+          </button>
+          <button class="boton-accion boton-accion--finalizar" onclick="CuentasProcedimiento.verificar()" id="btnVerificarCuentas">
+            Verificar clasificación
+          </button>
+        </div>
+
+        <table class="tabla-decision">
+          <thead>
+            <tr>
+              <th>Cuenta contable</th>
+              <th class="col-decision">Global</th>
+              <th class="col-decision">Analítico</th>
+              <th class="col-decision">Perpetuos</th>
+              <th class="col-decision">Ninguno</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoCuentas"></tbody>
+        </table>
+
+        <div class="feedback-actividad" id="feedbackCuentas"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA EXAMEN -->
+  <div class="contenido-tab" id="tab-examen">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Examen final — 10 reactivos de opción múltiple</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada reactivo se califica en cuanto haces clic en una opción.
+          Después de responder, la opción correcta se marca en verde y la tuya (si es incorrecta)
+          en rojo. El reactivo queda bloqueado. Al responder el último, aparece automáticamente
+          tu <strong>calificación global</strong>. Cada reinicio genera un examen distinto.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Examen.reiniciar()">
+            Reiniciar examen
+          </button>
+        </div>
+
+        <div class="examen-progreso">
+          <div class="examen-progreso__texto" id="examenProgresoTexto">0 / 10 respondidas</div>
+          <div class="examen-progreso__barra">
+            <div class="examen-progreso__relleno" id="examenProgresoRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorExamen"></div>
+
+        <div class="resultado-examen" id="resultadoExamen">
+          <div class="resultado-examen__titulo">Calificación final</div>
+          <div class="resultado-examen__porcentaje" id="examenPorcentaje">0%</div>
+          <div class="resultado-examen__detalle" id="examenDetalle">0 aciertos de 10</div>
+          <div class="resultado-examen__mensaje" id="examenMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__titulo" id="modalTitulo">¿Cómo funciona el complemento?</div>
+      <button class="modal__cerrar" onclick="Modal.cerrar()">Cerrar</button>
+    </div>
+    <div class="modal__cuerpo" id="modalCuerpo"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ============================================================
+   ACTIVIDAD 1 — SIMULADOR DE LOS 3 PROCEDIMIENTOS
+   ============================================================ */
+const Simulador = {
+  procedimiento: 'global',
+
+  init() {
+    this.calcular();
+  },
+
+  reiniciar() {
+    document.getElementById('s-inv-ini-u').value = 100;
+    document.getElementById('s-inv-ini-c').value = 1000;
+    document.getElementById('s-compra-u').value = 50;
+    document.getElementById('s-compra-c').value = 1000;
+    document.getElementById('s-venta-u').value = 80;
+    document.getElementById('s-venta-p').value = 1800;
+    document.getElementById('s-inv-fin-u').value = 70;
+    document.getElementById('s-inv-fin-c').value = 1000;
+    this.calcular();
+  },
+
+  cambiarProcedimiento(p) {
+    this.procedimiento = p;
+    document.querySelectorAll('[data-sim]').forEach(t => {
+      t.classList.toggle('tab--activa', t.dataset.sim === p);
+    });
+    this.calcular();
+  },
+
+  leerNumero(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  },
+
+  calcular() {
+    const invIniU = this.leerNumero('s-inv-ini-u');
+    const invIniC = this.leerNumero('s-inv-ini-c');
+    const compraU = this.leerNumero('s-compra-u');
+    const compraC = this.leerNumero('s-compra-c');
+    const ventaU = this.leerNumero('s-venta-u');
+    const ventaP = this.leerNumero('s-venta-p');
+    const invFinU = this.leerNumero('s-inv-fin-u');
+    const invFinC = this.leerNumero('s-inv-fin-c');
+
+    const valorInvIni = invIniU * invIniC;
+    const valorCompra = compraU * compraC;
+    const valorVenta = ventaU * ventaP;
+    const valorInvFin = invFinU * invFinC;
+
+    const cont = document.getElementById('simulador-contenido');
+    cont.innerHTML = '';
+
+    if (this.procedimiento === 'global') {
+      this.renderGlobal(cont, valorInvIni, valorCompra, valorVenta, valorInvFin);
+    } else if (this.procedimiento === 'analitico') {
+      this.renderAnalitico(cont, valorInvIni, valorCompra, valorVenta, valorInvFin);
+    } else {
+      this.renderPerpetuos(cont, valorInvIni, valorCompra, valorVenta, invIniC);
+    }
+  },
+
+  renderGlobal(cont, valorInvIni, valorCompra, valorVenta, valorInvFin) {
+    const sumaDebe = valorInvIni + valorCompra;
+    const sumaHaber = valorVenta;
+    const saldoMixto = Math.abs(sumaDebe - sumaHaber);
+    const costoVentas = sumaDebe - valorInvFin;
+    const utilidadBruta = valorVenta - costoVentas;
+
+    cont.innerHTML = `
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">Cuenta Mercancías generales</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th class="monto">Debe (costo)</th>
+            <th class="monto">Haber (venta)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuenta">Inventario inicial</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Compras del periodo</td>
+            <td class="monto">${fmt(valorCompra)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ventas del periodo</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+          <tr class="fila-total">
+            <td>Sumas antes del ajuste</td>
+            <td class="monto">${fmt(sumaDebe)}</td>
+            <td class="monto">${fmt(sumaHaber)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Saldo mixto (antes del ajuste)</td>
+            <td class="monto">${fmt(saldoMixto)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ajuste por inventario final</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorInvFin)}</td>
+          </tr>
+          <tr class="fila-total">
+            <td>Saldo final (utilidad bruta)</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(utilidadBruta)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="panel-resultado">
+        <div class="panel-resultado__titulo">Resultado del Procedimiento Global</div>
+        <div class="panel-resultado__linea"><span>Costo de ventas</span><span>${fmt(costoVentas)}</span></div>
+        <div class="panel-resultado__linea"><span>Ventas netas</span><span>${fmt(valorVenta)}</span></div>
+        <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>UTILIDAD BRUTA</span><span>${fmt(utilidadBruta)}</span></div>
+        <div class="panel-resultado__linea"><span>Inventario final</span><span>${fmt(valorInvFin)}</span></div>
+        <div class="panel-resultado__nota">
+          El saldo mixto se convierte en utilidad bruta después de separar el inventario final
+          con el asiento de ajuste al cierre.
+        </div>
+      </div>
+    `;
+  },
+
+  renderAnalitico(cont, valorInvIni, valorCompra, valorVenta, valorInvFin) {
+    const costoVentas = valorInvIni + valorCompra - valorInvFin;
+    const utilidadBruta = valorVenta - costoVentas;
+
+    cont.innerHTML = `
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">Asientos y ajustes del Procedimiento Analítico</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Asiento / Concepto</th>
+            <th class="monto">Debe</th>
+            <th class="monto">Haber</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuenta-principal" colspan="3">1. Apertura</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Inventarios</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Capital social</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">2. Compras</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Compras</td>
+            <td class="monto">${fmt(valorCompra)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Bancos</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorCompra)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">3. Ventas</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Bancos</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ventas</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">A-1. Adición del inventario inicial a compras</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Compras</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Inventarios</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">A-2. Deducción del inventario final</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Inventarios</td>
+            <td class="monto">${fmt(valorInvFin)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Compras</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorInvFin)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">A-3. Traspaso del costo de ventas a Ventas</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ventas</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Compras</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">A-4. Traspaso de utilidad bruta a Pérdidas y ganancias</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ventas</td>
+            <td class="monto">${fmt(utilidadBruta)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Pérdidas y ganancias</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(utilidadBruta)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="panel-resultado">
+        <div class="panel-resultado__titulo">Resultado del Procedimiento Analítico</div>
+        <div class="panel-resultado__linea"><span>Costo de ventas</span><span>${fmt(costoVentas)}</span></div>
+        <div class="panel-resultado__linea"><span>Ventas netas</span><span>${fmt(valorVenta)}</span></div>
+        <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>UTILIDAD BRUTA</span><span>${fmt(utilidadBruta)}</span></div>
+        <div class="panel-resultado__linea"><span>Inventario final</span><span>${fmt(valorInvFin)}</span></div>
+        <div class="panel-resultado__nota">
+          Los cuatro asientos de ajuste al cierre convierten las cuentas transitorias en costo
+          de ventas y utilidad bruta.
+        </div>
+      </div>
+    `;
+  },
+
+  renderPerpetuos(cont, valorInvIni, valorCompra, valorVenta, costoUnitarioSalida) {
+    const ventaU = this.leerNumero('s-venta-u');
+    const costoVentas = ventaU * costoUnitarioSalida;
+
+    const almacenDebe = valorInvIni + valorCompra;
+    const almacenHaber = costoVentas;
+    const almacenSaldo = almacenDebe - almacenHaber;
+
+    const utilidadBruta = valorVenta - costoVentas;
+
+    cont.innerHTML = `
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">Asientos del Procedimiento de Perpetuos</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Asiento / Concepto</th>
+            <th class="monto">Debe</th>
+            <th class="monto">Haber</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuenta-principal" colspan="3">1. Apertura</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Almacén</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Capital social</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorInvIni)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">2. Compra del periodo</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Almacén</td>
+            <td class="monto">${fmt(valorCompra)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Bancos</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorCompra)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">3a. Venta a precio comercial</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Bancos</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ventas</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta-principal" colspan="3">3b. Salida de mercancía a costo</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Costo de ventas</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+            <td class="monto">—</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Almacén</td>
+            <td class="monto">—</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-md) 0;">Saldos de Mayor</h3>
+      <table class="tabla-resultado">
+        <thead>
+          <tr>
+            <th>Cuenta</th>
+            <th class="monto">Debe</th>
+            <th class="monto">Haber</th>
+            <th class="monto">Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuenta">Almacén</td>
+            <td class="monto">${fmt(almacenDebe)}</td>
+            <td class="monto">${fmt(almacenHaber)}</td>
+            <td class="monto">${fmt(almacenSaldo)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Costo de ventas</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+            <td class="monto">$0.00</td>
+            <td class="monto">${fmt(costoVentas)}</td>
+          </tr>
+          <tr>
+            <td class="cuenta">Ventas</td>
+            <td class="monto">$0.00</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+            <td class="monto">${fmt(valorVenta)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="panel-resultado">
+        <div class="panel-resultado__titulo">Resultado del Procedimiento de Perpetuos</div>
+        <div class="panel-resultado__linea"><span>Costo de ventas (al momento)</span><span>${fmt(costoVentas)}</span></div>
+        <div class="panel-resultado__linea"><span>Ventas netas</span><span>${fmt(valorVenta)}</span></div>
+        <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>UTILIDAD BRUTA</span><span>${fmt(utilidadBruta)}</span></div>
+        <div class="panel-resultado__linea"><span>Inventario final (en libros)</span><span>${fmt(almacenSaldo)}</span></div>
+        <div class="panel-resultado__nota">
+          El inventario y el costo de ventas se conocen en cualquier momento, sin esperar
+          al cierre.
+        </div>
+      </div>
+    `;
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 2 — UBICA LA CUENTA EN EL PROCEDIMIENTO
+   ============================================================ */
+const CuentasPunto2 = [
+  { nombre: 'Mercancías generales',                  correcta: 'global',     explicacion: 'Es la única cuenta del Procedimiento Global.' },
+  { nombre: 'Inventarios',                           correcta: 'analitico',  explicacion: 'Cuenta del Procedimiento Analítico; registra el saldo de mercancía al inicio y al final.' },
+  { nombre: 'Compras',                               correcta: 'analitico',  explicacion: 'Cuenta del Procedimiento Analítico; acumula las adquisiciones del periodo.' },
+  { nombre: 'Gastos de compra',                      correcta: 'analitico',  explicacion: 'Cuenta del Analítico; registra fletes, acarreos y seguros de compra.' },
+  { nombre: 'Almacén',                               correcta: 'perpetuos',  explicacion: 'Cuenta de activo del Procedimiento de Perpetuos; se actualiza en cada operación.' },
+  { nombre: 'Costo de ventas',                       correcta: 'perpetuos',  explicacion: 'Cuenta de costo del Procedimiento de Perpetuos; acumula el costo de lo vendido al momento.' },
+  { nombre: 'Ventas',                                correcta: 'perpetuos',  explicacion: 'Cuenta de ingresos del Procedimiento de Perpetuos; registra las ventas netas.' },
+  { nombre: 'Capital social',                        correcta: 'ninguno',    explicacion: 'No es una cuenta de inventarios; es una cuenta de capital contable que aplica a cualquier procedimiento.' },
+  { nombre: 'Bancos',                                correcta: 'ninguno',    explicacion: 'No es una cuenta de inventarios; es una cuenta de activo circulante que aplica a cualquier procedimiento.' },
+  { nombre: 'Mobiliario y Equipo de Oficina',        correcta: 'ninguno',    explicacion: 'No es una cuenta de inventarios; es una cuenta de activo fijo que aplica a cualquier procedimiento.' }
+];
+
+const CuentasProcedimiento = {
+  cuentas: [],
+  verificada: false,
+
+  init() {
+    this.cuentas = shuffle(CuentasPunto2).map(c => ({
+      nombre: c.nombre,
+      correcta: c.correcta,
+      explicacion: c.explicacion,
+      eleccion: null
+    }));
+    this.verificada = false;
+    this.render();
+    this.ocultarFeedback();
+    document.getElementById('btnVerificarCuentas').style.display = 'inline-flex';
+  },
+
+  reiniciar() {
+    this.init();
+  },
+
+  render() {
+    const tbody = document.getElementById('cuerpoCuentas');
+    tbody.innerHTML = '';
+
+    this.cuentas.forEach((c, i) => {
+      const tr = document.createElement('tr');
+      let clases = '';
+      if (this.verificada) {
+        clases = (c.eleccion === c.correcta) ? 'fila-correcta' : 'fila-incorrecta';
+      }
+      tr.className = clases;
+
+      const opciones = ['global', 'analitico', 'perpetuos', 'ninguno'];
+      const celdas = opciones.map(op => {
+        const activo = c.eleccion === op ? 'decision-boton--activo' : '';
+        let extra = '';
+        if (this.verificada) {
+          if (op === c.correcta) extra = 'decision-boton--correcto';
+          if (c.eleccion === op && c.eleccion !== c.correcta) extra = 'decision-boton--incorrecto';
+        }
+        const disabled = this.verificada ? 'disabled' : '';
+        return `
+          <td class="col-decision">
+            <div class="decision-grupo">
+              <button class="decision-boton ${activo} ${extra}" ${disabled} onclick="CuentasProcedimiento.elegir(${i}, '${op}')">${op === 'ninguno' ? '—' : ''}</button>
+            </div>
+          </td>
+        `;
+      }).join('');
+
+      tr.innerHTML = `<td>${c.nombre}</td>${celdas}`;
+      tbody.appendChild(tr);
+    });
+  },
+
+  elegir(i, opcion) {
+    if (this.verificada) return;
+    this.cuentas[i].eleccion = opcion;
+    this.render();
+  },
+
+  verificar() {
+    const sinDecision = this.cuentas.filter(c => c.eleccion === null).length;
+    if (sinDecision > 0) {
+      alert(`Faltan ${sinDecision} cuenta(s) por clasificar. Asigna un procedimiento a cada una antes de verificar.`);
+      return;
+    }
+
+    this.verificada = true;
+    this.render();
+
+    const aciertos = this.cuentas.filter(c => c.eleccion === c.correcta).length;
+    const total = this.cuentas.length;
+    const fb = document.getElementById('feedbackCuentas');
+    fb.className = 'feedback-actividad visible ' + (aciertos === total ? 'feedback-actividad--correcto' : 'feedback-actividad--incorrecto');
+
+    let mensaje = '';
+    if (aciertos === total) {
+      mensaje = `¡Excelente! Ubicaste correctamente las ${total} cuentas en su procedimiento.`;
+    } else {
+      mensaje = `Acertaste ${aciertos} de ${total} cuentas. Las filas en rojo indican tus errores. Repasa la cuenta específica y a qué procedimiento pertenece.`;
+    }
+    fb.innerHTML = mensaje;
+
+    document.getElementById('btnVerificarCuentas').style.display = 'none';
+  },
+
+  ocultarFeedback() {
+    const fb = document.getElementById('feedbackCuentas');
+    fb.className = 'feedback-actividad';
+    fb.innerHTML = '';
+  }
+};
+
+/* ============================================================
+   EXAMEN — banco de 20, calificación inmediata por reactivo
+   ============================================================ */
+const BancoExamen = [
+  { pregunta: '¿Cuántos procedimientos de registro contable reconoce la práctica contable?',
+    opciones: [
+      { texto: 'Dos: periódico y permanente.', correcta: false },
+      { texto: 'Tres: Global, Analítico y Perpetuos.', correcta: true },
+      { texto: 'Cuatro: Global, Analítico, Perpetuos y Mixto.', correcta: false },
+      { texto: 'Uno: solo el de Perpetuos.', correcta: false }
+    ],
+    explicacion: 'La práctica contable reconoce tres procedimientos: Global, Analítico y Perpetuos.'
+  },
+  { pregunta: 'El Procedimiento Global se caracteriza por usar una sola cuenta llamada...',
+    opciones: [
+      { texto: 'Almacén.', correcta: false },
+      { texto: 'Mercancías generales.', correcta: true },
+      { texto: 'Compras.', correcta: false },
+      { texto: 'Costo de ventas.', correcta: false }
+    ],
+    explicacion: 'El Procedimiento Global usa la cuenta Mercancías generales.'
+  },
+  { pregunta: 'El saldo de la cuenta Mercancías generales antes del ajuste es mixto porque...',
+    opciones: [
+      { texto: 'Combina cargos a precio de costo con abonos a precio de venta.', correcta: true },
+      { texto: 'Solo registra compras del periodo.', correcta: false },
+      { texto: 'Solo registra ventas del periodo.', correcta: false },
+      { texto: 'No tiene saldo.', correcta: false }
+    ],
+    explicacion: 'El saldo es mixto porque combina cargos a costo con abonos a precio de venta.'
+  },
+  { pregunta: 'El Procedimiento Analítico se caracteriza por...',
+    opciones: [
+      { texto: 'Usar una sola cuenta para todo el movimiento.', correcta: false },
+      { texto: 'Abrir una cuenta particular para cada concepto del movimiento.', correcta: true },
+      { texto: 'No requerir ajustes al cierre.', correcta: false },
+      { texto: 'Registrar solo las compras.', correcta: false }
+    ],
+    explicacion: 'El Analítico abre una cuenta particular para cada concepto.'
+  },
+  { pregunta: '¿Cuántos asientos de ajuste requiere el Procedimiento Analítico al cierre?',
+    opciones: [
+      { texto: 'Uno.', correcta: false },
+      { texto: 'Dos.', correcta: false },
+      { texto: 'Cuatro.', correcta: true },
+      { texto: 'Ninguno.', correcta: false }
+    ],
+    explicacion: 'El Analítico requiere cuatro asientos de ajuste: A-1, A-2, A-3 y A-4.'
+  },
+  { pregunta: 'El Procedimiento de Perpetuos se caracteriza porque...',
+    opciones: [
+      { texto: 'Solo registra las ventas al cierre.', correcta: false },
+      { texto: 'Registra simultáneamente la venta y su costo.', correcta: true },
+      { texto: 'Usa la cuenta Mercancías generales.', correcta: false },
+      { texto: 'No requiere recuento físico nunca.', correcta: false }
+    ],
+    explicacion: 'El Procedimiento de Perpetuos registra venta y costo en asientos simultáneos.'
+  },
+  { pregunta: '¿Cuáles son las tres cuentas principales del Procedimiento de Perpetuos?',
+    opciones: [
+      { texto: 'Mercancías generales, Ventas y Capital.', correcta: false },
+      { texto: 'Almacén, Costo de ventas y Ventas.', correcta: true },
+      { texto: 'Inventarios, Compras y Ventas.', correcta: false },
+      { texto: 'Bancos, Almacén y Proveedores.', correcta: false }
+    ],
+    explicacion: 'Las tres cuentas son Almacén, Costo de ventas y Ventas.'
+  },
+  { pregunta: 'En el Procedimiento Global, ¿cómo se determina el costo de ventas?',
+    opciones: [
+      { texto: 'Al momento de cada venta.', correcta: false },
+      { texto: 'Al cierre, por diferencia entre las sumas del Debe y del Haber ajustadas.', correcta: true },
+      { texto: 'Por el saldo inicial del inventario.', correcta: false },
+      { texto: 'No se determina.', correcta: false }
+    ],
+    explicacion: 'En el Global, el costo de ventas se determina al cierre por diferencia.'
+  },
+  { pregunta: 'En el Procedimiento de Perpetuos, ¿cuándo se determina el costo de ventas?',
+    opciones: [
+      { texto: 'Al cierre del ejercicio.', correcta: false },
+      { texto: 'Al momento de cada venta.', correcta: true },
+      { texto: 'Al inicio del ejercicio.', correcta: false },
+      { texto: 'Solo cuando hay pérdidas.', correcta: false }
+    ],
+    explicacion: 'En Perpetuos, el costo se registra en el asiento simultáneo de cada venta.'
+  },
+  { pregunta: '¿Cuál procedimiento se considera periódico?',
+    opciones: [
+      { texto: 'Solo el Global.', correcta: false },
+      { texto: 'El Global y el Analítico.', correcta: true },
+      { texto: 'Solo el de Perpetuos.', correcta: false },
+      { texto: 'Ninguno.', correcta: false }
+    ],
+    explicacion: 'El Global y el Analítico son periódicos: el costo de ventas se calcula al cierre.'
+  },
+  { pregunta: 'En el caso, ¿cuál es el resultado final común a los tres procedimientos?',
+    opciones: [
+      { texto: 'Costo de ventas $126,000, utilidad $122,000.', correcta: false },
+      { texto: 'Costo de ventas $80,000, utilidad bruta $64,000 e inventario final $70,000.', correcta: true },
+      { texto: 'Costo de ventas $136,800, utilidad $111,200.', correcta: false },
+      { texto: 'Cada procedimiento da un resultado distinto.', correcta: false }
+    ],
+    explicacion: 'Los tres procedimientos llegan al mismo resultado: costo $80,000, utilidad $64,000, inventario $70,000.'
+  },
+  { pregunta: '¿Cuánto vale el inventario final del caso?',
+    opciones: [
+      { texto: '$80,000.00', correcta: false },
+      { texto: '$70,000.00', correcta: true },
+      { texto: '$64,000.00', correcta: false },
+      { texto: '$100,000.00', correcta: false }
+    ],
+    explicacion: 'El inventario final del caso es de $70,000 (70 unidades × $1,000).'
+  },
+  { pregunta: '¿Cuál es la utilidad bruta del caso?',
+    opciones: [
+      { texto: '$80,000.00', correcta: false },
+      { texto: '$64,000.00', correcta: true },
+      { texto: '$122,000.00', correcta: false },
+      { texto: '$144,000.00', correcta: false }
+    ],
+    explicacion: 'La utilidad bruta es Ventas $144,000 − Costo de ventas $80,000 = $64,000.'
+  },
+  { pregunta: 'En el Procedimiento Global, la cuenta que se abona para separar el inventario final es...',
+    opciones: [
+      { texto: 'Almacén.', correcta: false },
+      { texto: 'Inventarios.', correcta: false },
+      { texto: 'Mercancías generales.', correcta: true },
+      { texto: 'Ventas.', correcta: false }
+    ],
+    explicacion: 'En el Global se abona Mercancías generales por el valor del inventario final.'
+  },
+  { pregunta: 'En el Procedimiento Analítico, ¿qué asiento adiciona el inventario inicial a las compras?',
+    opciones: [
+      { texto: 'A-1: cargo a Compras y abono a Inventarios.', correcta: true },
+      { texto: 'A-2: cargo a Inventarios y abono a Compras.', correcta: false },
+      { texto: 'A-3: cargo a Ventas y abono a Compras.', correcta: false },
+      { texto: 'A-4: cargo a Ventas y abono a Pérdidas y ganancias.', correcta: false }
+    ],
+    explicacion: 'El asiento A-1 carga a Compras y abona a Inventarios por el inventario inicial.'
+  },
+  { pregunta: 'En el Procedimiento de Perpetuos, ¿qué asiento registra la salida de mercancía al costo real?',
+    opciones: [
+      { texto: 'Cargo a Bancos y abono a Ventas.', correcta: false },
+      { texto: 'Cargo a Costo de ventas y abono a Almacén.', correcta: true },
+      { texto: 'Cargo a Almacén y abono a Costo de ventas.', correcta: false },
+      { texto: 'Cargo a Ventas y abono a Costo de ventas.', correcta: false }
+    ],
+    explicacion: 'El asiento 3b carga a Costo de ventas y abona a Almacén por el costo real de lo vendido.'
+  },
+  { pregunta: '¿Cuál es la principal ventaja del Procedimiento de Perpetuos?',
+    opciones: [
+      { texto: 'Es el más económico de implementar.', correcta: false },
+      { texto: 'Permite conocer el inventario y el costo de ventas en cualquier momento.', correcta: true },
+      { texto: 'No requiere recuento físico.', correcta: false },
+      { texto: 'No requiere disciplina en el registro.', correcta: false }
+    ],
+    explicacion: 'La ventaja principal de Perpetuos es la información en tiempo real.'
+  },
+  { pregunta: '¿Cuál es la principal limitación del Procedimiento Global?',
+    opciones: [
+      { texto: 'Es muy costoso de implementar.', correcta: false },
+      { texto: 'Su saldo es mixto y no permite detectar robos o mermas con rapidez.', correcta: true },
+      { texto: 'Requiere demasiadas cuentas.', correcta: false },
+      { texto: 'No permite registrar compras.', correcta: false }
+    ],
+    explicacion: 'El Global tiene saldo mixto y no detecta robos o mermas con rapidez.'
+  },
+  { pregunta: 'En el caso, ¿cuál es el total de mercancías disponibles (inventario inicial + compras)?',
+    opciones: [
+      { texto: '$100,000.00', correcta: false },
+      { texto: '$150,000.00', correcta: true },
+      { texto: '$80,000.00', correcta: false },
+      { texto: '$144,000.00', correcta: false }
+    ],
+    explicacion: 'Total de mercancías = $100,000 (inventario inicial) + $50,000 (compras) = $150,000.'
+  }
+];
+
+const Examen = {
+  reactivos: [],
+  TOTAL: 10,
+  aciertos: 0,
+  respondidas: 0,
+
+  init() {
+    const seleccionados = shuffle(BancoExamen).slice(0, this.TOTAL);
+    this.reactivos = seleccionados.map(r => ({
+      pregunta: r.pregunta,
+      explicacion: r.explicacion,
+      opciones: shuffle(r.opciones),
+      eleccion: null,
+      verificada: false
+    }));
+    this.aciertos = 0;
+    this.respondidas = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() {
+    this.init();
+  },
+
+  render() {
+    const cont = document.getElementById('contenedorExamen');
+    cont.innerHTML = '';
+
+    this.reactivos.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reactivo';
+      if (r.verificada) {
+        const correcta = r.eleccion !== null && r.opciones[r.eleccion].correcta;
+        div.classList.add(correcta ? 'reactivo--correcto' : 'reactivo--incorrecto');
+      }
+
+      let html = `
+        <div class="reactivo__titulo">
+          <span class="reactivo__numero">${i + 1}</span>
+          Reactivo ${i + 1} de ${this.reactivos.length}
+        </div>
+        <div class="reactivo__pregunta">${r.pregunta}</div>
+        <div class="reactivo__opciones">
+      `;
+
+      r.opciones.forEach((op, j) => {
+        const clases = ['reactivo__opcion'];
+        if (r.verificada) {
+          clases.push('bloqueada');
+          if (op.correcta) clases.push('correcta');
+          else if (r.eleccion === j) clases.push('incorrecta');
+        }
+        const checked = r.eleccion === j ? 'checked' : '';
+        html += `
+          <label class="${clases.join(' ')}">
+            <input type="radio" name="examen-${i}" value="${j}" ${checked} ${r.verificada ? 'disabled' : ''} onchange="Examen.responder(${i}, ${j})">
+            ${op.texto}
+          </label>
+        `;
+      });
+
+      html += `</div>`;
+
+      html += `<div class="reactivo__feedback ${r.verificada ? 'visible' : ''} ${r.verificada ? (r.opciones[r.eleccion].correcta ? 'reactivo__feedback--correcto' : 'reactivo__feedback--incorrecto') : ''}">`;
+      if (r.verificada) {
+        if (r.opciones[r.eleccion].correcta) {
+          html += `<strong>¡Correcto!</strong>`;
+        } else {
+          html += `<strong>Incorrecto.</strong> La respuesta correcta está marcada en verde.`;
+        }
+        html += `<br><br><strong>Explicación:</strong> ${r.explicacion}`;
+      }
+      html += `</div>`;
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const r = this.reactivos[i];
+    if (r.verificada) return;
+
+    r.eleccion = j;
+    r.verificada = true;
+
+    if (r.opciones[j].correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.TOTAL) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('examenProgresoTexto').textContent = this.respondidas + ' / ' + this.TOTAL + ' respondidas';
+    const pct = (this.respondidas / this.TOTAL) * 100;
+    document.getElementById('examenProgresoRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const porcentaje = Math.round((this.aciertos / this.TOTAL) * 100);
+
+    const cont = document.getElementById('resultadoExamen');
+    cont.classList.add('visible');
+    document.getElementById('examenPorcentaje').textContent = porcentaje + '%';
+    document.getElementById('examenDetalle').textContent = this.aciertos + ' aciertos de ' + this.TOTAL + ' reactivos';
+
+    let mensaje = '';
+    if (porcentaje >= 90) {
+      mensaje = '¡Excelente! Dominas los tres procedimientos de registro contable. Estás lista para avanzar al Punto 3.';
+    } else if (porcentaje >= 70) {
+      mensaje = 'Buen trabajo. Tienes una base sólida. Repasa los reactivos donde fallaste para afinar los conceptos.';
+    } else if (porcentaje >= 50) {
+      mensaje = 'Aprobaste con lo mínimo. Te recomendamos volver a la presentación del Punto 2 y repasar los conceptos antes de continuar.';
+    } else {
+      mensaje = 'Es necesario reforzar los conceptos. Repasa la presentación del Punto 2 y vuelve a intentar el examen.';
+    }
+    document.getElementById('examenMensaje').textContent = mensaje;
+
+    setTimeout(() => {
+      cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoExamen').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  tabActiva: 'simulador',
+
+  cargarCaso() {
+    Simulador.reiniciar();
+    CuentasProcedimiento.reiniciar();
+    Examen.reiniciar();
+  },
+
+  limpiar() {
+    Simulador.reiniciar();
+    CuentasProcedimiento.reiniciar();
+    Examen.reiniciar();
+  },
+
+  cambiarTab(tab) {
+    this.tabActiva = tab;
+    document.querySelectorAll('.tabs > .tab').forEach(t => {
+      if (t.dataset.tab) {
+        t.classList.toggle('tab--activa', t.dataset.tab === tab);
+      }
+    });
+    document.querySelectorAll('.contenido-tab').forEach(c => {
+      c.classList.toggle('contenido-tab--activo', c.id === 'tab-' + tab);
+    });
+  }
+};
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+const Modal = {
+  abrir() {
+    const tabActiva = App.tabActiva;
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    if (tabActiva === 'simulador') {
+      titulo.textContent = '¿Cómo funciona el simulador?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Comparar los tres procedimientos de registro contable (Global, Analítico y Perpetuos)
+        con los mismos datos, para verificar que llegan al mismo resultado final.</p>
+        <h3>Pestañas internas</h3>
+        <ul>
+          <li><strong>Global:</strong> una sola cuenta <em>Mercancías generales</em>. Saldo mixto hasta el cierre.</li>
+          <li><strong>Analítico:</strong> cuentas separadas (Inventarios, Compras, Ventas). Cuatro asientos de ajuste al cierre.</li>
+          <li><strong>Perpetuos:</strong> tres cuentas (Almacén, Costo de ventas, Ventas). Doble asiento por venta.</li>
+        </ul>
+        <h3>Cifras del caso</h3>
+        <ul>
+          <li>Inventario inicial: 100 u. × $1,000 = $100,000</li>
+          <li>Compras: 50 u. × $1,000 = $50,000</li>
+          <li>Ventas: 80 u. × $1,800 = $144,000</li>
+          <li>Inventario final: 70 u. × $1,000 = $70,000</li>
+        </ul>
+        <p><strong>Resultado esperado (los tres):</strong> costo $80,000, utilidad $64,000, inventario final $70,000.</p>
+      `;
+    } else if (tabActiva === 'cuentas') {
+      titulo.textContent = '¿Cómo funciona la actividad "Ubica la cuenta"?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Decidir a qué procedimiento pertenece cada cuenta contable: Global, Analítico,
+        Perpetuos o Ninguno.</p>
+        <h3>Reglas</h3>
+        <ul>
+          <li><strong>Global:</strong> solo la cuenta <em>Mercancías generales</em>.</li>
+          <li><strong>Analítico:</strong> Inventarios, Compras, Gastos de compra, Devoluciones, Ventas.</li>
+          <li><strong>Perpetuos:</strong> Almacén, Costo de ventas, Ventas (a precio de venta).</li>
+          <li><strong>Ninguno:</strong> cuentas que no son de inventarios (Bancos, Capital social, Mobiliario).</li>
+        </ul>
+        <h3>Cómo usar la actividad</h3>
+        <ul>
+          <li>Para cada cuenta, elige uno de los cuatro botones.</li>
+          <li>Cuando termines, presiona <strong>Verificar clasificación</strong>.</li>
+          <li>Cada reinicio baraja el orden de las cuentas.</li>
+        </ul>
+      `;
+    } else {
+      titulo.textContent = '¿Cómo funciona el examen final?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Evaluar el dominio del Punto 2 con calificación inmediata.</p>
+        <h3>Estructura</h3>
+        <ul>
+          <li><strong>10 reactivos</strong> seleccionados al azar de un banco de 20.</li>
+          <li>Se <strong>aleatoriza</strong> el orden de los reactivos y de las opciones.</li>
+          <li>Cada reactivo tiene <strong>4 opciones</strong>, solo una correcta.</li>
+        </ul>
+        <h3>Calificación inmediata</h3>
+        <ul>
+          <li>Al hacer clic en una opción, el reactivo se califica al instante.</li>
+          <li>La opción correcta se marca en verde; tu elección incorrecta en rojo.</li>
+          <li>El reactivo queda bloqueado.</li>
+          <li>Al responder el último reactivo, aparece tu <strong>calificación en %</strong>.</li>
+        </ul>
+      `;
+    }
+
+    overlay.classList.add('visible');
+  },
+
+  cerrar() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+  }
+};
+
+document.getElementById('modalOverlay').onclick = (e) => {
+  if (e.target.id === 'modalOverlay') Modal.cerrar();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Modal.cerrar();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  Simulador.init();
+  CuentasProcedimiento.init();
+  Examen.init();
+});
+</script>
+
+</body>
+</html>

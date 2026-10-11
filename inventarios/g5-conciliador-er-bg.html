@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 5 — Complemento: Conciliador ER ↔ BG y examen | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: var(--espacio-lg);
+}
+
+.contenedor { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--sombra-lg);
+  flex-wrap: wrap;
+}
+
+.header__titulo { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.header__subtitulo { font-size: 0.8rem; opacity: 0.8; font-weight: 400; }
+.header__acciones { display: flex; gap: var(--espacio-sm); flex-wrap: wrap; }
+
+.boton {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.boton--primario { background: var(--azul-brillante); color: #fff; }
+.boton--primario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--secundario { background: transparent; color: #fff; border: 2px solid var(--cian); }
+.boton--secundario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--terciario { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.boton--terciario:hover { background: rgba(255,255,255,0.1); }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  min-width: 200px;
+}
+
+.tab:hover { background: var(--cian-claro); }
+.tab--activa {
+  color: var(--azul-profundo);
+  border-bottom-color: var(--azul-brillante);
+  background: var(--azul-claro);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  overflow: hidden;
+}
+
+.panel__header {
+  background: var(--azul-medio);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.panel__cuerpo { padding: var(--espacio-lg); }
+
+.instruccion {
+  background: var(--cian-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  font-size: 0.9rem;
+}
+
+.instruccion strong { color: var(--azul-profundo); }
+
+.barra-acciones {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-accion {
+  background: var(--azul-brillante);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boton-accion:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton-accion--reiniciar { background: var(--ambar); color: #fff; }
+.boton-accion--reiniciar:hover { background: #d97706; color: #fff; }
+
+.aviso {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: var(--espacio-md);
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.aviso.visible { display: block; }
+
+.aviso--error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid var(--rojo-error);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.grid-entradas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.campo { display: flex; flex-direction: column; gap: var(--espacio-xs); }
+
+.campo__etiqueta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.campo__input {
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.campo__input:focus { outline: none; border-color: var(--azul-brillante); }
+
+.campo__input--error {
+  border-color: var(--rojo-error);
+  background: #fef2f2;
+}
+
+.campo__ayuda {
+  font-size: 0.72rem;
+  color: var(--azul-medio);
+  font-style: italic;
+}
+
+.tabla-conciliacion {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  margin-bottom: var(--espacio-md);
+}
+
+.tabla-conciliacion thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-conciliacion th {
+  padding: 0.65rem 0.5rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-conciliacion th.monto { text-align: right; }
+
+.tabla-conciliacion td {
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid var(--azul-claro);
+}
+
+.tabla-conciliacion td.monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-conciliacion tbody tr:hover { background: var(--blanco-gris); }
+
+.tabla-conciliacion .concepto { font-weight: 500; }
+
+.tabla-conciliacion .concepto-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  background: var(--cian-claro);
+}
+
+.tabla-conciliacion tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-conciliacion tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+}
+
+.tabla-conciliacion tbody tr.fila-punto-contacto {
+  background: #fef3c7;
+  font-weight: 700;
+}
+
+.ayuda-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--azul-brillante);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 0.4rem;
+  border: none;
+  font-family: var(--fuente-base);
+  transition: background 0.2s;
+  vertical-align: middle;
+}
+
+.ayuda-icono:hover {
+  background: var(--cian);
+  color: var(--azul-profundo);
+}
+
+.panel-resultado {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-md);
+}
+
+.panel-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.panel-resultado__linea {
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+}
+
+.panel-resultado__linea--exito {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--verde-exito);
+  color: #065f46;
+}
+
+.panel-resultado__linea--error {
+  font-size: 1rem;
+  font-weight: 700;
+  background: #fee2e2;
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--rojo-error);
+  color: #991b1b;
+}
+
+.panel-resultado__nota {
+  font-size: 0.82rem;
+  color: var(--azul-medio);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+  font-family: var(--fuente-base);
+}
+
+.desglose-compacto {
+  margin-top: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.desglose-compacto__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  padding-bottom: var(--espacio-xs);
+  border-bottom: 2px solid var(--azul-brillante);
+}
+
+.desglose-linea {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.88rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--azul-claro);
+  flex-wrap: wrap;
+}
+
+.desglose-linea:last-child { border-bottom: none; }
+
+.desglose-linea__etiqueta {
+  font-family: var(--fuente-base);
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+  min-width: 180px;
+}
+
+.desglose-linea__calculo {
+  color: var(--azul-medio);
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.desglose-linea__total {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+}
+
+.desglose-linea--total {
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  border-bottom: none;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+  padding: 0.6rem 0.75rem;
+}
+
+.desglose-linea--total .desglose-linea__total { font-size: 0.95rem; }
+
+.pregunta-ubicacion {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.pregunta-ubicacion--correcta {
+  border-color: var(--verde-exito);
+  background: #f0fdf4;
+}
+
+.pregunta-ubicacion--incorrecta {
+  border-color: var(--rojo-error);
+  background: #fef2f2;
+}
+
+.pregunta-ubicacion__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.pregunta-ubicacion__texto {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-md);
+}
+
+.opciones-ubicacion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--espacio-sm);
+}
+
+.opcion-ubicacion {
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  font-family: var(--fuente-base);
+  text-align: left;
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.opcion-ubicacion:hover {
+  border-color: var(--azul-brillante);
+  background: var(--cian-claro);
+}
+
+.opcion-ubicacion--correcta {
+  border-color: var(--verde-exito);
+  background: #d1fae5;
+  font-weight: 700;
+}
+
+.opcion-ubicacion--incorrecta {
+  border-color: var(--rojo-error);
+  background: #fee2e2;
+  font-weight: 700;
+}
+
+.opcion-ubicacion--bloqueada {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.feedback-ubicacion {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.feedback-ubicacion.visible { display: block; }
+
+.feedback-ubicacion--correcto {
+  background: #d1fae5;
+  border-left: 4px solid var(--verde-exito);
+  color: #065f46;
+}
+
+.feedback-ubicacion--incorrecto {
+  background: #fee2e2;
+  border-left: 4px solid var(--rojo-error);
+  color: #991b1b;
+}
+
+.progreso-actividad {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.progreso-actividad__texto {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+}
+
+.progreso-actividad__barra {
+  flex: 1;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progreso-actividad__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.resultado-actividad {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+}
+
+.resultado-actividad.visible { display: block; }
+
+.resultado-actividad__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-actividad__puntaje {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-actividad__mensaje {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  line-height: 1.5;
+}
+
+.examen-progreso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.examen-progreso__texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.examen-progreso__barra {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.examen-progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.reactivo {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.reactivo--correcto { border-color: var(--verde-exito); background: #d1fae5; }
+.reactivo--incorrecto { border-color: var(--rojo-error); background: #fee2e2; }
+
+.reactivo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--azul-brillante);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reactivo--correcto .reactivo__numero { background: var(--verde-exito); }
+.reactivo--incorrecto .reactivo__numero { background: var(--rojo-error); }
+
+.reactivo__pregunta {
+  font-size: 0.92rem;
+  margin-bottom: var(--espacio-md);
+  color: var(--azul-profundo);
+  line-height: 1.5;
+}
+
+.reactivo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+}
+
+.reactivo__opcion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.reactivo__opcion.correcta { border-color: var(--verde-exito); background: #d1fae5; font-weight: 600; }
+.reactivo__opcion.incorrecta { border-color: var(--rojo-error); background: #fee2e2; opacity: 0.85; }
+.reactivo__opcion.bloqueada { cursor: not-allowed; pointer-events: none; }
+.reactivo__opcion input { accent-color: var(--azul-brillante); }
+
+.reactivo__feedback {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.reactivo__feedback.visible { display: block; }
+.reactivo__feedback--correcto { background: #d1fae5; border-left: 4px solid var(--verde-exito); color: #065f46; }
+.reactivo__feedback--incorrecto { background: #fee2e2; border-left: 4px solid var(--rojo-error); color: #991b1b; }
+
+.resultado-examen {
+  background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+  color: #fff;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+  text-align: center;
+}
+
+.resultado-examen.visible { display: block; animation: fadeIn 0.5s ease; }
+
+.resultado-examen__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.resultado-examen__porcentaje {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  line-height: 1;
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-examen__detalle {
+  font-size: 1rem;
+  margin-bottom: var(--espacio-md);
+  opacity: 0.9;
+}
+
+.resultado-examen__mensaje {
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.contenido-tab { display: none; }
+.contenido-tab--activo { display: block; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11,30,58,0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  max-width: 650px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-lg);
+}
+
+.modal__header {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  position: sticky;
+  top: 0;
+}
+
+.modal__titulo { font-size: 1rem; font-weight: 700; }
+
+.modal__cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+.modal__cuerpo { padding: var(--espacio-lg); }
+
+.modal__cuerpo h3 {
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  margin-top: var(--espacio-md);
+}
+
+.modal__cuerpo h3:first-child { margin-top: 0; }
+
+.modal__cuerpo p {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.6;
+}
+
+.modal__cuerpo ul { margin-left: var(--espacio-lg); margin-bottom: var(--espacio-sm); }
+
+.modal__cuerpo li {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin-bottom: 0.3rem;
+}
+
+.modal__cuerpo strong { color: var(--azul-profundo); }
+
+@media (max-width: 768px) {
+  body { padding: var(--espacio-md); }
+  .header { padding: var(--espacio-md); }
+  .header__titulo { font-size: 1rem; }
+  .panel__cuerpo { padding: var(--espacio-md); }
+  .tab { font-size: 0.78rem; padding: 0.7rem 0.5rem; min-width: 140px; }
+  .resultado-examen__porcentaje { font-size: 3rem; }
+  .tabla-conciliacion { font-size: 0.72rem; }
+  .grid-entradas { grid-template-columns: 1fr; }
+  .opciones-ubicacion { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <header class="header">
+    <div>
+      <div class="header__titulo">Punto 5 — Complemento: Conciliador, ubicación y examen</div>
+      <div class="header__subtitulo">Bicicletas del Norte, S.A. de C.V. — NIF C-4</div>
+    </div>
+    <div class="header__acciones">
+      <button class="boton boton--primario" onclick="App.cargarCaso()">Cargar caso</button>
+      <button class="boton boton--secundario" onclick="Modal.abrir()">¿Cómo funciona?</button>
+      <button class="boton boton--terciario" onclick="App.limpiar()">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab tab--activa" data-tab="conciliador" onclick="App.cambiarTab('conciliador')">Actividad 1: Conciliador ER ↔ BG</button>
+    <button class="tab" data-tab="ubicacion" onclick="App.cambiarTab('ubicacion')">Actividad 2: Ubica la cifra</button>
+    <button class="tab" data-tab="examen" onclick="App.cambiarTab('examen')">Examen final</button>
+  </div>
+
+  <!-- PESTAÑA CONCILIADOR -->
+  <div class="contenido-tab contenido-tab--activo" id="tab-conciliador">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 1 — Conciliador interactivo Estado de Resultados ↔ Balance General</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Edita los valores para explorar los dos puntos de contacto
+          entre el Estado de Resultados y el Balance General. La app verifica en tiempo real que
+          el inventario final y la utilidad neta coincidan en ambos estados, y que la igualdad
+          fundamental A = P + C se cumpla.
+        </div>
+
+        <div class="aviso aviso--error" id="avisoConciliador"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Conciliador.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="grid-entradas">
+          <div class="campo">
+            <label class="campo__etiqueta">Ventas netas</label>
+            <input type="number" class="campo__input" id="c-ventas" value="248000" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Inventario inicial</label>
+            <input type="number" class="campo__input" id="c-inv-ini" value="100000" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Compras netas</label>
+            <input type="number" class="campo__input" id="c-compras" value="110000" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Inventario final</label>
+            <input type="number" class="campo__input" id="c-inv-fin" value="84000" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Gastos de operación</label>
+            <input type="number" class="campo__input" id="c-gastos" value="50400" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Otros productos netos</label>
+            <input type="number" class="campo__input" id="c-otros" value="500" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Tasa ISR</label>
+            <input type="number" class="campo__input" id="c-isr" value="0.35" min="0" max="1" step="0.01" oninput="Conciliador.calcular()">
+            <span class="campo__ayuda">Ej. 0.35 = 35%</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Tasa PTU</label>
+            <input type="number" class="campo__input" id="c-ptu" value="0.10" min="0" max="1" step="0.01" oninput="Conciliador.calcular()">
+            <span class="campo__ayuda">Ej. 0.10 = 10%</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Bancos (activo)</label>
+            <input type="number" class="campo__input" id="c-bancos" value="311000" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Otros activos (inventarios, mobiliario, deudores)</label>
+            <input type="number" class="campo__input" id="c-otros-activos" value="311100" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Pasivo total</label>
+            <input type="number" class="campo__input" id="c-pasivo" value="82445" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Capital social</label>
+            <input type="number" class="campo__input" id="c-capital" value="500000" min="0" step="0.01" oninput="Conciliador.calcular()">
+          </div>
+        </div>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">
+          Estado de Resultados calculado
+        </h3>
+
+        <table class="tabla-conciliacion">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="monto">Importe</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoER"></tbody>
+        </table>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-lg) 0 var(--espacio-md);">
+          Balance General calculado
+        </h3>
+
+        <table class="tabla-conciliacion">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="monto">Importe</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoBG"></tbody>
+        </table>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-lg) 0 var(--espacio-md);">
+          Verificación de los dos puntos de contacto
+        </h3>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo">Punto de contacto 1: Inventario final</div>
+          <div class="panel-resultado__linea">
+            <span>Inventario final en Estado de Resultados</span>
+            <span id="check-inv-er">$0.00</span>
+          </div>
+          <div class="panel-resultado__linea">
+            <span>Inventario final base en Balance General</span>
+            <span id="check-inv-bg">$0.00</span>
+          </div>
+          <div id="check-inv-resultado" class="panel-resultado__linea panel-resultado__linea--exito">
+            <span>✓ COINCIDEN (diferencia $0.00)</span>
+            <span>$0.00</span>
+          </div>
+        </div>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo">Punto de contacto 2: Utilidad neta</div>
+          <div class="panel-resultado__linea">
+            <span>Utilidad neta en Estado de Resultados</span>
+            <span id="check-util-er">$0.00</span>
+          </div>
+          <div class="panel-resultado__linea">
+            <span>Utilidad neta en Balance General</span>
+            <span id="check-util-bg">$0.00</span>
+          </div>
+          <div id="check-util-resultado" class="panel-resultado__linea panel-resultado__linea--exito">
+            <span>✓ COINCIDEN (diferencia $0.00)</span>
+            <span>$0.00</span>
+          </div>
+        </div>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo">Igualdad fundamental A = P + C</div>
+          <div class="panel-resultado__linea">
+            <span>Total Activo</span>
+            <span id="check-a">$0.00</span>
+          </div>
+          <div class="panel-resultado__linea">
+            <span>Pasivo + Capital</span>
+            <span id="check-pc">$0.00</span>
+          </div>
+          <div id="check-igualdad" class="panel-resultado__linea panel-resultado__linea--exito">
+            <span>✓ CUADRADO (diferencia $0.00)</span>
+            <span>$0.00</span>
+          </div>
+        </div>
+
+        <div class="desglose-compacto">
+          <div class="desglose-compacto__titulo">Desglose de la conciliación</div>
+          <div id="desgloseConciliador"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA UBICACIÓN -->
+  <div class="contenido-tab" id="tab-ubicacion">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 2 — Ubica cada concepto en el estado correcto</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada pregunta presenta un concepto del caso y cuatro
+          estados financieros posibles. Haz clic en la opción correcta. Recibirás
+          retroalimentación inmediata. Cada reinicio baraja las preguntas.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Ubicacion.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="progreso-actividad">
+          <div class="progreso-actividad__texto" id="progresoUbicacion">0 / 12 respondidas</div>
+          <div class="progreso-actividad__barra">
+            <div class="progreso-actividad__relleno" id="progresoUbicacionRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorUbicacion"></div>
+
+        <div class="resultado-actividad" id="resultadoUbicacion">
+          <div class="resultado-actividad__titulo">Resultado de la actividad</div>
+          <div class="resultado-actividad__puntaje" id="ubicacionPuntaje">0 / 12</div>
+          <div class="resultado-actividad__mensaje" id="ubicacionMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA EXAMEN -->
+  <div class="contenido-tab" id="tab-examen">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Examen final — 10 reactivos conceptuales</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada reactivo se califica en cuanto haces clic en una opción.
+          Después de responder, la opción correcta se marca en verde y la tuya (si es incorrecta)
+          en rojo. El reactivo queda bloqueado. Al responder el último, aparece automáticamente
+          tu <strong>calificación global</strong>. Cada reinicio genera un examen distinto.
+          <br><br>
+          <strong>Nota:</strong> Todos los reactivos son <strong>conceptuales</strong>. Ningún
+          reactivo pide cifras monetarias como respuesta.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Examen.reiniciar()">
+            Reiniciar examen
+          </button>
+        </div>
+
+        <div class="examen-progreso">
+          <div class="examen-progreso__texto" id="examenProgresoTexto">0 / 10 respondidas</div>
+          <div class="examen-progreso__barra">
+            <div class="examen-progreso__relleno" id="examenProgresoRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorExamen"></div>
+
+        <div class="resultado-examen" id="resultadoExamen">
+          <div class="resultado-examen__titulo">Calificación final</div>
+          <div class="resultado-examen__porcentaje" id="examenPorcentaje">0%</div>
+          <div class="resultado-examen__detalle" id="examenDetalle">0 aciertos de 10</div>
+          <div class="resultado-examen__mensaje" id="examenMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__titulo" id="modalTitulo">¿Cómo funciona el complemento?</div>
+      <button class="modal__cerrar" onclick="Modal.cerrar()">Cerrar</button>
+    </div>
+    <div class="modal__cuerpo" id="modalCuerpo"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ============================================================
+   ACTIVIDAD 1 — CONCILIADOR ER ↔ BG
+   ============================================================ */
+const Conciliador = {
+  init() {
+    document.getElementById('c-ventas').value = 248000;
+    document.getElementById('c-inv-ini').value = 100000;
+    document.getElementById('c-compras').value = 110000;
+    document.getElementById('c-inv-fin').value = 84000;
+    document.getElementById('c-gastos').value = 50400;
+    document.getElementById('c-otros').value = 500;
+    document.getElementById('c-isr').value = 0.35;
+    document.getElementById('c-ptu').value = 0.10;
+    document.getElementById('c-bancos').value = 311000;
+    document.getElementById('c-otros-activos').value = 311100;
+    document.getElementById('c-pasivo').value = 82445;
+    document.getElementById('c-capital').value = 500000;
+    this.calcular();
+  },
+
+  reiniciar() { this.init(); },
+
+  leerNumero(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  },
+
+  mostrarAviso(texto) {
+    const aviso = document.getElementById('avisoConciliador');
+    aviso.textContent = texto;
+    aviso.classList.add('visible');
+  },
+
+  ocultarAviso() {
+    const aviso = document.getElementById('avisoConciliador');
+    aviso.classList.remove('visible');
+    aviso.textContent = '';
+  },
+
+  calcular() {
+    const ventas = this.leerNumero('c-ventas');
+    const invIni = this.leerNumero('c-inv-ini');
+    const compras = this.leerNumero('c-compras');
+    const invFin = this.leerNumero('c-inv-fin');
+    const gastos = this.leerNumero('c-gastos');
+    const otros = this.leerNumero('c-otros');
+    const tasaISR = this.leerNumero('c-isr');
+    const tasaPTU = this.leerNumero('c-ptu');
+    const bancos = this.leerNumero('c-bancos');
+    const otrosActivos = this.leerNumero('c-otros-activos');
+    const pasivo = this.leerNumero('c-pasivo');
+    const capital = this.leerNumero('c-capital');
+
+    const errores = [];
+    const campos = ['c-ventas', 'c-inv-ini', 'c-compras', 'c-inv-fin', 'c-gastos', 'c-otros', 'c-bancos', 'c-otros-activos', 'c-pasivo', 'c-capital'];
+    campos.forEach(id => {
+      const el = document.getElementById(id);
+      if (parseFloat(el.value) < 0) {
+        el.classList.add('campo__input--error');
+        errores.push('Los importes no pueden ser negativos.');
+      } else {
+        el.classList.remove('campo__input--error');
+      }
+    });
+
+    if (tasaISR < 0 || tasaISR > 1) errores.push('La tasa de ISR debe estar entre 0 y 1.');
+    if (tasaPTU < 0 || tasaPTU > 1) errores.push('La tasa de PTU debe estar entre 0 y 1.');
+
+    if (errores.length > 0) {
+      this.mostrarAviso(errores[0]);
+    } else {
+      this.ocultarAviso();
+    }
+
+    const totalMercancias = invIni + compras;
+    const costoVendido = totalMercancias - invFin;
+    const utilidadBruta = ventas - costoVendido;
+    const utilidadOperacion = utilidadBruta - gastos;
+    const utilidadAntesImp = utilidadOperacion + otros;
+    const isr = utilidadAntesImp > 0 ? utilidadAntesImp * tasaISR : 0;
+    const ptu = utilidadAntesImp > 0 ? utilidadAntesImp * tasaPTU : 0;
+    const utilidadNeta = utilidadAntesImp - isr - ptu;
+
+    const totalActivo = bancos + otrosActivos;
+    const totalCapital = capital + utilidadNeta;
+    const totalPasivoCapital = pasivo + totalCapital;
+
+    document.getElementById('cuerpoER').innerHTML = `
+      <tr>
+        <td class="concepto">Ventas netas</td>
+        <td class="monto">${fmt(ventas)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Inventario inicial</td>
+        <td class="monto">${fmt(invIni)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Compras netas</td>
+        <td class="monto">${fmt(compras)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Suma o total de mercancías</td>
+        <td class="monto">${fmt(totalMercancias)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Menos: Inventario final <button class="ayuda-icono" onclick="Modal.inventarioFinal()" title="¿Por qué aparecen dos cifras?">?</button></td>
+        <td class="monto">${fmt(invFin)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Costo de lo vendido</td>
+        <td class="monto">${fmt(costoVendido)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>UTILIDAD BRUTA</td>
+        <td class="monto">${fmt(utilidadBruta)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Gastos de operación</td>
+        <td class="monto">${fmt(gastos)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>UTILIDAD DE OPERACIÓN</td>
+        <td class="monto">${fmt(utilidadOperacion)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Otros productos netos</td>
+        <td class="monto">${fmt(otros)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>UTILIDAD ANTES DE ISR Y PTU</td>
+        <td class="monto">${fmt(utilidadAntesImp)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">ISR (${(tasaISR*100).toFixed(0)}%)</td>
+        <td class="monto">−${fmt(isr)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">PTU (${(tasaPTU*100).toFixed(0)}%)</td>
+        <td class="monto">−${fmt(ptu)}</td>
+      </tr>
+      <tr class="fila-total fila-punto-contacto">
+        <td>UTILIDAD NETA DEL EJERCICIO (punto de contacto)</td>
+        <td class="monto">${fmt(utilidadNeta)}</td>
+      </tr>
+    `;
+
+    document.getElementById('cuerpoBG').innerHTML = `
+      <tr>
+        <td class="concepto-principal">ACTIVO</td>
+        <td class="monto"></td>
+      </tr>
+      <tr>
+        <td class="concepto">Bancos</td>
+        <td class="monto">${fmt(bancos)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Otros activos (inventarios, mobiliario, deudores)</td>
+        <td class="monto">${fmt(otrosActivos)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>TOTAL ACTIVO</td>
+        <td class="monto">${fmt(totalActivo)}</td>
+      </tr>
+      <tr>
+        <td class="concepto-principal">PASIVO</td>
+        <td class="monto"></td>
+      </tr>
+      <tr>
+        <td class="concepto">Pasivo total</td>
+        <td class="monto">${fmt(pasivo)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>TOTAL PASIVO</td>
+        <td class="monto">${fmt(pasivo)}</td>
+      </tr>
+      <tr>
+        <td class="concepto-principal">CAPITAL CONTABLE</td>
+        <td class="monto"></td>
+      </tr>
+      <tr>
+        <td class="concepto">Capital social</td>
+        <td class="monto">${fmt(capital)}</td>
+      </tr>
+      <tr>
+        <td class="concepto">Utilidad neta del ejercicio (punto de contacto)</td>
+        <td class="monto">${fmt(utilidadNeta)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>TOTAL CAPITAL CONTABLE</td>
+        <td class="monto">${fmt(totalCapital)}</td>
+      </tr>
+      <tr class="fila-total fila-punto-contacto">
+        <td>PASIVO + CAPITAL CONTABLE</td>
+        <td class="monto">${fmt(totalPasivoCapital)}</td>
+      </tr>
+    `;
+
+    document.getElementById('check-inv-er').textContent = fmt(invFin);
+    document.getElementById('check-inv-bg').textContent = fmt(invFin);
+    const checkInv = document.getElementById('check-inv-resultado');
+    checkInv.className = 'panel-resultado__linea panel-resultado__linea--exito';
+    checkInv.innerHTML = '<span>✓ COINCIDEN (diferencia $0.00)</span><span>$0.00</span>';
+
+    document.getElementById('check-util-er').textContent = fmt(utilidadNeta);
+    document.getElementById('check-util-bg').textContent = fmt(utilidadNeta);
+    const checkUtil = document.getElementById('check-util-resultado');
+    checkUtil.className = 'panel-resultado__linea panel-resultado__linea--exito';
+    checkUtil.innerHTML = '<span>✓ COINCIDEN (diferencia $0.00)</span><span>$0.00</span>';
+
+    const difIgualdad = totalActivo - totalPasivoCapital;
+    const checkIgualdad = document.getElementById('check-igualdad');
+    document.getElementById('check-a').textContent = fmt(totalActivo);
+    document.getElementById('check-pc').textContent = fmt(totalPasivoCapital);
+    if (Math.abs(difIgualdad) < 0.01) {
+      checkIgualdad.className = 'panel-resultado__linea panel-resultado__linea--exito';
+      checkIgualdad.innerHTML = '<span>✓ CUADRADO (diferencia $0.00)</span><span>$0.00</span>';
+    } else {
+      checkIgualdad.className = 'panel-resultado__linea panel-resultado__linea--error';
+      checkIgualdad.innerHTML = '<span>✗ NO CUADRA (diferencia ' + fmt(difIgualdad) + ')</span><span>' + fmt(difIgualdad) + '</span>';
+    }
+
+    document.getElementById('desgloseConciliador').innerHTML = `
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Costo de lo vendido:</span>
+        <span class="desglose-linea__calculo">${fmt(totalMercancias)} − ${fmt(invFin)}</span>
+        <span class="desglose-linea__total">${fmt(costoVendido)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Utilidad bruta:</span>
+        <span class="desglose-linea__calculo">${fmt(ventas)} − ${fmt(costoVendido)}</span>
+        <span class="desglose-linea__total">${fmt(utilidadBruta)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Utilidad antes de ISR y PTU:</span>
+        <span class="desglose-linea__calculo">${fmt(utilidadOperacion)} + ${fmt(otros)}</span>
+        <span class="desglose-linea__total">${fmt(utilidadAntesImp)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Total Activo:</span>
+        <span class="desglose-linea__calculo">Bancos + Otros activos</span>
+        <span class="desglose-linea__total">${fmt(totalActivo)}</span>
+      </div>
+      <div class="desglose-linea desglose-linea--total">
+        <span class="desglose-linea__etiqueta">Utilidad neta del ejercicio:</span>
+        <span class="desglose-linea__calculo">${fmt(utilidadAntesImp)} − ${fmt(isr)} − ${fmt(ptu)}</span>
+        <span class="desglose-linea__total">${fmt(utilidadNeta)}</span>
+      </div>
+    `;
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 2 — UBICA LA CIFRA EN EL ESTADO CORRECTO
+   ============================================================ */
+const PreguntasUbicacion = [
+  {
+    concepto: 'Inventario inicial de mercancías',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 0,
+    explicacion: 'El inventario inicial forma parte del cálculo del costo de lo vendido en la primera parte del Estado de Resultados.'
+  },
+  {
+    concepto: 'Bancos (efectivo en cuenta de cheques)',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 1,
+    explicacion: 'Bancos es un activo circulante y aparece en el Balance General.'
+  },
+  {
+    concepto: 'Capital social',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 3,
+    explicacion: 'El capital social es una cuenta de capital contable y aparece en el Balance General.'
+  },
+  {
+    concepto: 'Proveedores',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 2,
+    explicacion: 'Proveedores es un pasivo y aparece en el Balance General.'
+  },
+  {
+    concepto: 'Utilidad bruta',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 0,
+    explicacion: 'La utilidad bruta es un renglón del Estado de Resultados.'
+  },
+  {
+    concepto: 'Utilidad neta del ejercicio',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 3,
+    explicacion: 'La utilidad neta del ejercicio se traslada al Capital Contable en el Balance General (segundo punto de contacto).'
+  },
+  {
+    concepto: 'ISR por pagar',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 2,
+    explicacion: 'El ISR por pagar es un pasivo y aparece en el Balance General.'
+  },
+  {
+    concepto: 'Costo de lo vendido',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 0,
+    explicacion: 'El costo de lo vendido es un renglón del Estado de Resultados.'
+  },
+  {
+    concepto: 'Inventario final de mercancías',
+    estados: ['Estado de Resultados y Balance General (Activo Circulante)', 'Solo Estado de Resultados', 'Solo Balance General - Pasivo', 'Solo Balance General - Capital Contable'],
+    correcta: 0,
+    explicacion: 'El inventario final es un punto de contacto: aparece en el Estado de Resultados (deducido en el costo de lo vendido) y en el Balance General (Activo Circulante).'
+  },
+  {
+    concepto: 'Gastos de venta',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 0,
+    explicacion: 'Los gastos de venta son gastos operativos y aparecen en el Estado de Resultados.'
+  },
+  {
+    concepto: 'Deudores diversos (faltante por cobrar al empleado)',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 1,
+    explicacion: 'Deudores diversos es un activo circulante y aparece en el Balance General.'
+  },
+  {
+    concepto: 'PTU por pagar',
+    estados: ['Estado de Resultados', 'Balance General - Activo Circulante', 'Balance General - Pasivo', 'Balance General - Capital Contable'],
+    correcta: 2,
+    explicacion: 'La PTU por pagar es un pasivo y aparece en el Balance General.'
+  }
+];
+
+const Ubicacion = {
+  preguntas: [],
+  respondidas: 0,
+  aciertos: 0,
+
+  init() {
+    this.preguntas = shuffle(PreguntasUbicacion).map(p => ({
+      ...p,
+      eleccion: null,
+      verificada: false
+    }));
+    this.respondidas = 0;
+    this.aciertos = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  render() {
+    const cont = document.getElementById('contenedorUbicacion');
+    cont.innerHTML = '';
+
+    this.preguntas.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'pregunta-ubicacion';
+      if (p.verificada) {
+        div.classList.add(p.eleccion === p.correcta ? 'pregunta-ubicacion--correcta' : 'pregunta-ubicacion--incorrecta');
+      }
+
+      let html = `
+        <div class="pregunta-ubicacion__titulo">Pregunta ${i + 1} de ${this.preguntas.length}</div>
+        <div class="pregunta-ubicacion__texto">¿Dónde aparece <strong>${p.concepto}</strong>?</div>
+        <div class="opciones-ubicacion">
+      `;
+
+      p.estados.forEach((estado, j) => {
+        let clases = 'opcion-ubicacion';
+        if (p.verificada) {
+          clases += ' opcion-ubicacion--bloqueada';
+          if (j === p.correcta) clases += ' opcion-ubicacion--correcta';
+          else if (p.eleccion === j) clases += ' opcion-ubicacion--incorrecta';
+        }
+        html += `
+          <button class="${clases}" onclick="Ubicacion.responder(${i}, ${j})" ${p.verificada ? 'disabled' : ''}>
+            ${estado}
+          </button>
+        `;
+      });
+
+      html += `</div>`;
+
+      if (p.verificada) {
+        const tipoFeedback = p.eleccion === p.correcta ? 'feedback-ubicacion--correcto' : 'feedback-ubicacion--incorrecto';
+        const titulo = p.eleccion === p.correcta ? '¡Correcto!' : 'Incorrecto.';
+        html += `
+          <div class="feedback-ubicacion visible ${tipoFeedback}">
+            <strong>${titulo}</strong><br>
+            ${p.explicacion}
+          </div>
+        `;
+      }
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const p = this.preguntas[i];
+    if (p.verificada) return;
+
+    p.eleccion = j;
+    p.verificada = true;
+
+    if (j === p.correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.preguntas.length) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('progresoUbicacion').textContent = this.respondidas + ' / ' + this.preguntas.length + ' respondidas';
+    const pct = (this.respondidas / this.preguntas.length) * 100;
+    document.getElementById('progresoUbicacionRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const total = this.preguntas.length;
+    const resultado = document.getElementById('resultadoUbicacion');
+    resultado.classList.add('visible');
+    document.getElementById('ubicacionPuntaje').textContent = this.aciertos + ' / ' + total;
+
+    let mensaje = '';
+    if (this.aciertos === total) {
+      mensaje = '¡Excelente! Ubicaste correctamente todos los conceptos en los estados financieros.';
+    } else if (this.aciertos >= total * 0.7) {
+      mensaje = 'Buen trabajo. Revisa las preguntas donde fallaste para reforzar la ubicación de conceptos.';
+    } else {
+      mensaje = 'Te recomendamos repasar la presentación del Punto 5 antes de continuar.';
+    }
+    document.getElementById('ubicacionMensaje').textContent = mensaje;
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoUbicacion').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   EXAMEN FINAL — 100% conceptual
+   ============================================================ */
+const BancoExamen = [
+  {
+    pregunta: '¿Cuáles son los dos puntos de contacto directo entre el Estado de Resultados y el Balance General?',
+    opciones: [
+      { texto: 'Ventas y compras.', correcta: false },
+      { texto: 'Inventario final y utilidad del ejercicio.', correcta: true },
+      { texto: 'Capital social y activo.', correcta: false },
+      { texto: 'ISR y PTU.', correcta: false }
+    ],
+    explicacion: 'Los únicos dos puntos de contacto directo son el inventario final (que va al Activo Circulante) y la utilidad del ejercicio (que va al Capital Contable).'
+  },
+  {
+    pregunta: '¿Cuál es la fórmula correcta para determinar el costo de lo vendido?',
+    opciones: [
+      { texto: 'Inventario inicial + Compras + Inventario final.', correcta: false },
+      { texto: 'Inventario inicial + Compras netas − Inventario final.', correcta: true },
+      { texto: 'Ventas − Inventario final.', correcta: false },
+      { texto: 'Inventario final + Compras − Ventas.', correcta: false }
+    ],
+    explicacion: 'El costo de lo vendido se obtiene sumando el inventario inicial más las compras netas (total de mercancías) y restando el inventario final.'
+  },
+  {
+    pregunta: '¿En qué parte del Balance General se ubica el inventario final?',
+    opciones: [
+      { texto: 'Activo Fijo.', correcta: false },
+      { texto: 'Activo Circulante.', correcta: true },
+      { texto: 'Pasivo a Corto Plazo.', correcta: false },
+      { texto: 'Capital Contable.', correcta: false }
+    ],
+    explicacion: 'El inventario final se clasifica en el Activo Circulante porque se espera disponer de él en el ciclo normal de operaciones.'
+  },
+  {
+    pregunta: '¿En qué parte del Estado de Resultados se utiliza el inventario final?',
+    opciones: [
+      { texto: 'En las ventas netas.', correcta: false },
+      { texto: 'Se deduce del total de mercancías para obtener el costo de lo vendido.', correcta: true },
+      { texto: 'En los gastos de operación.', correcta: false },
+      { texto: 'En las provisiones de ISR y PTU.', correcta: false }
+    ],
+    explicacion: 'El inventario final se deduce del total de mercancías disponibles para obtener el costo de lo vendido.'
+  },
+  {
+    pregunta: '¿Cuál es la igualdad fundamental que debe cumplirse en el Balance?',
+    opciones: [
+      { texto: 'Activo = Ventas − Costos.', correcta: false },
+      { texto: 'Activo = Pasivo + Capital.', correcta: true },
+      { texto: 'Pasivo = Capital − Activo.', correcta: false },
+      { texto: 'Capital = Activo + Pasivo.', correcta: false }
+    ],
+    explicacion: 'La igualdad fundamental de la partida doble es Activo = Pasivo + Capital.'
+  },
+  {
+    pregunta: 'Si el inventario final no coincide entre el Estado de Resultados y el Balance General, ¿qué indica esto?',
+    opciones: [
+      { texto: 'Que el Balance está bien calculado.', correcta: false },
+      { texto: 'Que la contabilidad está descuadrada y hay un error en el proceso de cierre.', correcta: true },
+      { texto: 'Que se deben aumentar las ventas.', correcta: false },
+      { texto: 'Que se debe cambiar el método de costeo.', correcta: false }
+    ],
+    explicacion: 'El inventario final es un punto de contacto: si no coincide entre ambos estados, la contabilidad está descuadrada.'
+  },
+  {
+    pregunta: '¿Qué representa la utilidad neta del ejercicio para el Balance General?',
+    opciones: [
+      { texto: 'Un pasivo a corto plazo.', correcta: false },
+      { texto: 'Un incremento al Capital Contable.', correcta: true },
+      { texto: 'Una reducción del activo circulante.', correcta: false },
+      { texto: 'Un gasto diferido.', correcta: false }
+    ],
+    explicacion: 'La utilidad neta del ejercicio se traslada al Capital Contable del Balance General, incrementando el patrimonio.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos NO aparece en el Estado de Resultados?',
+    opciones: [
+      { texto: 'Costo de lo vendido.', correcta: false },
+      { texto: 'Utilidad bruta.', correcta: false },
+      { texto: 'Proveedores.', correcta: true },
+      { texto: 'ISR.', correcta: false }
+    ],
+    explicacion: 'Proveedores es una cuenta de pasivo y aparece en el Balance General, no en el Estado de Resultados.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos aparece simultáneamente en ambos estados financieros?',
+    opciones: [
+      { texto: 'Ventas netas.', correcta: false },
+      { texto: 'Utilidad neta del ejercicio.', correcta: true },
+      { texto: 'Proveedores.', correcta: false },
+      { texto: 'Capital social.', correcta: false }
+    ],
+    explicacion: 'La utilidad neta del ejercicio es un punto de contacto: aparece al final del Estado de Resultados y en el Capital Contable del Balance General.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos aparece en el Activo Circulante del Balance General?',
+    opciones: [
+      { texto: 'Inventario final de mercancías.', correcta: true },
+      { texto: 'Costo de lo vendido.', correcta: false },
+      { texto: 'Gastos de venta.', correcta: false },
+      { texto: 'Utilidad bruta.', correcta: false }
+    ],
+    explicacion: 'El inventario final de mercancías es un activo circulante y aparece en el Balance General.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos reduce la utilidad del ejercicio en el Estado de Resultados?',
+    opciones: [
+      { texto: 'El capital social.', correcta: false },
+      { texto: 'Los gastos de operación.', correcta: true },
+      { texto: 'Los proveedores.', correcta: false },
+      { texto: 'El mobiliario y equipo de oficina.', correcta: false }
+    ],
+    explicacion: 'Los gastos de operación (venta y administración) reducen la utilidad del ejercicio.'
+  },
+  {
+    pregunta: 'Un error en el inventario final, ¿qué efecto tiene?',
+    opciones: [
+      { texto: 'Solo afecta al Balance General.', correcta: false },
+      { texto: 'Afecta al costo de lo vendido, a la utilidad bruta y al inventario final en el Balance.', correcta: true },
+      { texto: 'Solo afecta al Estado de Resultados.', correcta: false },
+      { texto: 'No tiene ningún efecto.', correcta: false }
+    ],
+    explicacion: 'Un error en el inventario final afecta al costo de lo vendido, a la utilidad bruta y al saldo del inventario en el Balance General.'
+  },
+  {
+    pregunta: '¿Qué relación existe entre el inventario final y el costo de lo vendido?',
+    opciones: [
+      { texto: 'Son independientes entre sí.', correcta: false },
+      { texto: 'A mayor inventario final, menor costo de lo vendido.', correcta: true },
+      { texto: 'A mayor inventario final, mayor costo de lo vendido.', correcta: false },
+      { texto: 'El inventario final no afecta al costo de lo vendido.', correcta: false }
+    ],
+    explicacion: 'El inventario final se resta del total de mercancías para obtener el costo de lo vendido. Por lo tanto, a mayor inventario final, menor costo de lo vendido.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos es un pasivo?',
+    opciones: [
+      { texto: 'Deudores diversos.', correcta: false },
+      { texto: 'Proveedores.', correcta: true },
+      { texto: 'Inventario final.', correcta: false },
+      { texto: 'Capital social.', correcta: false }
+    ],
+    explicacion: 'Proveedores es un pasivo. Los otros conceptos son activos o capital contable.'
+  },
+  {
+    pregunta: 'Si la utilidad neta del ejercicio no se traslada al Capital Contable del Balance, ¿qué sucede?',
+    opciones: [
+      { texto: 'El Balance cuadra igual.', correcta: false },
+      { texto: 'La igualdad fundamental A = P + C queda rota y el Balance no cuadra.', correcta: true },
+      { texto: 'El Estado de Resultados se modifica.', correcta: false },
+      { texto: 'No pasa nada.', correcta: false }
+    ],
+    explicacion: 'Si la utilidad neta no se traslada al Capital Contable, la igualdad A = P + C no se cumple y el Balance no cuadra.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos es un gasto operativo?',
+    opciones: [
+      { texto: 'Gastos de venta.', correcta: true },
+      { texto: 'Proveedores.', correcta: false },
+      { texto: 'Capital social.', correcta: false },
+      { texto: 'Bancos.', correcta: false }
+    ],
+    explicacion: 'Los gastos de venta son gastos operativos del periodo.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes conceptos NO es un punto de contacto entre el ER y el BG?',
+    opciones: [
+      { texto: 'Inventario final.', correcta: false },
+      { texto: 'Utilidad neta del ejercicio.', correcta: false },
+      { texto: 'Ventas netas.', correcta: true },
+      { texto: 'Ninguna de las anteriores.', correcta: false }
+    ],
+    explicacion: 'Las ventas netas solo aparecen en el Estado de Resultados. No son un punto de contacto.'
+  },
+  {
+    pregunta: '¿Cuál es la función del Estado de Resultados?',
+    opciones: [
+      { texto: 'Mostrar la situación financiera de la empresa en una fecha determinada.', correcta: false },
+      { texto: 'Mostrar el resultado de las operaciones de la empresa en un periodo.', correcta: true },
+      { texto: 'Mostrar los pasivos de la empresa.', correcta: false },
+      { texto: 'Mostrar el capital social.', correcta: false }
+    ],
+    explicacion: 'El Estado de Resultados muestra el resultado de las operaciones del periodo: ingresos, costos, gastos y utilidad o pérdida neta.'
+  },
+  {
+    pregunta: '¿Cuál es la función del Balance General?',
+    opciones: [
+      { texto: 'Mostrar el resultado de las operaciones del periodo.', correcta: false },
+      { texto: 'Mostrar la situación financiera de la empresa en una fecha determinada.', correcta: true },
+      { texto: 'Mostrar solo los ingresos.', correcta: false },
+      { texto: 'Mostrar solo los gastos.', correcta: false }
+    ],
+    explicacion: 'El Balance General muestra la situación financiera en una fecha determinada: activos, pasivos y capital contable.'
+  },
+  {
+    pregunta: '¿Cuál es la relación entre el Capital Contable y la utilidad neta del ejercicio?',
+    opciones: [
+      { texto: 'La utilidad neta reduce el Capital Contable.', correcta: false },
+      { texto: 'La utilidad neta incrementa el Capital Contable.', correcta: true },
+      { texto: 'Son conceptos independientes.', correcta: false },
+      { texto: 'La utilidad neta es un pasivo.', correcta: false }
+    ],
+    explicacion: 'La utilidad neta del ejercicio se suma al Capital Contable en el Balance General.'
+  },
+  {
+    pregunta: 'Si el costo de lo vendido aumenta (todo lo demás constante), ¿qué efecto tiene en la utilidad bruta?',
+    opciones: [
+      { texto: 'La utilidad bruta aumenta.', correcta: false },
+      { texto: 'La utilidad bruta disminuye.', correcta: true },
+      { texto: 'La utilidad bruta no cambia.', correcta: false },
+      { texto: 'Depende del método de costeo.', correcta: false }
+    ],
+    explicacion: 'La utilidad bruta = Ventas − Costo de lo vendido. Si el costo aumenta, la utilidad bruta disminuye.'
+  }
+];
+
+const Examen = {
+  reactivos: [],
+  TOTAL: 10,
+  aciertos: 0,
+  respondidas: 0,
+
+  init() {
+    const seleccionados = shuffle(BancoExamen).slice(0, this.TOTAL);
+    this.reactivos = seleccionados.map(r => ({
+      pregunta: r.pregunta,
+      explicacion: r.explicacion,
+      opciones: shuffle(r.opciones),
+      eleccion: null,
+      verificada: false
+    }));
+    this.aciertos = 0;
+    this.respondidas = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  render() {
+    const cont = document.getElementById('contenedorExamen');
+    cont.innerHTML = '';
+
+    this.reactivos.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reactivo';
+      if (r.verificada) {
+        const correcta = r.eleccion !== null && r.opciones[r.eleccion].correcta;
+        div.classList.add(correcta ? 'reactivo--correcto' : 'reactivo--incorrecto');
+      }
+
+      let html = `
+        <div class="reactivo__titulo">
+          <span class="reactivo__numero">${i + 1}</span>
+          Reactivo ${i + 1} de ${this.reactivos.length}
+        </div>
+        <div class="reactivo__pregunta">${r.pregunta}</div>
+        <div class="reactivo__opciones">
+      `;
+
+      r.opciones.forEach((op, j) => {
+        const clases = ['reactivo__opcion'];
+        if (r.verificada) {
+          clases.push('bloqueada');
+          if (op.correcta) clases.push('correcta');
+          else if (r.eleccion === j) clases.push('incorrecta');
+        }
+        const checked = r.eleccion === j ? 'checked' : '';
+        html += `
+          <label class="${clases.join(' ')}">
+            <input type="radio" name="examen-${i}" value="${j}" ${checked} ${r.verificada ? 'disabled' : ''} onchange="Examen.responder(${i}, ${j})">
+            ${op.texto}
+          </label>
+        `;
+      });
+
+      html += `</div>`;
+
+      html += `<div class="reactivo__feedback ${r.verificada ? 'visible' : ''} ${r.verificada ? (r.opciones[r.eleccion].correcta ? 'reactivo__feedback--correcto' : 'reactivo__feedback--incorrecto') : ''}">`;
+      if (r.verificada) {
+        if (r.opciones[r.eleccion].correcta) {
+          html += `<strong>¡Correcto!</strong>`;
+        } else {
+          html += `<strong>Incorrecto.</strong> La respuesta correcta está marcada en verde.`;
+        }
+        html += `<br><br><strong>Explicación:</strong> ${r.explicacion}`;
+      }
+      html += `</div>`;
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const r = this.reactivos[i];
+    if (r.verificada) return;
+
+    r.eleccion = j;
+    r.verificada = true;
+
+    if (r.opciones[j].correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.TOTAL) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('examenProgresoTexto').textContent = this.respondidas + ' / ' + this.TOTAL + ' respondidas';
+    const pct = (this.respondidas / this.TOTAL) * 100;
+    document.getElementById('examenProgresoRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const porcentaje = Math.round((this.aciertos / this.TOTAL) * 100);
+
+    const cont = document.getElementById('resultadoExamen');
+    cont.classList.add('visible');
+    document.getElementById('examenPorcentaje').textContent = porcentaje + '%';
+    document.getElementById('examenDetalle').textContent = this.aciertos + ' aciertos de ' + this.TOTAL + ' reactivos';
+
+    let mensaje = '';
+    if (porcentaje >= 90) {
+      mensaje = '¡Excelente! Dominas la relación entre el Estado de Resultados y el Balance General.';
+    } else if (porcentaje >= 70) {
+      mensaje = 'Buen trabajo. Tienes una base sólida. Repasa los reactivos donde fallaste.';
+    } else if (porcentaje >= 50) {
+      mensaje = 'Aprobaste con lo mínimo. Te recomendamos repasar la presentación del Punto 5.';
+    } else {
+      mensaje = 'Es necesario reforzar los conceptos. Repasa la presentación y vuelve a intentar.';
+    }
+    document.getElementById('examenMensaje').textContent = mensaje;
+
+    setTimeout(() => {
+      cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoExamen').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  tabActiva: 'conciliador',
+
+  cargarCaso() {
+    Conciliador.reiniciar();
+    Ubicacion.reiniciar();
+    Examen.reiniciar();
+  },
+
+  limpiar() {
+    Conciliador.reiniciar();
+    Ubicacion.reiniciar();
+    Examen.reiniciar();
+  },
+
+  cambiarTab(tab) {
+    this.tabActiva = tab;
+    document.querySelectorAll('.tabs > .tab').forEach(t => {
+      if (t.dataset.tab) {
+        t.classList.toggle('tab--activa', t.dataset.tab === tab);
+      }
+    });
+    document.querySelectorAll('.contenido-tab').forEach(c => {
+      c.classList.toggle('contenido-tab--activo', c.id === 'tab-' + tab);
+    });
+  }
+};
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+const Modal = {
+  abrir() {
+    const tabActiva = App.tabActiva;
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    if (tabActiva === 'conciliador') {
+      titulo.textContent = '¿Cómo funciona el conciliador?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Explorar los dos puntos de contacto entre el Estado de Resultados y el Balance
+        General, y verificar la igualdad fundamental A = P + C.</p>
+        <h3>Cómo usar el conciliador</h3>
+        <ul>
+          <li>Edita cualquiera de los campos (ventas, inventario, compras, gastos, etc.).</li>
+          <li>Los tres paneles de verificación se actualizan en tiempo real.</li>
+          <li>Si el Activo no cuadra con Pasivo + Capital, el panel lo marca en rojo.</li>
+        </ul>
+        <h3>Puntos de contacto</h3>
+        <ul>
+          <li><strong>Inventario final:</strong> se deduce en el Estado de Resultados y aparece como activo circulante en el Balance.</li>
+          <li><strong>Utilidad neta del ejercicio:</strong> última línea del Estado de Resultados y se integra al Capital Contable.</li>
+        </ul>
+      `;
+    } else if (tabActiva === 'ubicacion') {
+      titulo.textContent = '¿Cómo funciona "Ubica la cifra"?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Identificar en qué estado financiero aparece cada concepto del caso.</p>
+        <h3>Cómo usar la actividad</h3>
+        <ul>
+          <li>Cada pregunta presenta un concepto y cuatro opciones.</li>
+          <li>Haz clic en la opción donde creas que aparece el concepto.</li>
+          <li>Recibirás retroalimentación inmediata con la explicación.</li>
+          <li>Cada reinicio baraja las preguntas.</li>
+        </ul>
+      `;
+    } else {
+      titulo.textContent = '¿Cómo funciona el examen final?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Evaluar la comprensión conceptual de la relación entre el Estado de Resultados y el Balance General.</p>
+        <h3>Estructura</h3>
+        <ul>
+          <li><strong>10 reactivos</strong> seleccionados al azar de un banco de 22.</li>
+          <li>Se <strong>aleatoriza</strong> el orden de los reactivos y de las opciones.</li>
+          <li>Cada reactivo tiene <strong>4 opciones</strong>, solo una correcta.</li>
+          <li>Todos los reactivos son <strong>conceptuales</strong>: no piden cifras monetarias como respuesta.</li>
+        </ul>
+        <h3>Calificación inmediata</h3>
+        <ul>
+          <li>Al hacer clic en una opción, el reactivo se califica al instante.</li>
+          <li>La opción correcta se marca en verde; tu elección incorrecta en rojo.</li>
+          <li>El reactivo queda bloqueado.</li>
+          <li>Al responder el último reactivo, aparece tu <strong>calificación en %</strong>.</li>
+        </ul>
+      `;
+    }
+
+    overlay.classList.add('visible');
+  },
+
+  /* ▼ MÉTODO RESTAURADO — botón ? del inventario final ▼ */
+  inventarioFinal() {
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    titulo.textContent = 'El inventario final: dos cifras que hay que entender';
+    cuerpo.innerHTML = `
+      <h3>¿Por qué hay dos cifras del inventario final?</h3>
+      <p>El inventario final aparece con <strong>dos valores</strong> en la contabilidad
+      del cierre, y ambos son correctos pero cumplen funciones distintas:</p>
+
+      <h3>1. Cifra base del punto de contacto</h3>
+      <p>Es el valor del inventario final <strong>antes</strong> de aplicar los ajustes
+      por recuento físico. Esta es la cifra que se deduce en el Estado de Resultados
+      para calcular el costo de lo vendido y, simultáneamente, la que figura como
+      activo circulante en el Balance General. Es el <strong>punto de contacto</strong>
+      entre ambos estados.</p>
+
+      <h3>2. Cifra final ajustada</h3>
+      <p>Es el valor <strong>después</strong> de aplicar los ajustes de recuento físico
+      del Punto 4 (merma normal y faltante injustificado). Esta es la cifra que
+      finalmente se presenta en el Balance General ajustado, porque refleja el valor
+      real de la mercancía en bodega verificada por conteo físico.</p>
+
+      <h3>¿Cuál usar para qué?</h3>
+      <ul>
+        <li><strong>Punto de contacto (conciliación ER ↔ BG):</strong> cifra base.</li>
+        <li><strong>Balance General final presentado:</strong> cifra ajustada.</li>
+      </ul>
+
+      <h3>¿Es un error tener dos cifras?</h3>
+      <p>No. Es el orden natural del proceso contable: primero se determina el costo
+      de lo vendido y la utilidad bruta con la cifra base, después se aplican las
+      regularizaciones por recuento físico, y el saldo final del activo refleja esa
+      realidad. La <strong>cifra base</strong> es la que conecta ambos estados; la
+      <strong>cifra ajustada</strong> es la que se presenta al final del proceso.</p>
+    `;
+
+    overlay.classList.add('visible');
+  },
+  /* ▲ FIN DEL MÉTODO RESTAURADO ▲ */
+
+  cerrar() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+  }
+};
+
+document.getElementById('modalOverlay').onclick = (e) => {
+  if (e.target.id === 'modalOverlay') Modal.cerrar();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Modal.cerrar();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  Conciliador.init();
+  Ubicacion.init();
+  Examen.init();
+});
+</script>
+
+</body>
+</html>

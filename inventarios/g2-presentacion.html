@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 2 — Procedimientos de Registro Contable | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #1a3a6b;
+  --azul-medio: #2c5aa0;
+  --azul-claro: #d6e4f5;
+  --azul-muy-claro: #eef4fb;
+
+  --fondo: #f7f9fc;
+  --superficie: #ffffff;
+  --texto: #1a2b45;
+  --texto-suave: #5a6b82;
+  --borde: #c5d5e8;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  --sombra-sm: 0 1px 2px rgba(26,58,107,0.06);
+  --sombra-md: 0 4px 6px rgba(26,58,107,0.10);
+  --sombra-lg: 0 10px 15px rgba(26,58,107,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.barra-progreso {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--borde);
+  z-index: 1000;
+}
+
+.barra-progreso__relleno {
+  height: 100%;
+  background: var(--azul-medio);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.contenedor-slides {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-lg);
+  padding-top: 2rem;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  background: var(--superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-lg);
+  padding: var(--espacio-xl) var(--espacio-lg);
+  animation: fadeIn 0.5s ease;
+  min-height: 70vh;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.slide.activo { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide__numero {
+  display: inline-block;
+  background: var(--azul-profundo);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.slide__titulo {
+  font-size: 2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.2;
+}
+
+.slide__subtitulo {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.slide__cuerpo { font-size: 1rem; }
+
+.navegacion {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espacio-md) var(--espacio-lg);
+  z-index: 999;
+  box-shadow: 0 -2px 10px rgba(26,58,107,0.05);
+}
+
+.navegacion__boton {
+  background: var(--azul-profundo);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radio-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__boton:hover { background: var(--azul-medio); }
+.navegacion__boton:active { transform: scale(0.97); }
+.navegacion__boton:disabled {
+  background: var(--borde);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+.navegacion__contador {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.navegacion__indice {
+  background: transparent;
+  border: 2px solid var(--azul-profundo);
+  color: var(--azul-profundo);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__indice:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.indice {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: var(--superficie);
+  box-shadow: -4px 0 20px rgba(26,58,107,0.15);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: var(--espacio-lg);
+}
+
+.indice.abierto { right: 0; }
+
+.indice__titulo {
+  font-size: 1.2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 2px solid var(--borde);
+}
+
+.indice__lista { list-style: none; }
+
+.indice__item {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--texto);
+  transition: background 0.2s;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.indice__item:hover { background: var(--azul-muy-claro); }
+.indice__item.activo {
+  background: var(--azul-profundo);
+  color: #fff;
+  font-weight: 600;
+}
+
+.indice__item-num {
+  font-weight: 700;
+  font-size: 0.8rem;
+  min-width: 1.5rem;
+}
+
+.indice__cerrar {
+  position: absolute;
+  top: var(--espacio-md);
+  right: var(--espacio-md);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+  line-height: 1;
+  font-family: var(--fuente-base);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26,58,107,0.4);
+  z-index: 1000;
+  display: none;
+}
+
+.overlay.visible { display: block; }
+
+.caja-concepto {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-concepto__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-concepto__texto {
+  font-size: 1rem;
+  color: var(--texto);
+  line-height: 1.7;
+}
+
+.caja-concepto__texto strong { color: var(--azul-profundo); }
+
+.caja-ejemplo {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-ejemplo__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-ejemplo__texto {
+  font-size: 0.95rem;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+.caja-resultado {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.caja-resultado__linea {
+  font-size: 0.95rem;
+  color: var(--texto);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__linea--utilidad {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  background: var(--azul-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__nota {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+}
+
+.alerta {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.exito {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-datos thead { background: var(--azul-medio); color: #fff; }
+
+.tabla-datos th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.tabla-datos td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-datos tbody tr:hover { background: var(--fondo); }
+.tabla-datos tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-datos .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+}
+
+.tabla-datos .centro { text-align: center; }
+
+.tabla-contable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-contable thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-contable th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-contable td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-contable tbody tr:hover { background: var(--fondo); }
+.tabla-contable tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-contable tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+}
+
+.tabla-contable .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-contable .cuenta { font-weight: 500; }
+
+.tabla-contable .cuenta-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+.esquema-mayor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.mayor {
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+}
+
+.mayor__titulo {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mayor__cuerpo { display: grid; grid-template-columns: 1fr 1fr; }
+
+.mayor__columna { padding: 0.4rem; font-size: 0.78rem; }
+.mayor__columna:first-child { border-right: 1px solid var(--borde); }
+
+.mayor__columna-titulo {
+  text-align: center;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--borde);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.mayor__linea {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--fuente-mono);
+  padding: 0.1rem 0;
+  font-size: 0.78rem;
+}
+
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.tarjeta {
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-md);
+}
+
+.tarjeta__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+}
+
+.tarjeta__texto {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.mapa-conceptual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.mapa-nodo {
+  background: var(--superficie);
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  text-align: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.mapa-nodo:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.mapa-nodo__texto {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .slide {
+    padding: var(--espacio-lg) var(--espacio-md);
+    min-height: 80vh;
+  }
+  .slide__titulo { font-size: 1.4rem; }
+  .slide__subtitulo { font-size: 0.95rem; }
+  .navegacion { padding: var(--espacio-sm) var(--espacio-md); }
+  .navegacion__boton { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
+  .tabla-contable, .tabla-datos { font-size: 0.75rem; }
+  .grid-tarjetas { grid-template-columns: 1fr; }
+  .esquema-mayor { grid-template-columns: 1fr; }
+  .indice { width: 300px; right: -300px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="barra-progreso">
+    <div class="barra-progreso__relleno" id="progreso"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="indice" id="indice">
+    <button class="indice__cerrar" id="cerrarIndice" aria-label="Cerrar índice">Cerrar</button>
+    <h2 class="indice__titulo">Índice — Punto 2</h2>
+    <ul class="indice__lista" id="listaIndice"></ul>
+  </aside>
+
+  <main class="contenedor-slides" id="contenedorSlides">
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide activo" data-titulo="Portada">
+      <span class="slide__numero">Punto 2 de 6</span>
+      <h1 class="slide__titulo">Procedimientos de Registro Contable</h1>
+      <p class="slide__subtitulo">Global, Analítico y Perpetuos — Caso: "Bicicletas del Norte, S.A. de C.V." — NIF C-4</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿De qué trata este punto?</div>
+          <div class="caja-concepto__texto">
+            En el Punto 1 aprendiste <strong>qué son los inventarios</strong> y cómo se clasifican
+            según la NIF C-4. Ahora toca responder una pregunta distinta:
+            <strong>¿cómo se registran contablemente las operaciones de compra y venta de mercancías?</strong>
+            <br><br>
+            La contabilidad ofrece <strong>tres procedimientos</strong> para llevar ese registro:
+            el <strong>Global</strong>, el <strong>Analítico</strong> y los <strong>Inventarios Perpetuos</strong>.
+            Los tres llegan al mismo resultado final, pero se diferencian en el nivel de detalle,
+            en el número de cuentas que utilizan y en el momento en que determinan el costo de ventas.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Operaciones del periodo</div>
+          <div class="caja-ejemplo__texto">
+            <strong>Saldo inicial:</strong> 100 bicicletas a $1,000 = $100,000<br>
+            <strong>Compra:</strong> 50 bicicletas a $1,000 = $50,000 (pagadas con cheque)<br>
+            <strong>Venta:</strong> 80 bicicletas a $1,800 = $144,000 (cobradas). Costo: $80,000<br>
+            <strong>Recuento físico:</strong> 70 bicicletas = $70,000
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Este punto es fundamentalmente conceptual. Las actividades
+          prácticas y los ejercicios están en el complemento del Punto 2.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: LOS 3 PROCEDIMIENTOS -->
+    <section class="slide" data-titulo="Los 3 procedimientos">
+      <span class="slide__numero">Slide 2</span>
+      <h1 class="slide__titulo">Concepto de los tres procedimientos</h1>
+      <p class="slide__subtitulo">¿Qué distingue al Global, al Analítico y a los Perpetuos?</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Definición general</div>
+          <div class="caja-concepto__texto">
+            Los <strong>procedimientos de registro contable</strong> son las distintas formas en que una
+            entidad puede controlar y registrar sus inventarios. Se diferencian por el
+            <strong>nivel de detalle</strong> con que se lleva el control de las mercancías y por el
+            <strong>momento</strong> en que se determina el costo de ventas.
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">1. Procedimiento Global</div>
+            <div class="tarjeta__texto">
+              Una sola cuenta de inventario. Las compras y ventas se registran sin distinguir
+              unidades ni costos. El costo de ventas se determina al cierre por diferencia.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">2. Procedimiento Analítico</div>
+            <div class="tarjeta__texto">
+              Una cuenta por cada tipo de mercancía o por cada concepto del movimiento.
+              Exige auxiliares detallados de entradas y salidas.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">3. Procedimiento de Perpetuos</div>
+            <div class="tarjeta__texto">
+              Registra simultáneamente la venta y su costo. La cuenta de inventario se actualiza
+              en cada operación. El costo de ventas se conoce al momento.
+            </div>
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> El Global y el Analítico son procedimientos
+          <strong>periódicos</strong> (el costo de ventas se calcula al cierre). Los Perpetuos son
+          <strong>permanentes</strong> (el costo se registra en cada venta).
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: GLOBAL -->
+    <section class="slide" data-titulo="Procedimiento Global">
+      <span class="slide__numero">Slide 3</span>
+      <h1 class="slide__titulo">Procedimiento Global</h1>
+      <p class="slide__subtitulo">Una sola cuenta, saldo mixto y ajuste al cierre</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            Se abre <strong>una sola cuenta</strong> llamada <em>Mercancías generales</em>.
+            Todas las operaciones del periodo se registran ahí:
+            <br><br>
+            • Las <strong>compras</strong> se <strong>cargan</strong> al Debe (aumentan el inventario).<br>
+            • Las <strong>ventas</strong> se <strong>abonan</strong> al Haber (disminuyen el inventario).<br>
+            • El <strong>inventario inicial</strong> también se carga.
+            <br><br>
+            El problema es que <strong>no se distingue el precio de costo del precio de venta</strong>:
+            todo se mezcla en la misma cuenta. Su saldo es <strong>mixto y heterogéneo</strong>.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Analogía cualitativa</div>
+          <div class="caja-ejemplo__texto">
+            Es como una <strong>caja única</strong> donde se echan tanto las monedas que entran por
+            compras (a costo) como las que entran por ventas (a precio de venta). Al final del día
+            la caja tiene una mezcla de ambos valores y no se puede saber cuánto es ganancia real.
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> En este procedimiento <strong>no se conoce el costo de ventas
+          ni el inventario final</strong> hasta que se hace un recuento físico al cierre.
+        </div>
+
+        <div class="esquema-mayor">
+          <div class="mayor">
+            <div class="mayor__titulo">Mercancías generales</div>
+            <div class="mayor__cuerpo">
+              <div class="mayor__columna">
+                <div class="mayor__columna-titulo">Debe (cargos)</div>
+                <div class="mayor__linea"><span>Apertura</span><span>$100,000.00</span></div>
+                <div class="mayor__linea"><span>Compra</span><span>$50,000.00</span></div>
+                <div class="mayor__linea"><span>Total cargos</span><span>$150,000.00</span></div>
+              </div>
+              <div class="mayor__columna">
+                <div class="mayor__columna-titulo">Haber (abonos)</div>
+                <div class="mayor__linea"><span>Venta</span><span>$144,000.00</span></div>
+                <div class="mayor__linea"><span>Ajuste</span><span>$70,000.00</span></div>
+                <div class="mayor__linea"><span>Total abonos</span><span>$214,000.00</span></div>
+              </div>
+            </div>
+            <div style="padding: 0.5rem; background: var(--azul-claro); text-align: center; font-weight: 700; color: var(--azul-profundo); font-family: var(--fuente-mono); font-size: 0.9rem;">
+              Saldo acreedor: $64,000.00 (utilidad bruta)
+            </div>
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Resultado:</strong> Al cierre se hace un recuento físico ($70,000), se separa
+          el inventario final con un ajuste, y el saldo restante se convierte en utilidad bruta
+          ($64,000). El costo de ventas se obtiene por diferencia: $80,000.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: ANALÍTICO -->
+    <section class="slide" data-titulo="Procedimiento Analítico">
+      <span class="slide__numero">Slide 4</span>
+      <h1 class="slide__titulo">Procedimiento Analítico</h1>
+      <p class="slide__subtitulo">Una cuenta por cada concepto del movimiento de mercancías</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            En lugar de una sola cuenta, se abre <strong>una cuenta particular en el mayor
+            para cada concepto</strong> del movimiento de mercancías:
+            <br><br>
+            • <strong>Inventarios:</strong> saldo al inicio y al final.<br>
+            • <strong>Compras:</strong> adquisiciones del periodo.<br>
+            • <strong>Gastos de compra:</strong> fletes, acarreos, seguros.<br>
+            • <strong>Devoluciones y descuentos sobre compras.</strong><br>
+            • <strong>Ventas:</strong> ingresos por venta.<br>
+            • <strong>Devoluciones y descuentos sobre ventas.</strong>
+            <br><br>
+            Permite elaborar el estado de resultados con mucho detalle, pero
+            <strong>sigue sin conocerse el inventario final</strong> hasta el recuento físico.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Los 4 asientos de ajuste al cierre</div>
+          <div class="caja-ejemplo__texto">
+            <strong>A-1.</strong> Se suma el inventario inicial a las compras (total de mercancías).<br>
+            <strong>A-2.</strong> Se resta el inventario final físico de la cuenta de Compras.<br>
+            <strong>A-3.</strong> El costo de ventas se traspasa a la cuenta de Ventas.<br>
+            <strong>A-4.</strong> La utilidad bruta se traspasa a Pérdidas y ganancias.
+          </div>
+        </div>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Resultado del procedimiento Analítico</div>
+          <div class="caja-resultado__linea">
+            <strong>Inventario inicial:</strong> $100,000.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Compras netas:</strong> $50,000.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Total de mercancías:</strong> $150,000.00
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Menos inventario final:</strong> $70,000.00
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>Costo de ventas: $80,000.00 → Utilidad bruta: $64,000.00</strong>
+          </div>
+          <div class="caja-resultado__nota">
+            El costo de ventas se obtiene después de los cuatro asientos de ajuste al cierre.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: PERPETUOS -->
+    <section class="slide" data-titulo="Procedimiento de Perpetuos">
+      <span class="slide__numero">Slide 5</span>
+      <h1 class="slide__titulo">Procedimiento de Inventarios Perpetuos</h1>
+      <p class="slide__subtitulo">Registro permanente y doble asiento en cada venta</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            Emplea <strong>tres cuentas principales</strong> que mantienen información actualizada
+            en todo momento:
+            <br><br>
+            • <strong>Almacén:</strong> activo manejado a precio de <strong>costo</strong>; su saldo
+            expresa el inventario final en cualquier momento.<br>
+            • <strong>Costo de ventas:</strong> costo acumulado de lo vendido.<br>
+            • <strong>Ventas:</strong> ingresos manejados a precio de <strong>venta</strong>.
+            <br><br>
+            La particularidad es que <strong>cada venta genera dos asientos simultáneos</strong>:
+            uno a precio de venta (Bancos contra Ventas) y otro a precio de costo
+            (Costo de ventas contra Almacén).
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Analogía cualitativa</div>
+          <div class="caja-ejemplo__texto">
+            Es como un <strong>kardex que se actualiza solo</strong> con cada movimiento: cada vez
+            que entra mercancía se carga al Almacén; cada vez que sale, se descuenta del Almacén
+            y se acumula en Costo de ventas. Al final del día, con solo mirar el saldo del Almacén
+            ya se sabe cuánta mercancía queda y cuánto costó la que se vendió.
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1rem;">
+          Doble asiento por venta
+        </h3>
+
+        <table class="tabla-contable">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="monto">Debe</th>
+              <th class="monto">Haber</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cuenta-principal" colspan="3">3a. Venta a precio comercial</td>
+            </tr>
+            <tr>
+              <td class="cuenta">Bancos</td>
+              <td class="monto">$144,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Ventas</td>
+              <td class="monto"></td>
+              <td class="monto">$144,000.00</td>
+            </tr>
+            <tr>
+              <td class="cuenta-principal" colspan="3">3b. Salida de mercancía al costo real</td>
+            </tr>
+            <tr>
+              <td class="cuenta">Costo de ventas</td>
+              <td class="monto">$80,000.00</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td class="cuenta">Almacén</td>
+              <td class="monto"></td>
+              <td class="monto">$80,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exito">
+          <strong>Ventaja principal:</strong> Con solo mirar el mayor del <em>Almacén</em> ya sabemos
+          que quedan $70,000 de inventario. Con solo mirar el mayor de <em>Costo de ventas</em>
+          sabemos que lo vendido costó $80,000. No hace falta esperar al cierre.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: COMPARACIÓN Y SÍNTESIS -->
+    <section class="slide" data-titulo="Comparación y síntesis">
+      <span class="slide__numero">Slide 6</span>
+      <h1 class="slide__titulo">Comparación y síntesis del Punto 2</h1>
+      <p class="slide__subtitulo">Los mismos hechos, tres formas de registrarlos, un mismo resultado</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">La idea central</div>
+          <div class="caja-concepto__texto">
+            Los tres procedimientos parten de las <strong>mismas operaciones</strong> y llegan
+            al <strong>mismo resultado final</strong>: costo de ventas $80,000, utilidad bruta $64,000
+            e inventario final $70,000. La diferencia está en <strong>cómo se organiza la información</strong>
+            durante el periodo y en <strong>qué tan rápido</strong> se puede conocer.
+          </div>
+        </div>
+
+        <table class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Indicador contable</th>
+              <th class="centro">Global</th>
+              <th class="centro">Analítico</th>
+              <th class="centro">Perpetuos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Cuentas utilizadas</strong></td>
+              <td class="centro">Mercancías generales</td>
+              <td class="centro">Inventarios, Compras, Ventas</td>
+              <td class="centro">Almacén, Costo de ventas, Ventas</td>
+            </tr>
+            <tr>
+              <td><strong>Inventario final</strong></td>
+              <td class="centro">$70,000<br><em>(conteo obligatorio)</em></td>
+              <td class="centro">$70,000<br><em>(conteo obligatorio)</em></td>
+              <td class="centro">$70,000<br><em>(en libros, tiempo real)</em></td>
+            </tr>
+            <tr>
+              <td><strong>Costo de ventas</strong></td>
+              <td class="centro">Al cierre</td>
+              <td class="centro">$80,000<br><em>(por ajuste)</em></td>
+              <td class="centro">$80,000<br><em>(al momento)</em></td>
+            </tr>
+            <tr class="fila-total">
+              <td><strong>Utilidad bruta</strong></td>
+              <td class="centro">$64,000</td>
+              <td class="centro">$64,000</td>
+              <td class="centro">$64,000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1rem;">
+          Ventajas y limitaciones
+        </h3>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Global</div>
+            <div class="tarjeta__texto">
+              <strong>Ventajas:</strong> sencillo, pocas cuentas, bajo costo administrativo.<br>
+              <strong>Limitaciones:</strong> no revela ventas ni compras por separado; no detecta
+              robos o extravíos; exige recuento físico obligatorio; su saldo es mixto.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Analítico</div>
+            <div class="tarjeta__texto">
+              <strong>Ventajas:</strong> facilita el estado de resultados detallado al clasificar
+              cada concepto.<br>
+              <strong>Limitaciones:</strong> sigue exigiendo recuento físico para conocer el
+              inventario final; no detecta faltantes con rapidez.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Perpetuos</div>
+            <div class="tarjeta__texto">
+              <strong>Ventajas:</strong> información en tiempo real; permite detectar robos o mermas
+              al cotejar libros contra almacén; no requiere cierre para conocer el inventario.<br>
+              <strong>Limitaciones:</strong> mayor costo administrativo; requiere disciplina en el registro.
+            </div>
+          </div>
+        </div>
+
+        <div class="mapa-conceptual">
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Global: una cuenta mixta</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Analítico: cuentas por concepto</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Perpetuos: doble asiento</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Costo de ventas: $80,000</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Utilidad bruta: $64,000</div>
+          </div>
+          <div class="mapa-nodo">
+            <div class="mapa-nodo__texto">Inventario final: $70,000</div>
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Has completado el Punto 2.</strong> Ahora sabes distinguir los tres procedimientos
+          de registro contable, entender cuándo conviene usar cada uno y reconocer que los tres
+          llegan al mismo resultado final aplicado al caso de Bicicletas del Norte.
+        </div>
+
+        <div class="alerta">
+          <strong>Práctica recomendada:</strong> Abre el complemento del Punto 2 para reforzar
+          los tres procedimientos con actividades interactivas, simuladores y un examen final.
+        </div>
+
+        <div style="text-align: center; margin-top: var(--espacio-lg);">
+          <button class="navegacion__boton" onclick="abrirIndice()" style="padding: 0.8rem 2rem; font-size: 1rem;">
+            Volver al índice
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="navegacion">
+    <button class="navegacion__boton" id="btnAnterior" onclick="Slides.anterior()">Anterior</button>
+    <div style="display: flex; align-items: center; gap: var(--espacio-md);">
+      <button class="navegacion__indice" onclick="abrirIndice()">Índice</button>
+      <span class="navegacion__contador" id="contador">1 / 6</span>
+    </div>
+    <button class="navegacion__boton" id="btnSiguiente" onclick="Slides.siguiente()">Siguiente</button>
+  </nav>
+
+</div>
+
+<script>
+const Slides = {
+  actual: 0,
+  slides: [],
+  total: 0,
+
+  init() {
+    this.slides = document.querySelectorAll('.slide');
+    this.total = this.slides.length;
+    this.render();
+    this.bindKeys();
+    this.bindHash();
+    this.construirIndice();
+  },
+
+  ir(n) {
+    if (n < 0 || n >= this.total) return;
+    this.slides[this.actual].classList.remove('activo');
+    this.actual = n;
+    this.slides[this.actual].classList.add('activo');
+    this.render();
+  },
+
+  siguiente() { this.ir(this.actual + 1); },
+  anterior() { this.ir(this.actual - 1); },
+
+  render() {
+    document.getElementById('contador').textContent = (this.actual + 1) + ' / ' + this.total;
+    document.getElementById('btnAnterior').disabled = this.actual === 0;
+    document.getElementById('btnSiguiente').disabled = this.actual === this.total - 1;
+    const pct = ((this.actual + 1) / this.total) * 100;
+    document.getElementById('progreso').style.width = pct + '%';
+    document.querySelectorAll('.indice__item').forEach((item, i) => {
+      item.classList.toggle('activo', i === this.actual);
+    });
+    history.replaceState(null, '', '#slide-' + (this.actual + 1));
+    this.slides[this.actual].scrollTop = 0;
+  },
+
+  bindKeys() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        this.siguiente();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.anterior();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        this.ir(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        this.ir(this.total - 1);
+      }
+    });
+  },
+
+  bindHash() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#slide-')) {
+      const n = parseInt(hash.replace('#slide-', '')) - 1;
+      if (n >= 0 && n < this.total) {
+        this.ir(n);
+      }
+    }
+  },
+
+  construirIndice() {
+    const lista = document.getElementById('listaIndice');
+    lista.innerHTML = '';
+    this.slides.forEach((slide, i) => {
+      const titulo = slide.dataset.titulo || ('Slide ' + (i + 1));
+      const li = document.createElement('li');
+      li.className = 'indice__item' + (i === this.actual ? ' activo' : '');
+      li.innerHTML = '<span class="indice__item-num">' + (i + 1) + '.</span> ' + titulo;
+      li.onclick = () => {
+        this.ir(i);
+        cerrarIndice();
+      };
+      lista.appendChild(li);
+    });
+  }
+};
+
+function abrirIndice() {
+  document.getElementById('indice').classList.add('abierto');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function cerrarIndice() {
+  document.getElementById('indice').classList.remove('abierto');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+document.getElementById('cerrarIndice').onclick = cerrarIndice;
+document.getElementById('overlay').onclick = cerrarIndice;
+
+document.addEventListener('DOMContentLoaded', () => {
+  Slides.init();
+});
+</script>
+
+</body>
+</html>

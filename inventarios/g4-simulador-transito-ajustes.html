@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 4 — Complemento: Simulador de tránsito y ajustes + examen | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: var(--espacio-lg);
+}
+
+.contenedor { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--sombra-lg);
+  flex-wrap: wrap;
+}
+
+.header__titulo { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.header__subtitulo { font-size: 0.8rem; opacity: 0.8; font-weight: 400; }
+.header__acciones { display: flex; gap: var(--espacio-sm); flex-wrap: wrap; }
+
+.boton {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.boton--primario { background: var(--azul-brillante); color: #fff; }
+.boton--primario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--secundario { background: transparent; color: #fff; border: 2px solid var(--cian); }
+.boton--secundario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--terciario { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.boton--terciario:hover { background: rgba(255,255,255,0.1); }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  min-width: 200px;
+}
+
+.tab:hover { background: var(--cian-claro); }
+.tab--activa {
+  color: var(--azul-profundo);
+  border-bottom-color: var(--azul-brillante);
+  background: var(--azul-claro);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  overflow: hidden;
+}
+
+.panel__header {
+  background: var(--azul-medio);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.panel__cuerpo { padding: var(--espacio-lg); }
+
+.instruccion {
+  background: var(--cian-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  font-size: 0.9rem;
+}
+
+.instruccion strong { color: var(--azul-profundo); }
+
+.barra-acciones {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-accion {
+  background: var(--azul-brillante);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boton-accion:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton-accion--reiniciar { background: var(--ambar); color: #fff; }
+.boton-accion--reiniciar:hover { background: #d97706; color: #fff; }
+
+/* ==== AVISO ==== */
+.aviso {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: var(--espacio-md);
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.aviso.visible { display: block; }
+
+.aviso--error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid var(--rojo-error);
+}
+
+.aviso--exito {
+  background: #d1fae5;
+  color: #065f46;
+  border-left: 4px solid var(--verde-exito);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==== CAMPOS EDITABLES ==== */
+.grid-entradas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.campo { display: flex; flex-direction: column; gap: var(--espacio-xs); }
+
+.campo__etiqueta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.campo__input {
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.campo__input:focus { outline: none; border-color: var(--azul-brillante); }
+
+.campo__input--error {
+  border-color: var(--rojo-error);
+  background: #fef2f2;
+}
+
+.campo__ayuda {
+  font-size: 0.72rem;
+  color: var(--azul-medio);
+  font-style: italic;
+}
+
+/* ==== TABLAS ==== */
+.tabla-resultado {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.85rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-resultado thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-resultado th {
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-resultado th.monto { text-align: right; }
+
+.tabla-resultado td {
+  padding: 0.6rem 0.6rem;
+  border-bottom: 1px solid var(--azul-claro);
+}
+
+.tabla-resultado td.monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-resultado td.monto-vacio {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  color: var(--azul-medio);
+}
+
+.tabla-resultado tbody tr:hover { background: var(--blanco-gris); }
+
+.tabla-resultado .cuenta { font-weight: 500; }
+
+.tabla-resultado .cuenta-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  background: var(--cian-claro);
+}
+
+.tabla-resultado tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-resultado tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+}
+
+.tabla-resultado tbody tr.fila-cargo { background: #f0f7ff; }
+.tabla-resultado tbody tr.fila-abono { background: #fff8f0; }
+
+/* ==== DESGLOSE COMPACTO ==== */
+.desglose-compacto {
+  margin-top: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.desglose-compacto__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  padding-bottom: var(--espacio-xs);
+  border-bottom: 2px solid var(--azul-brillante);
+}
+
+.desglose-linea {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.88rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--azul-claro);
+  flex-wrap: wrap;
+}
+
+.desglose-linea:last-child { border-bottom: none; }
+
+.desglose-linea__etiqueta {
+  font-family: var(--fuente-base);
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+  min-width: 180px;
+}
+
+.desglose-linea__calculo {
+  color: var(--azul-medio);
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.desglose-linea__total {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+}
+
+.desglose-linea--total {
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  border-bottom: none;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+  padding: 0.6rem 0.75rem;
+}
+
+.desglose-linea--total .desglose-linea__total { font-size: 0.95rem; }
+
+/* ==== PANEL RESULTADO ==== */
+.panel-resultado {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-md);
+}
+
+.panel-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.panel-resultado__linea {
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+}
+
+.panel-resultado__linea--utilidad {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+}
+
+.panel-resultado__nota {
+  font-size: 0.82rem;
+  color: var(--azul-medio);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+  font-family: var(--fuente-base);
+}
+
+/* ==== ESQUEMA MAYOR ==== */
+.esquema-mayor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.mayor {
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+}
+
+.mayor__titulo {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mayor__cuerpo { display: grid; grid-template-columns: 1fr 1fr; }
+
+.mayor__columna { padding: 0.4rem; font-size: 0.78rem; }
+.mayor__columna:first-child { border-right: 1px solid var(--azul-claro); }
+
+.mayor__columna-titulo {
+  text-align: center;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--azul-claro);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.mayor__linea {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--fuente-mono);
+  padding: 0.1rem 0;
+  font-size: 0.78rem;
+}
+
+/* ==== EXAMEN ==== */
+.examen-progreso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.examen-progreso__texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.examen-progreso__barra {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.examen-progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.reactivo {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.reactivo--correcto { border-color: var(--verde-exito); background: #d1fae5; }
+.reactivo--incorrecto { border-color: var(--rojo-error); background: #fee2e2; }
+
+.reactivo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--azul-brillante);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reactivo--correcto .reactivo__numero { background: var(--verde-exito); }
+.reactivo--incorrecto .reactivo__numero { background: var(--rojo-error); }
+
+.reactivo__pregunta {
+  font-size: 0.92rem;
+  margin-bottom: var(--espacio-md);
+  color: var(--azul-profundo);
+  line-height: 1.5;
+}
+
+.reactivo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+}
+
+.reactivo__opcion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.reactivo__opcion.correcta { border-color: var(--verde-exito); background: #d1fae5; font-weight: 600; }
+.reactivo__opcion.incorrecta { border-color: var(--rojo-error); background: #fee2e2; opacity: 0.85; }
+.reactivo__opcion.bloqueada { cursor: not-allowed; pointer-events: none; }
+.reactivo__opcion input { accent-color: var(--azul-brillante); }
+
+.reactivo__feedback {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.reactivo__feedback.visible { display: block; }
+.reactivo__feedback--correcto { background: #d1fae5; border-left: 4px solid var(--verde-exito); color: #065f46; }
+.reactivo__feedback--incorrecto { background: #fee2e2; border-left: 4px solid var(--rojo-error); color: #991b1b; }
+
+.resultado-examen {
+  background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+  color: #fff;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+  text-align: center;
+}
+
+.resultado-examen.visible { display: block; animation: fadeIn 0.5s ease; }
+
+.resultado-examen__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.resultado-examen__porcentaje {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  line-height: 1;
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-examen__detalle {
+  font-size: 1rem;
+  margin-bottom: var(--espacio-md);
+  opacity: 0.9;
+}
+
+.resultado-examen__mensaje {
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.contenido-tab { display: none; }
+.contenido-tab--activo { display: block; }
+
+/* ==== MODAL ==== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11,30,58,0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  max-width: 650px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-lg);
+}
+
+.modal__header {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  position: sticky;
+  top: 0;
+}
+
+.modal__titulo { font-size: 1rem; font-weight: 700; }
+
+.modal__cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+.modal__cuerpo { padding: var(--espacio-lg); }
+
+.modal__cuerpo h3 {
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  margin-top: var(--espacio-md);
+}
+
+.modal__cuerpo h3:first-child { margin-top: 0; }
+
+.modal__cuerpo p {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.6;
+}
+
+.modal__cuerpo ul { margin-left: var(--espacio-lg); margin-bottom: var(--espacio-sm); }
+
+.modal__cuerpo li {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin-bottom: 0.3rem;
+}
+
+.modal__cuerpo strong { color: var(--azul-profundo); }
+
+@media (max-width: 768px) {
+  body { padding: var(--espacio-md); }
+  .header { padding: var(--espacio-md); }
+  .header__titulo { font-size: 1rem; }
+  .panel__cuerpo { padding: var(--espacio-md); }
+  .tab { font-size: 0.78rem; padding: 0.7rem 0.5rem; min-width: 140px; }
+  .resultado-examen__porcentaje { font-size: 3rem; }
+  .tabla-resultado { font-size: 0.72rem; }
+  .grid-entradas { grid-template-columns: 1fr; }
+  .esquema-mayor { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <header class="header">
+    <div>
+      <div class="header__titulo">Punto 4 — Complemento: Simuladores y examen</div>
+      <div class="header__subtitulo">Bicicletas del Norte, S.A. de C.V. — NIF C-4</div>
+    </div>
+    <div class="header__acciones">
+      <button class="boton boton--primario" onclick="App.cargarCaso()">Cargar caso</button>
+      <button class="boton boton--secundario" onclick="Modal.abrir()">¿Cómo funciona?</button>
+      <button class="boton boton--terciario" onclick="App.limpiar()">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab tab--activa" data-tab="transito" onclick="App.cambiarTab('transito')">Actividad 1: Simulador de tránsito</button>
+    <button class="tab" data-tab="ajustes" onclick="App.cambiarTab('ajustes')">Actividad 2: Simulador de ajustes</button>
+    <button class="tab" data-tab="examen" onclick="App.cambiarTab('examen')">Examen final</button>
+  </div>
+
+  <!-- PESTAÑA TRÁNSITO -->
+  <div class="contenido-tab contenido-tab--activo" id="tab-transito">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 1 — Simulador de mercancías en tránsito</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Edita los campos para simular una compra foránea.
+          La cuenta <em>Mercancías en tránsito</em> acumula el valor de la factura más los
+          gastos de traslado. Al recibir físicamente el lote, el costo total se traspasa al
+          Almacén y la cuenta puente queda saldada en cero.
+        </div>
+
+        <div class="aviso aviso--error" id="avisoTransito"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Transito.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="grid-entradas">
+          <div class="campo">
+            <label class="campo__etiqueta">Unidades del lote foráneo</label>
+            <input type="number" class="campo__input" id="t-unidades" value="50" min="0" step="1" oninput="Transito.calcular()">
+            <span class="campo__ayuda">Bicicletas en el lote</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Valor de factura del proveedor</label>
+            <input type="number" class="campo__input" id="t-factura" value="50000" min="0" step="0.01" oninput="Transito.calcular()">
+            <span class="campo__ayuda">Cargo inicial (Factura 451)</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Fletes y seguros</label>
+            <input type="number" class="campo__input" id="t-fletes" value="3000" min="0" step="0.01" oninput="Transito.calcular()">
+            <span class="campo__ayuda">Gastos de traslado</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Otros gastos de compra</label>
+            <input type="number" class="campo__input" id="t-otros" value="0" min="0" step="0.01" oninput="Transito.calcular()">
+            <span class="campo__ayuda">Aduanas, maniobras, etc.</span>
+          </div>
+        </div>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">
+          Asientos de la cuenta Mercancías en tránsito
+        </h3>
+
+        <table class="tabla-resultado">
+          <thead>
+            <tr>
+              <th>Asiento / Concepto</th>
+              <th class="monto">Debe</th>
+              <th class="monto">Haber</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoAsientosTransito"></tbody>
+        </table>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-lg) 0 var(--espacio-md);">
+          Esquema de Mayor: Mercancías en tránsito
+        </h3>
+
+        <div class="esquema-mayor" id="esquemaTransito"></div>
+
+        <div class="desglose-compacto">
+          <div class="desglose-compacto__titulo">Desglose del costo total del lote</div>
+          <div id="desgloseTransito"></div>
+        </div>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo">Resultado del manejo del lote foráneo</div>
+          <div class="panel-resultado__linea"><span>Unidades del lote</span><span id="resUnidades">0</span></div>
+          <div class="panel-resultado__linea"><span>Costo total de adquisición</span><span id="resCostoTotal">$0.00</span></div>
+          <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>COSTO UNITARIO REAL</span><span id="resCostoUnitario">$0.00</span></div>
+          <div class="panel-resultado__linea"><span>Saldo final de Mercancías en tránsito</span><span id="resSaldoTransito">$0.00</span></div>
+          <div class="panel-resultado__nota">
+            La cuenta puente queda saldada en cero al traspasar el costo total al Almacén.
+            El costo unitario real incorpora todos los gastos de compra.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA AJUSTES -->
+  <div class="contenido-tab" id="tab-ajustes">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 2 — Simulador de ajustes por recuento físico</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Edita los valores del recuento físico. La app aplica los
+          tres tipos de ajuste, calcula el saldo final ajustado y verifica que coincida con el
+          recuento. Los valores negativos se marcan como error.
+        </div>
+
+        <div class="aviso aviso--error" id="avisoAjustes"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Ajustes.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="grid-entradas">
+          <div class="campo">
+            <label class="campo__etiqueta">Saldo de Almacén en libros</label>
+            <input type="number" class="campo__input" id="a-saldo-libros" value="84000" min="0" step="0.01" oninput="Ajustes.calcular()">
+            <span class="campo__ayuda">Antes de ajustes</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Merma normal</label>
+            <input type="number" class="campo__input" id="a-merma" value="1400" min="0" step="0.01" oninput="Ajustes.calcular()">
+            <span class="campo__ayuda">Gasto de venta</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Faltante injustificado</label>
+            <input type="number" class="campo__input" id="a-faltante" value="1400" min="0" step="0.01" oninput="Ajustes.calcular()">
+            <span class="campo__ayuda">Deudores diversos</span>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta">Sobrante desconocido</label>
+            <input type="number" class="campo__input" id="a-sobrante" value="500" min="0" step="0.01" oninput="Ajustes.calcular()">
+            <span class="campo__ayuda">Otros gastos y productos</span>
+          </div>
+        </div>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">
+          Asientos de ajuste
+        </h3>
+
+        <table class="tabla-resultado">
+          <thead>
+            <tr>
+              <th>Asiento / Concepto</th>
+              <th class="monto">Debe</th>
+              <th class="monto">Haber</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoAsientosAjustes"></tbody>
+        </table>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin:var(--espacio-lg) 0 var(--espacio-md);">
+          Esquema de Mayor: Almacén después de los ajustes
+        </h3>
+
+        <div class="esquema-mayor" id="esquemaAjustes"></div>
+
+        <div class="desglose-compacto">
+          <div class="desglose-compacto__titulo">Desglose del saldo final del Almacén</div>
+          <div id="desgloseAjustes"></div>
+        </div>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo">Resultado de los ajustes al Almacén</div>
+          <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>SALDO FINAL AJUSTADO</span><span id="a-res-final">$0.00</span></div>
+          <div class="panel-resultado__nota">
+            El saldo final ajustado debe coincidir con el valor del recuento físico.
+            La merma va a gastos operativos; el faltante con responsable genera una cuenta
+            por cobrar; el sobrante es un producto no operativo.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA EXAMEN -->
+  <div class="contenido-tab" id="tab-examen">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Examen final — 10 reactivos conceptuales</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada reactivo se califica en cuanto haces clic en una opción.
+          Después de responder, la opción correcta se marca en verde y la tuya (si es incorrecta)
+          en rojo. El reactivo queda bloqueado. Al responder el último, aparece automáticamente
+          tu <strong>calificación global</strong>. Cada reinicio genera un examen distinto.
+          <br><br>
+          <strong>Nota:</strong> Todos los reactivos son <strong>conceptuales</strong>. Ningún
+          reactivo pide cifras monetarias como respuesta.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Examen.reiniciar()">
+            Reiniciar examen
+          </button>
+        </div>
+
+        <div class="examen-progreso">
+          <div class="examen-progreso__texto" id="examenProgresoTexto">0 / 10 respondidas</div>
+          <div class="examen-progreso__barra">
+            <div class="examen-progreso__relleno" id="examenProgresoRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorExamen"></div>
+
+        <div class="resultado-examen" id="resultadoExamen">
+          <div class="resultado-examen__titulo">Calificación final</div>
+          <div class="resultado-examen__porcentaje" id="examenPorcentaje">0%</div>
+          <div class="resultado-examen__detalle" id="examenDetalle">0 aciertos de 10</div>
+          <div class="resultado-examen__mensaje" id="examenMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__titulo" id="modalTitulo">¿Cómo funciona el complemento?</div>
+      <button class="modal__cerrar" onclick="Modal.cerrar()">Cerrar</button>
+    </div>
+    <div class="modal__cuerpo" id="modalCuerpo"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ============================================================
+   ACTIVIDAD 1 — SIMULADOR DE TRÁNSITO
+   ============================================================ */
+const Transito = {
+  init() {
+    document.getElementById('t-unidades').value = 50;
+    document.getElementById('t-factura').value = 50000;
+    document.getElementById('t-fletes').value = 3000;
+    document.getElementById('t-otros').value = 0;
+    this.calcular();
+  },
+
+  reiniciar() { this.init(); },
+
+  leerNumero(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  },
+
+  mostrarAviso(texto) {
+    const aviso = document.getElementById('avisoTransito');
+    aviso.textContent = texto;
+    aviso.classList.add('visible');
+  },
+
+  ocultarAviso() {
+    const aviso = document.getElementById('avisoTransito');
+    aviso.classList.remove('visible');
+    aviso.textContent = '';
+  },
+
+  calcular() {
+    const unidades = this.leerNumero('t-unidades');
+    const factura = this.leerNumero('t-factura');
+    const fletes = this.leerNumero('t-fletes');
+    const otros = this.leerNumero('t-otros');
+
+    // Validaciones
+    const errores = [];
+    if (unidades < 0) errores.push('Las unidades no pueden ser negativas.');
+    if (factura < 0) errores.push('El valor de factura no puede ser negativo.');
+    if (fletes < 0) errores.push('Los fletes no pueden ser negativos.');
+    if (otros < 0) errores.push('Los otros gastos no pueden ser negativos.');
+
+    // Marcar campos con error
+    ['t-unidades', 't-factura', 't-fletes', 't-otros'].forEach(id => {
+      const el = document.getElementById(id);
+      if (parseFloat(el.value) < 0) el.classList.add('campo__input--error');
+      else el.classList.remove('campo__input--error');
+    });
+
+    if (errores.length > 0) {
+      this.mostrarAviso(errores.join(' '));
+    } else {
+      this.ocultarAviso();
+    }
+
+    const gastos = fletes + otros;
+    const costoTotal = factura + gastos;
+    const costoUnitario = unidades > 0 ? costoTotal / unidades : 0;
+    const saldoTransito = 0;
+
+    // Cuerpo de asientos
+    const cuerpoAsientos = document.getElementById('cuerpoAsientosTransito');
+    cuerpoAsientos.innerHTML = `
+      <tr>
+        <td class="cuenta-principal" colspan="3">1. Registro del costo inicial (factura del proveedor)</td>
+      </tr>
+      <tr class="fila-cargo">
+        <td class="cuenta">Mercancías en tránsito</td>
+        <td class="monto">${fmt(factura)}</td>
+        <td class="monto-vacio">—</td>
+      </tr>
+      <tr class="fila-abono">
+        <td class="cuenta">Proveedores</td>
+        <td class="monto-vacio">—</td>
+        <td class="monto">${fmt(factura)}</td>
+      </tr>
+      <tr>
+        <td class="cuenta-principal" colspan="3">2. Gastos de traslado acumulados</td>
+      </tr>
+      <tr class="fila-cargo">
+        <td class="cuenta">Mercancías en tránsito (fletes + otros)</td>
+        <td class="monto">${fmt(gastos)}</td>
+        <td class="monto-vacio">—</td>
+      </tr>
+      <tr class="fila-abono">
+        <td class="cuenta">Bancos</td>
+        <td class="monto-vacio">—</td>
+        <td class="monto">${fmt(gastos)}</td>
+      </tr>
+      <tr>
+        <td class="cuenta-principal" colspan="3">3. Recepción física: traspaso al Almacén</td>
+      </tr>
+      <tr class="fila-cargo">
+        <td class="cuenta">Almacén (costo total acumulado)</td>
+        <td class="monto">${fmt(costoTotal)}</td>
+        <td class="monto-vacio">—</td>
+      </tr>
+      <tr class="fila-abono">
+        <td class="cuenta">Mercancías en tránsito</td>
+        <td class="monto-vacio">—</td>
+        <td class="monto">${fmt(costoTotal)}</td>
+      </tr>
+      <tr class="fila-total">
+        <td>Sumas iguales del traspaso</td>
+        <td class="monto">${fmt(costoTotal)}</td>
+        <td class="monto">${fmt(costoTotal)}</td>
+      </tr>
+    `;
+
+    // Esquema de mayor
+    document.getElementById('esquemaTransito').innerHTML = `
+      <div class="mayor">
+        <div class="mayor__titulo">Mercancías en tránsito</div>
+        <div class="mayor__cuerpo">
+          <div class="mayor__columna">
+            <div class="mayor__columna-titulo">Debe</div>
+            <div class="mayor__linea"><span>(1) Factura</span><span>${fmt(factura)}</span></div>
+            <div class="mayor__linea"><span>(2) Fletes + otros</span><span>${fmt(gastos)}</span></div>
+            <div class="mayor__linea"><span>Mov. deudor</span><span>${fmt(costoTotal)}</span></div>
+          </div>
+          <div class="mayor__columna">
+            <div class="mayor__columna-titulo">Haber</div>
+            <div class="mayor__linea"><span>(3) Recepción</span><span>${fmt(costoTotal)}</span></div>
+            <div class="mayor__linea"><span>Mov. acreedor</span><span>${fmt(costoTotal)}</span></div>
+          </div>
+        </div>
+        <div style="padding: 0.4rem; background: var(--azul-claro); text-align: center; font-weight: 700; color: var(--azul-profundo); font-family: var(--fuente-mono); font-size: 0.85rem;">
+          Saldo: ${fmt(saldoTransito)} (cuenta saldada)
+        </div>
+      </div>
+    `;
+
+    // Desglose compacto
+    document.getElementById('desgloseTransito').innerHTML = `
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Factura del proveedor:</span>
+        <span class="desglose-linea__calculo">—</span>
+        <span class="desglose-linea__total">${fmt(factura)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Fletes y seguros:</span>
+        <span class="desglose-linea__calculo">—</span>
+        <span class="desglose-linea__total">${fmt(fletes)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Otros gastos de compra:</span>
+        <span class="desglose-linea__calculo">—</span>
+        <span class="desglose-linea__total">${fmt(otros)}</span>
+      </div>
+      <div class="desglose-linea desglose-linea--total">
+        <span class="desglose-linea__etiqueta">Costo total del lote:</span>
+        <span class="desglose-linea__calculo">${unidades} u. × ${fmt(costoUnitario)}</span>
+        <span class="desglose-linea__total">${fmt(costoTotal)}</span>
+      </div>
+    `;
+
+    // Panel de resultado
+    document.getElementById('resUnidades').textContent = unidades;
+    document.getElementById('resCostoTotal').textContent = fmt(costoTotal);
+    document.getElementById('resCostoUnitario').textContent = fmt(costoUnitario);
+    document.getElementById('resSaldoTransito').textContent = fmt(saldoTransito);
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 2 — SIMULADOR DE AJUSTES
+   ============================================================ */
+const Ajustes = {
+  init() {
+    document.getElementById('a-saldo-libros').value = 84000;
+    document.getElementById('a-merma').value = 1400;
+    document.getElementById('a-faltante').value = 1400;
+    document.getElementById('a-sobrante').value = 500;
+    this.calcular();
+  },
+
+  reiniciar() { this.init(); },
+
+  leerNumero(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  },
+
+  mostrarAviso(texto) {
+    const aviso = document.getElementById('avisoAjustes');
+    aviso.textContent = texto;
+    aviso.classList.add('visible');
+  },
+
+  ocultarAviso() {
+    const aviso = document.getElementById('avisoAjustes');
+    aviso.classList.remove('visible');
+    aviso.textContent = '';
+  },
+
+  calcular() {
+    const saldoLibros = this.leerNumero('a-saldo-libros');
+    const merma = this.leerNumero('a-merma');
+    const faltante = this.leerNumero('a-faltante');
+    const sobrante = this.leerNumero('a-sobrante');
+
+    // Validaciones
+    const errores = [];
+    if (saldoLibros < 0) errores.push('El saldo en libros no puede ser negativo.');
+    if (merma < 0) errores.push('La merma no puede ser negativa.');
+    if (faltante < 0) errores.push('El faltante no puede ser negativo.');
+    if (sobrante < 0) errores.push('El sobrante no puede ser negativo.');
+
+    ['a-saldo-libros', 'a-merma', 'a-faltante', 'a-sobrante'].forEach(id => {
+      const el = document.getElementById(id);
+      if (parseFloat(el.value) < 0) el.classList.add('campo__input--error');
+      else el.classList.remove('campo__input--error');
+    });
+
+    // Validar que las deducciones no superen el saldo
+    const totalDeducciones = merma + faltante;
+    if (totalDeducciones > saldoLibros) {
+      errores.push(`La suma de merma y faltante (${fmt(totalDeducciones)}) supera el saldo en libros (${fmt(saldoLibros)}). El saldo final sería negativo.`);
+    }
+
+    if (errores.length > 0) {
+      this.mostrarAviso(errores.join(' '));
+    } else {
+      this.ocultarAviso();
+    }
+
+    const saldoFinal = saldoLibros - merma - faltante + sobrante;
+    const totalDebe = saldoLibros + sobrante;
+    const totalHaber = merma + faltante;
+
+    // Cuerpo de asientos
+    const cuerpoAsientos = document.getElementById('cuerpoAsientosAjustes');
+    cuerpoAsientos.innerHTML = `
+      <tr>
+        <td class="cuenta-principal" colspan="3">Ajuste A — Merma normal</td>
+      </tr>
+      <tr class="fila-cargo">
+        <td class="cuenta">Gastos de venta</td>
+        <td class="monto">${fmt(merma)}</td>
+        <td class="monto-vacio">—</td>
+      </tr>
+      <tr class="fila-abono">
+        <td class="cuenta">Almacén</td>
+        <td class="monto-vacio">—</td>
+        <td class="monto">${fmt(merma)}</td>
+      </tr>
+      <tr>
+        <td class="cuenta-principal" colspan="3">Ajuste B — Faltante injustificado con responsable</td>
+      </tr>
+      <tr class="fila-cargo">
+        <td class="cuenta">Deudores diversos</td>
+        <td class="monto">${fmt(faltante)}</td>
+        <td class="monto-vacio">—</td>
+      </tr>
+      <tr class="fila-abono">
+        <td class="cuenta">Almacén</td>
+        <td class="monto-vacio">—</td>
+        <td class="monto">${fmt(faltante)}</td>
+      </tr>
+      <tr>
+        <td class="cuenta-principal" colspan="3">Ajuste C — Sobrante desconocido</td>
+      </tr>
+      <tr class="fila-cargo">
+        <td class="cuenta">Almacén</td>
+        <td class="monto">${fmt(sobrante)}</td>
+        <td class="monto-vacio">—</td>
+      </tr>
+      <tr class="fila-abono">
+        <td class="cuenta">Otros gastos y productos</td>
+        <td class="monto-vacio">—</td>
+        <td class="monto">${fmt(sobrante)}</td>
+      </tr>
+    `;
+
+    // Esquema de mayor
+    document.getElementById('esquemaAjustes').innerHTML = `
+      <div class="mayor">
+        <div class="mayor__titulo">Almacén (después de ajustes)</div>
+        <div class="mayor__cuerpo">
+          <div class="mayor__columna">
+            <div class="mayor__columna-titulo">Debe</div>
+            <div class="mayor__linea"><span>Saldo en libros</span><span>${fmt(saldoLibros)}</span></div>
+            <div class="mayor__linea"><span>(C) Sobrante</span><span>${fmt(sobrante)}</span></div>
+            <div class="mayor__linea"><span>Mov. deudor</span><span>${fmt(totalDebe)}</span></div>
+          </div>
+          <div class="mayor__columna">
+            <div class="mayor__columna-titulo">Haber</div>
+            <div class="mayor__linea"><span>(A) Merma</span><span>${fmt(merma)}</span></div>
+            <div class="mayor__linea"><span>(B) Faltante</span><span>${fmt(faltante)}</span></div>
+            <div class="mayor__linea"><span>Mov. acreedor</span><span>${fmt(totalHaber)}</span></div>
+          </div>
+        </div>
+        <div style="padding: 0.4rem; background: var(--azul-claro); text-align: center; font-weight: 700; color: var(--azul-profundo); font-family: var(--fuente-mono); font-size: 0.85rem;">
+          Saldo final ajustado: ${fmt(saldoFinal)}
+        </div>
+      </div>
+    `;
+
+    // Desglose compacto
+    document.getElementById('desgloseAjustes').innerHTML = `
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Saldo en libros:</span>
+        <span class="desglose-linea__calculo">—</span>
+        <span class="desglose-linea__total">${fmt(saldoLibros)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Menos merma normal (A):</span>
+        <span class="desglose-linea__calculo">Gastos de venta</span>
+        <span class="desglose-linea__total">−${fmt(merma)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Menos faltante injustificado (B):</span>
+        <span class="desglose-linea__calculo">Deudores diversos</span>
+        <span class="desglose-linea__total">−${fmt(faltante)}</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Más sobrante desconocido (C):</span>
+        <span class="desglose-linea__calculo">Otros gastos y productos</span>
+        <span class="desglose-linea__total">+${fmt(sobrante)}</span>
+      </div>
+      <div class="desglose-linea desglose-linea--total">
+        <span class="desglose-linea__etiqueta">Saldo final ajustado:</span>
+        <span class="desglose-linea__calculo">Coincide con el recuento físico</span>
+        <span class="desglose-linea__total">${fmt(saldoFinal)}</span>
+      </div>
+    `;
+
+    document.getElementById('a-res-final').textContent = fmt(saldoFinal);
+  }
+};
+
+/* ============================================================
+   EXAMEN FINAL — 100% conceptual
+   ============================================================ */
+const BancoExamen = [
+  {
+    pregunta: '¿Qué tipo de cuenta es Mercancías en tránsito?',
+    opciones: [
+      { texto: 'Una cuenta de pasivo a corto plazo.', correcta: false },
+      { texto: 'Una cuenta puente del Activo Circulante que acumula el costo de compras foráneas.', correcta: true },
+      { texto: 'Una cuenta de resultados de gastos.', correcta: false },
+      { texto: 'Una cuenta de capital contable.', correcta: false }
+    ],
+    explicacion: 'Mercancías en tránsito es una cuenta puente del Activo Circulante que acumula el costo total de las compras foráneas hasta su recepción física.'
+  },
+  {
+    pregunta: '¿Cuándo se abona la cuenta Mercancías en tránsito?',
+    opciones: [
+      { texto: 'Cuando se paga la factura del proveedor.', correcta: false },
+      { texto: 'Cuando se paga el flete.', correcta: false },
+      { texto: 'Cuando las mercancías llegan físicamente a la bodega y se traspasa el costo al Almacén.', correcta: true },
+      { texto: 'Al cierre del ejercicio.', correcta: false }
+    ],
+    explicacion: 'La cuenta se abona al recibir físicamente las mercancías: el costo total acumulado se traspasa al Almacén y la cuenta puente queda saldada.'
+  },
+  {
+    pregunta: '¿Cuál es la naturaleza del saldo de Mercancías en tránsito durante el traslado del lote?',
+    opciones: [
+      { texto: 'Acreedor: representa una deuda con el proveedor.', correcta: false },
+      { texto: 'Deudor: representa el valor de los bienes que viajan hacia la empresa.', correcta: true },
+      { texto: 'Mixto: contiene cargos y abonos mezclados.', correcta: false },
+      { texto: 'Cero: nunca tiene saldo.', correcta: false }
+    ],
+    explicacion: 'Mientras el lote viaja, la cuenta tiene saldo deudor. Al recibirlo físicamente, se abona y queda en cero.'
+  },
+  {
+    pregunta: 'Al recibir físicamente el lote foráneo, ¿qué sucede con la cuenta Mercancías en tránsito?',
+    opciones: [
+      { texto: 'Se deja con el mismo saldo hasta el cierre del ejercicio.', correcta: false },
+      { texto: 'Se abona por el costo total acumulado y queda saldada en cero.', correcta: true },
+      { texto: 'Se carga por el valor del flete.', correcta: false },
+      { texto: 'Se traspasa a una cuenta de pasivo.', correcta: false }
+    ],
+    explicacion: 'Al recibir el lote, la cuenta puente se abona por el costo total acumulado y queda en cero. El costo total se traspasa al Almacén.'
+  },
+  {
+    pregunta: '¿Cuál es la finalidad de los ajustes por inventario físico al cierre?',
+    opciones: [
+      { texto: 'Aumentar el valor del inventario en libros.', correcta: false },
+      { texto: 'Garantizar que el saldo contable del Almacén coincida con el valor de la mercancía realmente existente en bodega.', correcta: true },
+      { texto: 'Registrar las compras del periodo.', correcta: false },
+      { texto: 'Calcular la utilidad bruta del ejercicio.', correcta: false }
+    ],
+    explicacion: 'Los ajustes garantizan la veracidad de la información: el saldo en libros debe coincidir con el recuento físico.'
+  },
+  {
+    pregunta: 'Una merma normal (rotura, caída, deterioro inevitable) se envía a...',
+    opciones: [
+      { texto: 'Deudores diversos.', correcta: false },
+      { texto: 'Otros gastos y productos.', correcta: false },
+      { texto: 'Gastos de venta, porque es un gasto operativo del periodo.', correcta: true },
+      { texto: 'Capital social.', correcta: false }
+    ],
+    explicacion: 'La merma normal es un gasto operativo inevitable del manejo de mercancía y se envía a Gastos de venta.'
+  },
+  {
+    pregunta: 'Un faltante injustificado imputable a un empleado identificado se carga a...',
+    opciones: [
+      { texto: 'Gastos de venta.', correcta: false },
+      { texto: 'Deudores diversos, porque se convierte en una cuenta por cobrar al responsable.', correcta: true },
+      { texto: 'Otros gastos y productos.', correcta: false },
+      { texto: 'Costo de ventas.', correcta: false }
+    ],
+    explicacion: 'Si se identifica al responsable, el faltante se convierte en una cuenta por cobrar a esa persona (Deudores diversos). La empresa no absorbe la pérdida.'
+  },
+  {
+    pregunta: 'Un sobrante de mercancía de origen desconocido se registra en...',
+    opciones: [
+      { texto: 'Gastos de venta.', correcta: false },
+      { texto: 'Deudores diversos.', correcta: false },
+      { texto: 'Otros gastos y productos, como un producto no operativo.', correcta: true },
+      { texto: 'Capital social.', correcta: false }
+    ],
+    explicacion: 'El sobrante de origen desconocido se reconoce como un producto no operativo en Otros gastos y productos.'
+  },
+  {
+    pregunta: '¿Por qué se usa una cuenta puente para las compras foráneas?',
+    opciones: [
+      { texto: 'Porque el proveedor no acepta el registro directo al Almacén.', correcta: false },
+      { texto: 'Porque el costo total de la compra no se conoce hasta acumular todos los gastos de traslado, y el lote aún no está físicamente en bodega.', correcta: true },
+      { texto: 'Porque la NIF C-4 prohíbe registrar compras directamente en Almacén.', correcta: false },
+      { texto: 'Porque así se ahorran impuestos.', correcta: false }
+    ],
+    explicacion: 'Se usa la cuenta puente porque el costo total no se conoce hasta acumular fletes, seguros y otros gastos, y porque la mercancía aún no está físicamente en bodega.'
+  },
+  {
+    pregunta: 'Al recibir físicamente el lote foráneo, ¿a qué cuenta se traspasa el costo total acumulado?',
+    opciones: [
+      { texto: 'A Costo de ventas.', correcta: false },
+      { texto: 'A la cuenta Almacén, que es la cuenta definitiva del inventario.', correcta: true },
+      { texto: 'A Proveedores.', correcta: false },
+      { texto: 'A Capital social.', correcta: false }
+    ],
+    explicacion: 'Al recibir el lote, el costo total acumulado se traspasa a la cuenta Almacén, que es la cuenta definitiva del inventario.'
+  },
+  {
+    pregunta: 'En el traspaso del costo total de Mercancías en tránsito al Almacén, ¿cuál es el asiento correcto?',
+    opciones: [
+      { texto: 'Cargo a Mercancías en tránsito y abono a Almacén.', correcta: false },
+      { texto: 'Cargo a Almacén y abono a Mercancías en tránsito.', correcta: true },
+      { texto: 'Cargo a Proveedores y abono a Almacén.', correcta: false },
+      { texto: 'Cargo a Bancos y abono a Mercancías en tránsito.', correcta: false }
+    ],
+    explicacion: 'El asiento de recepción carga a Almacén (aumenta el inventario) y abona a Mercancías en tránsito (se salda la cuenta puente).'
+  },
+  {
+    pregunta: '¿Qué pasa si no se practica el recuento físico al cierre?',
+    opciones: [
+      { texto: 'El Almacén queda correctamente valuado.', correcta: false },
+      { texto: 'El saldo en libros puede no coincidir con la mercancía real y no se detectan mermas, faltantes ni sobrantes.', correcta: true },
+      { texto: 'Se duplica automáticamente el inventario.', correcta: false },
+      { texto: 'Se pierde el derecho a deducir impuestos.', correcta: false }
+    ],
+    explicacion: 'Sin recuento físico, el saldo en libros puede no reflejar la realidad y no se pueden aplicar los ajustes correspondientes.'
+  },
+  {
+    pregunta: '¿Cuál de los siguientes gastos NO se acumula en Mercancías en tránsito?',
+    opciones: [
+      { texto: 'Fletes del lote foráneo.', correcta: false },
+      { texto: 'Seguros del traslado.', correcta: false },
+      { texto: 'La depreciación del mobiliario de oficina.', correcta: true },
+      { texto: 'Gastos de aduana.', correcta: false }
+    ],
+    explicacion: 'La depreciación del mobiliario de oficina no tiene relación con la compra foránea. Los gastos que sí se acumulan son los directamente relacionados con el traslado del lote.'
+  },
+  {
+    pregunta: 'En el caso, ¿por qué la cuenta Mercancías en tránsito queda saldada en cero después de la recepción del lote?',
+    opciones: [
+      { texto: 'Porque se pagó la factura al proveedor.', correcta: false },
+      { texto: 'Porque se pagaron los fletes.', correcta: false },
+      { texto: 'Porque el costo total acumulado se traspasó íntegramente al Almacén.', correcta: true },
+      { texto: 'Porque se hizo un ajuste por merma.', correcta: false }
+    ],
+    explicacion: 'La cuenta puente se salda cuando el costo total acumulado se traspasa íntegramente al Almacén al recibir el lote.'
+  },
+  {
+    pregunta: '¿Cuál es la relación entre los ajustes por inventario físico y el saldo del Almacén?',
+    opciones: [
+      { texto: 'Los ajustes aumentan siempre el saldo del Almacén.', correcta: false },
+      { texto: 'Los ajustes modifican el saldo del Almacén hasta que coincida con el valor de la mercancía realmente existente en bodega.', correcta: true },
+      { texto: 'Los ajustes no afectan al Almacén.', correcta: false },
+      { texto: 'Los ajustes solo afectan al Estado de Resultados.', correcta: false }
+    ],
+    explicacion: 'Los ajustes modifican el saldo del Almacén para que coincida con el recuento físico, garantizando la veracidad de la información.'
+  },
+  {
+    pregunta: 'Un sobrante de mercancía de origen desconocido, ¿qué efecto tiene en el Estado de Resultados?',
+    opciones: [
+      { texto: 'Genera un gasto operativo.', correcta: false },
+      { texto: 'Genera un producto no operativo (Otros gastos y productos).', correcta: true },
+      { texto: 'Aumenta el costo de ventas.', correcta: false },
+      { texto: 'No tiene efecto en el Estado de Resultados.', correcta: false }
+    ],
+    explicacion: 'Un sobrante de origen desconocido se registra como producto no operativo en Otros gastos y productos.'
+  },
+  {
+    pregunta: 'Un faltante injustificado imputable a un empleado, ¿qué efecto tiene en el Estado de Resultados?',
+    opciones: [
+      { texto: 'Genera un gasto de venta del periodo.', correcta: false },
+      { texto: 'No afecta resultados: se convierte en una cuenta por cobrar (activo) al empleado responsable.', correcta: true },
+      { texto: 'Reduce la utilidad bruta.', correcta: false },
+      { texto: 'Aumenta el costo de ventas.', correcta: false }
+    ],
+    explicacion: 'Cuando el faltante se imputa a un responsable, se convierte en una cuenta por cobrar y no afecta el Estado de Resultados.'
+  },
+  {
+    pregunta: '¿Cuál es el orden correcto del manejo de una compra foránea?',
+    opciones: [
+      { texto: 'Recepción física → Pago de la factura → Acumulación de fletes.', correcta: false },
+      { texto: 'Registro de la factura en Mercancías en tránsito → Acumulación de fletes y otros gastos → Recepción física y traspaso al Almacén.', correcta: true },
+      { texto: 'Pago de fletes → Registro de la factura → Recepción.', correcta: false },
+      { texto: 'Registro directo en Almacén al momento del pedido.', correcta: false }
+    ],
+    explicacion: 'El flujo es: registrar la factura en la cuenta puente, acumular los gastos de traslado, y al llegar físicamente el lote, traspasar el costo total al Almacén.'
+  },
+  {
+    pregunta: '¿Por qué es importante separar la merma normal del faltante injustificado?',
+    opciones: [
+      { texto: 'Porque tienen la misma contrapartida contable.', correcta: false },
+      { texto: 'Porque la merma es un gasto operativo, mientras que el faltante con responsable es una cuenta por cobrar al empleado.', correcta: true },
+      { texto: 'Porque la merma se registra en el Activo y el faltante en el Pasivo.', correcta: false },
+      { texto: 'Porque solo la merma afecta al Almacén.', correcta: false }
+    ],
+    explicacion: 'Aunque ambos reducen el Almacén, tienen distinta naturaleza: la merma es un gasto operativo (Gastos de venta), y el faltante con responsable se convierte en una cuenta por cobrar (Deudores diversos).'
+  },
+  {
+    pregunta: 'Si los ajustes por recuento físico no coinciden con el valor de la mercancía en bodega, ¿qué indica esto?',
+    opciones: [
+      { texto: 'Que el recuento físico está mal hecho.', correcta: false },
+      { texto: 'Que el saldo contable del Almacén no refleja la realidad y hay diferencias no registradas.', correcta: true },
+      { texto: 'Que se debe aumentar el capital social.', correcta: false },
+      { texto: 'Que el ejercicio no se puede cerrar.', correcta: false }
+    ],
+    explicacion: 'Si los ajustes no logran que el saldo contable coincida con el recuento físico, hay diferencias no registradas que deben investigarse y corregirse.'
+  }
+];
+
+const Examen = {
+  reactivos: [],
+  TOTAL: 10,
+  aciertos: 0,
+  respondidas: 0,
+
+  init() {
+    const seleccionados = shuffle(BancoExamen).slice(0, this.TOTAL);
+    this.reactivos = seleccionados.map(r => ({
+      pregunta: r.pregunta,
+      explicacion: r.explicacion,
+      opciones: shuffle(r.opciones),
+      eleccion: null,
+      verificada: false
+    }));
+    this.aciertos = 0;
+    this.respondidas = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  render() {
+    const cont = document.getElementById('contenedorExamen');
+    cont.innerHTML = '';
+
+    this.reactivos.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reactivo';
+      if (r.verificada) {
+        const correcta = r.eleccion !== null && r.opciones[r.eleccion].correcta;
+        div.classList.add(correcta ? 'reactivo--correcto' : 'reactivo--incorrecto');
+      }
+
+      let html = `
+        <div class="reactivo__titulo">
+          <span class="reactivo__numero">${i + 1}</span>
+          Reactivo ${i + 1} de ${this.reactivos.length}
+        </div>
+        <div class="reactivo__pregunta">${r.pregunta}</div>
+        <div class="reactivo__opciones">
+      `;
+
+      r.opciones.forEach((op, j) => {
+        const clases = ['reactivo__opcion'];
+        if (r.verificada) {
+          clases.push('bloqueada');
+          if (op.correcta) clases.push('correcta');
+          else if (r.eleccion === j) clases.push('incorrecta');
+        }
+        const checked = r.eleccion === j ? 'checked' : '';
+        html += `
+          <label class="${clases.join(' ')}">
+            <input type="radio" name="examen-${i}" value="${j}" ${checked} ${r.verificada ? 'disabled' : ''} onchange="Examen.responder(${i}, ${j})">
+            ${op.texto}
+          </label>
+        `;
+      });
+
+      html += `</div>`;
+
+      html += `<div class="reactivo__feedback ${r.verificada ? 'visible' : ''} ${r.verificada ? (r.opciones[r.eleccion].correcta ? 'reactivo__feedback--correcto' : 'reactivo__feedback--incorrecto') : ''}">`;
+      if (r.verificada) {
+        if (r.opciones[r.eleccion].correcta) {
+          html += `<strong>¡Correcto!</strong>`;
+        } else {
+          html += `<strong>Incorrecto.</strong> La respuesta correcta está marcada en verde.`;
+        }
+        html += `<br><br><strong>Explicación:</strong> ${r.explicacion}`;
+      }
+      html += `</div>`;
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const r = this.reactivos[i];
+    if (r.verificada) return;
+
+    r.eleccion = j;
+    r.verificada = true;
+
+    if (r.opciones[j].correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.TOTAL) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('examenProgresoTexto').textContent = this.respondidas + ' / ' + this.TOTAL + ' respondidas';
+    const pct = (this.respondidas / this.TOTAL) * 100;
+    document.getElementById('examenProgresoRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const porcentaje = Math.round((this.aciertos / this.TOTAL) * 100);
+
+    const cont = document.getElementById('resultadoExamen');
+    cont.classList.add('visible');
+    document.getElementById('examenPorcentaje').textContent = porcentaje + '%';
+    document.getElementById('examenDetalle').textContent = this.aciertos + ' aciertos de ' + this.TOTAL + ' reactivos';
+
+    let mensaje = '';
+    if (porcentaje >= 90) {
+      mensaje = '¡Excelente! Dominas el manejo de mercancías en tránsito y los ajustes por recuento físico.';
+    } else if (porcentaje >= 70) {
+      mensaje = 'Buen trabajo. Tienes una base sólida. Repasa los reactivos donde fallaste.';
+    } else if (porcentaje >= 50) {
+      mensaje = 'Aprobaste con lo mínimo. Te recomendamos repasar la presentación del Punto 4.';
+    } else {
+      mensaje = 'Es necesario reforzar los conceptos. Repasa la presentación y vuelve a intentar.';
+    }
+    document.getElementById('examenMensaje').textContent = mensaje;
+
+    setTimeout(() => {
+      cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoExamen').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  tabActiva: 'transito',
+
+  cargarCaso() {
+    Transito.reiniciar();
+    Ajustes.reiniciar();
+    Examen.reiniciar();
+  },
+
+  limpiar() {
+    Transito.reiniciar();
+    Ajustes.reiniciar();
+    Examen.reiniciar();
+  },
+
+  cambiarTab(tab) {
+    this.tabActiva = tab;
+    document.querySelectorAll('.tabs > .tab').forEach(t => {
+      if (t.dataset.tab) {
+        t.classList.toggle('tab--activa', t.dataset.tab === tab);
+      }
+    });
+    document.querySelectorAll('.contenido-tab').forEach(c => {
+      c.classList.toggle('contenido-tab--activo', c.id === 'tab-' + tab);
+    });
+  }
+};
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+const Modal = {
+  abrir() {
+    const tabActiva = App.tabActiva;
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    if (tabActiva === 'transito') {
+      titulo.textContent = '¿Cómo funciona el simulador de tránsito?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Simular el manejo de una compra foránea usando la cuenta puente Mercancías en tránsito.</p>
+        <h3>Cómo usar el simulador</h3>
+        <ul>
+          <li>Edita las <strong>unidades</strong>, el <strong>valor de factura</strong>, los <strong>fletes y seguros</strong> y los <strong>otros gastos</strong>.</li>
+          <li>Los tres asientos y el esquema de mayor se actualizan en tiempo real.</li>
+          <li>El desglose muestra cómo se compone el costo total del lote.</li>
+        </ul>
+        <h3>Lógica de la cuenta puente</h3>
+        <ul>
+          <li>Se <strong>carga</strong> con la factura del proveedor y los gastos de traslado.</li>
+          <li>Se <strong>abona</strong> al recibir físicamente el lote.</li>
+          <li>Queda <strong>saldada en cero</strong> tras el traspaso al Almacén.</li>
+        </ul>
+      `;
+    } else if (tabActiva === 'ajustes') {
+      titulo.textContent = '¿Cómo funciona el simulador de ajustes?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Aplicar los tres tipos de ajuste por recuento físico y ver el saldo final del Almacén.</p>
+        <h3>Cómo usar el simulador</h3>
+        <ul>
+          <li>Edita el <strong>saldo en libros</strong>, la <strong>merma</strong>, el <strong>faltante</strong> y el <strong>sobrante</strong>.</li>
+          <li>Los asientos, el esquema de mayor y el desglose se actualizan en tiempo real.</li>
+          <li>Si los valores negativos o las deducciones superan el saldo, se marca un aviso.</li>
+        </ul>
+        <h3>Tipos de ajuste</h3>
+        <ul>
+          <li><strong>Merma normal:</strong> Gastos de venta.</li>
+          <li><strong>Faltante injustificado:</strong> Deudores diversos (si hay responsable).</li>
+          <li><strong>Sobrante desconocido:</strong> Otros gastos y productos.</li>
+        </ul>
+      `;
+    } else {
+      titulo.textContent = '¿Cómo funciona el examen final?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Evaluar la comprensión conceptual de mercancías en tránsito y ajustes por recuento físico.</p>
+        <h3>Estructura</h3>
+        <ul>
+          <li><strong>10 reactivos</strong> seleccionados al azar de un banco de 21.</li>
+          <li>Se <strong>aleatoriza</strong> el orden de los reactivos y de las opciones.</li>
+          <li>Cada reactivo tiene <strong>4 opciones</strong>, solo una correcta.</li>
+          <li>Todos los reactivos son <strong>conceptuales</strong>: no piden cifras monetarias como respuesta.</li>
+        </ul>
+        <h3>Calificación inmediata</h3>
+        <ul>
+          <li>Al hacer clic en una opción, el reactivo se califica al instante.</li>
+          <li>La opción correcta se marca en verde; tu elección incorrecta en rojo.</li>
+          <li>El reactivo queda bloqueado.</li>
+          <li>Al responder el último reactivo, aparece tu <strong>calificación en %</strong>.</li>
+        </ul>
+      `;
+    }
+
+    overlay.classList.add('visible');
+  },
+
+  cerrar() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+  }
+};
+
+document.getElementById('modalOverlay').onclick = (e) => {
+  if (e.target.id === 'modalOverlay') Modal.cerrar();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Modal.cerrar();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  Transito.init();
+  Ajustes.init();
+  Examen.init();
+});
+</script>
+
+</body>
+</html>

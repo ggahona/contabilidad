@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 1 — Complemento: Clasificación, partida doble y examen | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: var(--espacio-lg);
+}
+
+.contenedor { max-width: 1150px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--sombra-lg);
+  flex-wrap: wrap;
+}
+
+.header__titulo { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.header__subtitulo { font-size: 0.8rem; opacity: 0.8; font-weight: 400; }
+.header__acciones { display: flex; gap: var(--espacio-sm); flex-wrap: wrap; }
+
+.boton {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.boton--primario { background: var(--azul-brillante); color: #fff; }
+.boton--primario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--secundario { background: transparent; color: #fff; border: 2px solid var(--cian); }
+.boton--secundario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--terciario { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.boton--terciario:hover { background: rgba(255,255,255,0.1); }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  min-width: 200px;
+}
+
+.tab:hover { background: var(--cian-claro); }
+.tab--activa {
+  color: var(--azul-profundo);
+  border-bottom-color: var(--azul-brillante);
+  background: var(--azul-claro);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  overflow: hidden;
+}
+
+.panel__header {
+  background: var(--azul-medio);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.panel__cuerpo { padding: var(--espacio-lg); }
+
+.instruccion {
+  background: var(--cian-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  font-size: 0.9rem;
+}
+
+.instruccion strong { color: var(--azul-profundo); }
+
+.barra-acciones {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-accion {
+  background: var(--azul-brillante);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boton-accion:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton-accion--reiniciar { background: var(--ambar); color: #fff; }
+.boton-accion--reiniciar:hover { background: #d97706; color: #fff; }
+.boton-accion--finalizar { background: var(--verde-exito); color: #fff; }
+.boton-accion--finalizar:hover { background: #059669; color: #fff; }
+
+.aviso-clasificador {
+  background: var(--ambar);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: var(--espacio-md);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.aviso-clasificador.visible {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 100px;
+}
+
+/* ==== CLASIFICADOR ==== */
+.progreso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.progreso__barra {
+  flex: 1;
+  height: 8px;
+  background: var(--azul-claro);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.progreso__texto {
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+}
+
+.grid-categorias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.categoria {
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  background: var(--blanco-gris);
+  min-height: 110px;
+  transition: all 0.3s;
+  position: relative;
+  cursor: pointer;
+}
+
+.categoria--correcta { border-color: var(--verde-exito); background: #d1fae5; }
+.categoria--incorrecta { border-color: var(--rojo-error); background: #fee2e2; }
+
+.categoria__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.categoria__descripcion {
+  font-size: 0.78rem;
+  color: var(--azul-medio);
+  line-height: 1.4;
+  margin-bottom: var(--espacio-sm);
+}
+
+.categoria__items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.categoria__item {
+  font-size: 0.78rem;
+  background: #fff;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radio-sm);
+  border-left: 3px solid var(--azul-brillante);
+  font-family: var(--fuente-mono);
+  animation: aparecer 0.3s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.partidas {
+  background: #fff;
+  border: 2px dashed var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.partidas__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.partidas__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.partida {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-sm);
+  user-select: none;
+}
+
+.partida:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.partida--seleccionada {
+  border-color: var(--azul-brillante);
+  background: var(--azul-brillante);
+  color: #fff;
+  font-weight: 600;
+}
+.partida--clasificada {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.partida__texto { flex: 1; }
+
+.partida__badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--azul-claro);
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.partida--seleccionada .partida__badge {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+.resultado-final {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+}
+
+.resultado-final.visible { display: block; animation: aparecer 0.4s ease; }
+.resultado-final__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-final__puntaje {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-final__mensaje {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  line-height: 1.5;
+}
+
+/* ==== TABLA DE PARTIDA DOBLE ==== */
+.tabla-asiento {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-asiento thead {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.tabla-asiento th {
+  padding: 0.75rem 0.75rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-asiento th.col-decision {
+  text-align: center;
+  width: 110px;
+}
+
+.tabla-asiento td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--azul-claro);
+  font-size: 0.88rem;
+}
+
+.tabla-asiento td.col-decision {
+  text-align: center;
+}
+
+.tabla-asiento tbody tr:hover { background: var(--blanco-gris); }
+
+.tabla-asiento tbody tr.fila-correcta { background: #d1fae5; }
+.tabla-asiento tbody tr.fila-incorrecta { background: #fee2e2; }
+
+.tabla-asiento tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-asiento tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+  font-family: var(--fuente-mono);
+  color: var(--azul-profundo);
+}
+
+.decision-grupo {
+  display: inline-flex;
+  gap: 0.4rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.decision-boton {
+  border: 2px solid var(--azul-claro);
+  background: #fff;
+  color: var(--azul-medio);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radio-md);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.decision-boton:hover {
+  border-color: var(--azul-brillante);
+  background: var(--cian-claro);
+  color: var(--azul-profundo);
+}
+
+.decision-boton--activo {
+  background: var(--azul-brillante);
+  color: #fff;
+  border-color: var(--azul-brillante);
+}
+
+.decision-boton--correcto {
+  background: var(--verde-exito) !important;
+  color: #fff !important;
+  border-color: var(--verde-exito) !important;
+}
+
+.decision-boton--incorrecto {
+  background: var(--rojo-error) !important;
+  color: #fff !important;
+  border-color: var(--rojo-error) !important;
+}
+
+.decision-boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.suma-tiempo-real {
+  display: flex;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--cian-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.suma-tiempo-real__item {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.suma-tiempo-real__item strong {
+  font-family: var(--fuente-mono);
+  font-size: 1rem;
+}
+
+.suma-tiempo-real__estado {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.suma-tiempo-real__estado--cuadrado {
+  background: var(--verde-exito);
+  color: #fff;
+}
+
+.suma-tiempo-real__estado--descuadrado {
+  background: var(--ambar);
+  color: #fff;
+}
+
+.suma-tiempo-real__estado--vacio {
+  background: var(--azul-claro);
+  color: var(--azul-medio);
+}
+
+.feedback-partida {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.9rem;
+  display: none;
+}
+
+.feedback-partida.visible { display: block; }
+
+.feedback-partida--correcto {
+  background: #d1fae5;
+  border-left: 4px solid var(--verde-exito);
+  color: #065f46;
+}
+
+.feedback-partida--incorrecto {
+  background: #fee2e2;
+  border-left: 4px solid var(--rojo-error);
+  color: #991b1b;
+}
+
+/* ==== EXAMEN ==== */
+.examen-progreso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.examen-progreso__texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.examen-progreso__barra {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.examen-progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.reactivo {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.reactivo--correcto { border-color: var(--verde-exito); background: #d1fae5; }
+.reactivo--incorrecto { border-color: var(--rojo-error); background: #fee2e2; }
+
+.reactivo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--azul-brillante);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reactivo--correcto .reactivo__numero { background: var(--verde-exito); }
+.reactivo--incorrecto .reactivo__numero { background: var(--rojo-error); }
+
+.reactivo__pregunta {
+  font-size: 0.92rem;
+  margin-bottom: var(--espacio-md);
+  color: var(--azul-profundo);
+  line-height: 1.5;
+}
+
+.reactivo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+}
+
+.reactivo__opcion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.reactivo__opcion.correcta {
+  border-color: var(--verde-exito);
+  background: #d1fae5;
+  font-weight: 600;
+}
+.reactivo__opcion.incorrecta {
+  border-color: var(--rojo-error);
+  background: #fee2e2;
+  opacity: 0.85;
+}
+.reactivo__opcion.bloqueada {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.reactivo__opcion input { accent-color: var(--azul-brillante); }
+
+.reactivo__feedback {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.reactivo__feedback.visible { display: block; }
+
+.reactivo__feedback--correcto {
+  background: #d1fae5;
+  border-left: 4px solid var(--verde-exito);
+  color: #065f46;
+}
+
+.reactivo__feedback--incorrecto {
+  background: #fee2e2;
+  border-left: 4px solid var(--rojo-error);
+  color: #991b1b;
+}
+
+.resultado-examen {
+  background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+  color: #fff;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+  text-align: center;
+}
+
+.resultado-examen.visible { display: block; animation: aparecer 0.5s ease; }
+
+.resultado-examen__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.resultado-examen__porcentaje {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  line-height: 1;
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-examen__detalle {
+  font-size: 1rem;
+  margin-bottom: var(--espacio-md);
+  opacity: 0.9;
+}
+
+.resultado-examen__mensaje {
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.contenido-tab { display: none; }
+.contenido-tab--activo { display: block; }
+
+/* ==== MODAL ==== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11,30,58,0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  max-width: 650px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-lg);
+}
+
+.modal__header {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  position: sticky;
+  top: 0;
+}
+
+.modal__titulo { font-size: 1rem; font-weight: 700; }
+
+.modal__cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+.modal__cuerpo { padding: var(--espacio-lg); }
+
+.modal__cuerpo h3 {
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  margin-top: var(--espacio-md);
+}
+
+.modal__cuerpo h3:first-child { margin-top: 0; }
+
+.modal__cuerpo p {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.6;
+}
+
+.modal__cuerpo ul { margin-left: var(--espacio-lg); margin-bottom: var(--espacio-sm); }
+
+.modal__cuerpo li {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin-bottom: 0.3rem;
+}
+
+.modal__cuerpo strong { color: var(--azul-profundo); }
+
+@media (max-width: 768px) {
+  body { padding: var(--espacio-md); }
+  .header { padding: var(--espacio-md); }
+  .header__titulo { font-size: 1rem; }
+  .panel__cuerpo { padding: var(--espacio-md); }
+  .grid-categorias { grid-template-columns: 1fr; }
+  .tab { font-size: 0.78rem; padding: 0.7rem 0.5rem; min-width: 140px; }
+  .resultado-examen__porcentaje { font-size: 3rem; }
+  .tabla-asiento th.col-decision { width: 90px; }
+  .decision-boton { padding: 0.3rem 0.5rem; font-size: 0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <header class="header">
+    <div>
+      <div class="header__titulo">Punto 1 — Complemento: Clasificación, partida doble y examen</div>
+      <div class="header__subtitulo">Bicicletas del Norte, S.A. de C.V. — NIF C-4</div>
+    </div>
+    <div class="header__acciones">
+      <button class="boton boton--primario" onclick="App.cargarCaso()">Cargar caso</button>
+      <button class="boton boton--secundario" onclick="Modal.abrir()">¿Cómo funciona?</button>
+      <button class="boton boton--terciario" onclick="App.limpiar()">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab tab--activa" data-tab="clasificador" onclick="App.cambiarTab('clasificador')">Actividad 1: Clasificador</button>
+    <button class="tab" data-tab="partida" onclick="App.cambiarTab('partida')">Actividad 2: Partida doble</button>
+    <button class="tab" data-tab="examen" onclick="App.cambiarTab('examen')">Examen final</button>
+  </div>
+
+  <!-- PESTAÑA CLASIFICADOR -->
+  <div class="contenido-tab contenido-tab--activo" id="tab-clasificador">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 1 — Clasificador interactivo de inventarios</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Selecciona una partida de la lista inferior y luego haz clic
+          en la categoría NIF C-4 que le corresponda. Si aciertas, la partida se moverá a esa
+          categoría. Si fallas, la partida permanecerá en la lista para que lo intentes de nuevo.
+          Cada reinicio baraja el orden de las partidas.
+        </div>
+
+        <div class="aviso-clasificador" id="avisoClasificador"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Clasificador.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="progreso">
+          <div class="progreso__barra">
+            <div class="progreso__relleno" id="progresoRelleno"></div>
+          </div>
+          <div class="progreso__texto" id="progresoTexto">0 / 10</div>
+        </div>
+
+        <div class="grid-categorias">
+
+          <div class="categoria" data-categoria="materias-primas" onclick="Clasificador.intentarClasificar('materias-primas')">
+            <div class="categoria__titulo">1. Materias primas y materiales</div>
+            <div class="categoria__descripcion">Componentes adquiridos para transformarse en productos terminados.</div>
+            <ul class="categoria__items" id="items-materias-primas"></ul>
+          </div>
+
+          <div class="categoria" data-categoria="produccion-proceso" onclick="Clasificador.intentarClasificar('produccion-proceso')">
+            <div class="categoria__titulo">2. Producción en proceso</div>
+            <div class="categoria__descripcion">Productos no terminados que acumulan materia prima, mano de obra y gastos indirectos.</div>
+            <ul class="categoria__items" id="items-produccion-proceso"></ul>
+          </div>
+
+          <div class="categoria" data-categoria="terminados" onclick="Clasificador.intentarClasificar('terminados')">
+            <div class="categoria__titulo">3. Artículos terminados</div>
+            <div class="categoria__descripcion">Bienes producidos listos para su comercialización.</div>
+            <ul class="categoria__items" id="items-terminados"></ul>
+          </div>
+
+          <div class="categoria" data-categoria="consignacion" onclick="Clasificador.intentarClasificar('consignacion')">
+            <div class="categoria__titulo">4. Artículos en consignación o demostración</div>
+            <div class="categoria__descripcion">Bienes entregados a terceros para su venta o exhibición, conservando la entidad los riesgos y beneficios.</div>
+            <ul class="categoria__items" id="items-consignacion"></ul>
+          </div>
+
+          <div class="categoria" data-categoria="transito" onclick="Clasificador.intentarClasificar('transito')">
+            <div class="categoria__titulo">5. Mercancías en tránsito</div>
+            <div class="categoria__descripcion">Compras en camino de las cuales ya se tienen los riesgos y beneficios.</div>
+            <ul class="categoria__items" id="items-transito"></ul>
+          </div>
+
+          <div class="categoria" data-categoria="refacciones" onclick="Clasificador.intentarClasificar('refacciones')">
+            <div class="categoria__titulo">6. Refacciones, suministros y herramentales</div>
+            <div class="categoria__descripcion">Artículos auxiliares para el mantenimiento, reparación u operación.</div>
+            <ul class="categoria__items" id="items-refacciones"></ul>
+          </div>
+
+        </div>
+
+        <div class="partidas" id="panelPartidas">
+          <div class="partidas__titulo">Partidas por clasificar</div>
+          <div class="partidas__lista" id="listaPartidas"></div>
+        </div>
+
+        <div class="resultado-final" id="resultadoFinal">
+          <div class="resultado-final__titulo">Resultado de la actividad</div>
+          <div class="resultado-final__puntaje" id="resultadoPuntaje">0 / 10</div>
+          <div class="resultado-final__mensaje" id="resultadoMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA PARTIDA DOBLE -->
+  <div class="contenido-tab" id="tab-partida">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 2 — Partida doble: decide Debe o Haber</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Para cada cuenta del asiento de apertura, decide si va al
+          <strong>Debe</strong> o al <strong>Haber</strong>. Verás la suma de ambas columnas en
+          tiempo real. Cuando termines, presiona <strong>Verificar asiento</strong> para recibir
+          la retroalimentación. Cada reinicio baraja el orden de las cuentas.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="PartidaDoble.reiniciar()">
+            Reiniciar actividad
+          </button>
+          <button class="boton-accion boton-accion--finalizar" onclick="PartidaDoble.verificar()" id="btnVerificarAsiento">
+            Verificar asiento
+          </button>
+        </div>
+
+        <div class="suma-tiempo-real">
+          <div class="suma-tiempo-real__item">Debe: <strong id="sumaDebe">$0.00</strong></div>
+          <div class="suma-tiempo-real__item">Haber: <strong id="sumaHaber">$0.00</strong></div>
+          <div class="suma-tiempo-real__item">Diferencia: <strong id="sumaDiferencia">$0.00</strong></div>
+          <div class="suma-tiempo-real__estado suma-tiempo-real__estado--vacio" id="estadoAsiento">Sin iniciar</div>
+        </div>
+
+        <table class="tabla-asiento">
+          <thead>
+            <tr>
+              <th>Cuenta / Concepto</th>
+              <th class="col-decision">Debe</th>
+              <th class="col-decision">Haber</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoAsiento"></tbody>
+        </table>
+
+        <div class="feedback-partida" id="feedbackPartida"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA EXAMEN -->
+  <div class="contenido-tab" id="tab-examen">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Examen final — 10 reactivos de opción múltiple</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada reactivo se califica en cuanto haces clic en una opción.
+          Después de responder, la opción correcta se marca en verde y la tuya (si es incorrecta)
+          en rojo. El reactivo queda bloqueado. Al responder el último, aparece automáticamente
+          tu <strong>calificación global</strong>. Cada reinicio genera un examen distinto.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Examen.reiniciar()">
+            Reiniciar examen
+          </button>
+        </div>
+
+        <div class="examen-progreso">
+          <div class="examen-progreso__texto" id="examenProgresoTexto">0 / 10 respondidas</div>
+          <div class="examen-progreso__barra">
+            <div class="examen-progreso__relleno" id="examenProgresoRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorExamen"></div>
+
+        <div class="resultado-examen" id="resultadoExamen">
+          <div class="resultado-examen__titulo">Calificación final</div>
+          <div class="resultado-examen__porcentaje" id="examenPorcentaje">0%</div>
+          <div class="resultado-examen__detalle" id="examenDetalle">0 aciertos de 10</div>
+          <div class="resultado-examen__mensaje" id="examenMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__titulo" id="modalTitulo">¿Cómo funciona el complemento?</div>
+      <button class="modal__cerrar" onclick="Modal.cerrar()">Cerrar</button>
+    </div>
+    <div class="modal__cuerpo" id="modalCuerpo"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ============================================================
+   ACTIVIDAD 1 — CLASIFICADOR
+   ============================================================ */
+const PartidasClasificador = [
+  { id: 'p1', texto: '100 bicicletas Modelo Alpinista listas para venta', categoria: 'terminados', importe: '$100,000.00' },
+  { id: 'p2', texto: 'Cuadros de aluminio, rines y pedales para ensamble', categoria: 'materias-primas', importe: '$60,000.00' },
+  { id: 'p3', texto: '40 cuadros en taller con mano de obra y soldadura acumulada', categoria: 'produccion-proceso', importe: '$40,000.00' },
+  { id: 'p4', texto: 'Lote foráneo de 50 bicicletas comprado en Monterrey que viene en camino', categoria: 'transito', importe: '$50,000.00' },
+  { id: 'p5', texto: '10 bicicletas entregadas a prueba en Tiendas Deportivas El Rally', categoria: 'consignacion', importe: '$10,000.00' },
+  { id: 'p6', texto: 'Lubricantes, grasa y llantas de repuesto para taller', categoria: 'refacciones', importe: '$15,000.00' },
+  { id: 'p7', texto: 'Bicicletas armadas y etiquetadas en almacén de producto terminado', categoria: 'terminados', importe: '$25,000.00' },
+  { id: 'p8', texto: 'Tornillos y tuercas sueltos para mantenimiento del taller', categoria: 'refacciones', importe: '$3,000.00' },
+  { id: 'p9', texto: '30 cuadros recién soldados que aún no se pintan', categoria: 'produccion-proceso', importe: '$18,000.00' },
+  { id: 'p10', texto: 'Tubos de acero y alambres para armar cuadros nuevos', categoria: 'materias-primas', importe: '$12,000.00' }
+];
+
+const Clasificador = {
+  partidas: [],
+  seleccionada: null,
+  aciertos: 0,
+  errores: 0,
+  _avisoTimer: null,
+
+  init() {
+    this.partidas = shuffle(PartidasClasificador).map(p => ({ ...p }));
+    this.seleccionada = null;
+    this.aciertos = 0;
+    this.errores = 0;
+    this.limpiarCategorias();
+    this.ocultarResultado();
+    this.render();
+  },
+
+  reiniciar() {
+    this.init();
+  },
+
+  limpiarCategorias() {
+    document.querySelectorAll('.categoria__items').forEach(ul => ul.innerHTML = '');
+    document.querySelectorAll('.categoria').forEach(c => {
+      c.classList.remove('categoria--correcta', 'categoria--incorrecta');
+    });
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoFinal').classList.remove('visible');
+    const aviso = document.getElementById('avisoClasificador');
+    aviso.classList.remove('visible');
+    aviso.textContent = '';
+  },
+
+  mostrarAviso(texto) {
+    const aviso = document.getElementById('avisoClasificador');
+    aviso.textContent = texto;
+    aviso.classList.add('visible');
+    clearTimeout(this._avisoTimer);
+    this._avisoTimer = setTimeout(() => {
+      aviso.classList.remove('visible');
+    }, 2500);
+  },
+
+  render() {
+    const lista = document.getElementById('listaPartidas');
+    lista.innerHTML = '';
+
+    if (this.partidas.length === 0) {
+      lista.innerHTML = '<div style="text-align:center;color:#143A7A;font-size:0.9rem;padding:1rem;">No hay partidas por clasificar.</div>';
+    }
+
+    this.partidas.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'partida';
+      if (this.seleccionada === p.id) div.classList.add('partida--seleccionada');
+      if (p.clasificada) div.classList.add('partida--clasificada');
+      div.innerHTML = `
+        <span class="partida__texto">${p.texto}</span>
+        <span class="partida__badge">${p.importe}</span>
+      `;
+      div.onclick = () => this.seleccionar(p.id);
+      lista.appendChild(div);
+    });
+
+    this.actualizarProgreso();
+  },
+
+  seleccionar(id) {
+    const p = this.partidas.find(x => x.id === id);
+    if (!p || p.clasificada) return;
+    this.seleccionada = id;
+    this.render();
+  },
+
+  intentarClasificar(categoria) {
+    if (!this.seleccionada) {
+      this.mostrarAviso('Primero selecciona una partida de la lista de abajo.');
+      this.marcarCategoria(categoria, 'incorrecta');
+      setTimeout(() => {
+        const el = document.querySelector(`.categoria[data-categoria="${categoria}"]`);
+        if (el) el.classList.remove('categoria--incorrecta');
+      }, 1200);
+      return;
+    }
+
+    const p = this.partidas.find(x => x.id === this.seleccionada);
+    if (!p) return;
+
+    if (p.categoria === categoria) {
+      p.clasificada = true;
+      this.aciertos++;
+      this.agregarItemCategoria(categoria, p.texto, p.importe);
+      this.marcarCategoria(categoria, 'correcta');
+      setTimeout(() => {
+        const el = document.querySelector(`.categoria[data-categoria="${categoria}"]`);
+        if (el) el.classList.remove('categoria--correcta');
+      }, 800);
+      this.seleccionada = null;
+      this.render();
+    } else {
+      this.errores++;
+      this.mostrarAviso('Esa no es la categoría correcta. Inténtalo de nuevo.');
+      this.marcarCategoria(categoria, 'incorrecta');
+      setTimeout(() => {
+        const el = document.querySelector(`.categoria[data-categoria="${categoria}"]`);
+        if (el) el.classList.remove('categoria--incorrecta');
+      }, 1200);
+    }
+
+    this.actualizarProgreso();
+    this.verificarFinal();
+  },
+
+  agregarItemCategoria(categoria, texto, importe) {
+    const ul = document.getElementById('items-' + categoria);
+    const li = document.createElement('li');
+    li.className = 'categoria__item';
+    li.textContent = `${texto} (${importe})`;
+    ul.appendChild(li);
+  },
+
+  marcarCategoria(categoria, estado) {
+    const el = document.querySelector(`.categoria[data-categoria="${categoria}"]`);
+    if (!el) return;
+    el.classList.add('categoria--' + estado);
+  },
+
+  actualizarProgreso() {
+    const total = PartidasClasificador.length;
+    const clasificadas = this.partidas.filter(p => p.clasificada).length;
+    const pct = total > 0 ? (clasificadas / total) * 100 : 0;
+    document.getElementById('progresoRelleno').style.width = pct + '%';
+    document.getElementById('progresoTexto').textContent = clasificadas + ' / ' + total;
+  },
+
+  verificarFinal() {
+    const total = PartidasClasificador.length;
+    const clasificadas = this.partidas.filter(p => p.clasificada).length;
+    if (clasificadas === total) {
+      const resultado = document.getElementById('resultadoFinal');
+      resultado.classList.add('visible');
+      document.getElementById('resultadoPuntaje').textContent = this.aciertos + ' aciertos / ' + this.errores + ' errores';
+      let mensaje = '';
+      if (this.errores === 0) {
+        mensaje = '¡Excelente! Clasificaste todas las partidas sin errores. Dominas las 6 categorías de la NIF C-4.';
+      } else if (this.errores <= 2) {
+        mensaje = 'Buen trabajo. Clasificaste todas las partidas. Revisa las categorías donde tuviste errores para reforzar el concepto.';
+      } else {
+        mensaje = 'Completaste la actividad, pero cometiste varios errores. Te recomendamos repasar las definiciones de las 6 categorías NIF C-4 antes de continuar.';
+      }
+      document.getElementById('resultadoMensaje').textContent = mensaje;
+    }
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 2 — PARTIDA DOBLE (tabla Debe / Haber, con aleatorización)
+   ============================================================ */
+const CuentasAsiento = [
+  { nombre: 'Bancos',                                   importe: 225000, decision: 'debe' },
+  { nombre: 'Almacén de Artículos Terminados',          importe: 100000, decision: 'debe' },
+  { nombre: 'Almacén de Materias Primas',               importe: 60000,  decision: 'debe' },
+  { nombre: 'Producción en Proceso',                    importe: 40000,  decision: 'debe' },
+  { nombre: 'Mercancías en Tránsito',                   importe: 50000,  decision: 'debe' },
+  { nombre: 'Mercancías en Consignación',               importe: 10000,  decision: 'debe' },
+  { nombre: 'Almacén de Suministros y Refacciones',     importe: 15000,  decision: 'debe' },
+  { nombre: 'Mobiliario y Equipo de Oficina',           importe: 50000,  decision: 'debe' },
+  { nombre: 'Proveedores',                              importe: 50000,  decision: 'haber' },
+  { nombre: 'Capital Social',                           importe: 500000, decision: 'haber' }
+];
+
+const PartidaDoble = {
+  cuentas: [],
+  verificada: false,
+
+  init() {
+    // Aleatorizar el orden de las cuentas en cada reinicio
+    this.cuentas = shuffle(CuentasAsiento).map(c => ({
+      nombre: c.nombre,
+      importe: c.importe,
+      decision: c.decision,
+      eleccion: null
+    }));
+    this.verificada = false;
+    this.render();
+    this.actualizarSumas();
+    this.ocultarFeedback();
+    document.getElementById('btnVerificarAsiento').style.display = 'inline-flex';
+  },
+
+  reiniciar() {
+    this.init();
+  },
+
+  render() {
+    const tbody = document.getElementById('cuerpoAsiento');
+    tbody.innerHTML = '';
+
+    this.cuentas.forEach((c, i) => {
+      const tr = document.createElement('tr');
+      let clases = '';
+      if (this.verificada) {
+        clases = (c.eleccion === c.decision) ? 'fila-correcta' : 'fila-incorrecta';
+      }
+      tr.className = clases;
+
+      const debeActivo = c.eleccion === 'debe' ? 'decision-boton--activo' : '';
+      const haberActivo = c.eleccion === 'haber' ? 'decision-boton--activo' : '';
+
+      let debeExtra = '';
+      let haberExtra = '';
+      if (this.verificada) {
+        if (c.decision === 'debe') debeExtra = 'decision-boton--correcto';
+        else haberExtra = 'decision-boton--correcto';
+        if (c.eleccion && c.eleccion !== c.decision) {
+          if (c.eleccion === 'debe') debeExtra = 'decision-boton--incorrecto';
+          else haberExtra = 'decision-boton--incorrecto';
+        }
+      }
+
+      const disabled = this.verificada ? 'disabled' : '';
+
+      tr.innerHTML = `
+        <td>${c.nombre} <span style="color:var(--azul-medio);font-family:var(--fuente-mono);font-size:0.82rem;">(${fmt(c.importe)})</span></td>
+        <td class="col-decision">
+          <div class="decision-grupo">
+            <button class="decision-boton ${debeActivo} ${debeExtra}" ${disabled} onclick="PartidaDoble.elegir(${i}, 'debe')">Debe</button>
+          </div>
+        </td>
+        <td class="col-decision">
+          <div class="decision-grupo">
+            <button class="decision-boton ${haberActivo} ${haberExtra}" ${disabled} onclick="PartidaDoble.elegir(${i}, 'haber')">Haber</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const trTotal = document.createElement('tr');
+    trTotal.className = 'fila-total';
+    trTotal.innerHTML = `
+      <td>SUMAS IGUALES</td>
+      <td class="col-decision" id="celdaTotalDebe">$0.00</td>
+      <td class="col-decision" id="celdaTotalHaber">$0.00</td>
+    `;
+    tbody.appendChild(trTotal);
+  },
+
+  elegir(i, decision) {
+    if (this.verificada) return;
+    this.cuentas[i].eleccion = decision;
+    this.render();
+    this.actualizarSumas();
+  },
+
+  actualizarSumas() {
+    let debe = 0;
+    let haber = 0;
+    this.cuentas.forEach(c => {
+      if (c.eleccion === 'debe') debe += c.importe;
+      else if (c.eleccion === 'haber') haber += c.importe;
+    });
+    const dif = debe - haber;
+
+    document.getElementById('sumaDebe').textContent = fmt(debe);
+    document.getElementById('sumaHaber').textContent = fmt(haber);
+    document.getElementById('sumaDiferencia').textContent = fmt(Math.abs(dif));
+
+    const celdaDebe = document.getElementById('celdaTotalDebe');
+    const celdaHaber = document.getElementById('celdaTotalHaber');
+    if (celdaDebe) celdaDebe.textContent = fmt(debe);
+    if (celdaHaber) celdaHaber.textContent = fmt(haber);
+
+    const estado = document.getElementById('estadoAsiento');
+    const totalDecisiones = this.cuentas.filter(c => c.eleccion !== null).length;
+
+    if (totalDecisiones === 0) {
+      estado.className = 'suma-tiempo-real__estado suma-tiempo-real__estado--vacio';
+      estado.textContent = 'Sin iniciar';
+    } else if (Math.abs(dif) < 0.01 && totalDecisiones === this.cuentas.length) {
+      estado.className = 'suma-tiempo-real__estado suma-tiempo-real__estado--cuadrado';
+      estado.textContent = 'Cuadrado';
+    } else {
+      estado.className = 'suma-tiempo-real__estado suma-tiempo-real__estado--descuadrado';
+      estado.textContent = 'Descuadrado';
+    }
+  },
+
+  verificar() {
+    const sinDecision = this.cuentas.filter(c => c.eleccion === null).length;
+    if (sinDecision > 0) {
+      alert(`Faltan ${sinDecision} cuenta(s) por decidir. Asigna Debe o Haber a cada una antes de verificar.`);
+      return;
+    }
+
+    this.verificada = true;
+    this.render();
+    this.actualizarSumas();
+
+    const aciertos = this.cuentas.filter(c => c.eleccion === c.decision).length;
+    const total = this.cuentas.length;
+    const fb = document.getElementById('feedbackPartida');
+    fb.className = 'feedback-partida visible ' + (aciertos === total ? 'feedback-partida--correcto' : 'feedback-partida--incorrecto');
+
+    let mensaje = '';
+    if (aciertos === total) {
+      mensaje = `¡Excelente! Asignaste correctamente todas las cuentas del asiento de apertura. El asiento queda cuadrado: Debe = Haber = $550,000.00.`;
+    } else {
+      mensaje = `Acertaste ${aciertos} de ${total} cuentas. Las filas en rojo indican tus errores: revisa si la cuenta es de activo (Debe) o de pasivo/capital (Haber).`;
+    }
+    fb.innerHTML = mensaje;
+
+    document.getElementById('btnVerificarAsiento').style.display = 'none';
+  },
+
+  ocultarFeedback() {
+    const fb = document.getElementById('feedbackPartida');
+    fb.className = 'feedback-partida';
+    fb.innerHTML = '';
+  }
+};
+
+/* ============================================================
+   EXAMEN — banco de 20, calificación inmediata por reactivo
+   ============================================================ */
+const BancoExamen = [
+  { pregunta: '¿Cómo define la NIF C-4 a los inventarios?',
+    opciones: [
+      { texto: 'Como activos monetarios adquiridos para su venta.', correcta: false },
+      { texto: 'Como activos no monetarios sobre los cuales la entidad tiene riesgos y beneficios, para venta o consumo productivo.', correcta: true },
+      { texto: 'Como pasivos circulantes por compras a proveedores.', correcta: false },
+      { texto: 'Como activos fijos sujetos a depreciación.', correcta: false }
+    ],
+    explicacion: 'La NIF C-4 define los inventarios como activos no monetarios sobre los cuales la entidad tiene riesgos y beneficios, adquiridos para venta o consumo productivo.'
+  },
+  { pregunta: '¿En qué parte del Balance General se clasifican los inventarios?',
+    opciones: [
+      { texto: 'Activo Fijo', correcta: false },
+      { texto: 'Activo Circulante', correcta: true },
+      { texto: 'Pasivo a Corto Plazo', correcta: false },
+      { texto: 'Capital Contable', correcta: false }
+    ],
+    explicacion: 'Los inventarios van en el Activo Circulante porque se espera disponer de ellos en el ciclo normal de operaciones, menor a un año.'
+  },
+  { pregunta: '¿Cuál es la razón por la que los inventarios van en el Activo Circulante?',
+    opciones: [
+      { texto: 'Porque se espera convertirlos en efectivo o consumirlos en el ciclo normal de operaciones.', correcta: true },
+      { texto: 'Porque son los activos de mayor valor monetario.', correcta: false },
+      { texto: 'Porque no se deprecian.', correcta: false },
+      { texto: 'Porque son activos intangibles.', correcta: false }
+    ],
+    explicacion: 'Su clasificación obedece al grado de disponibilidad: forman parte del ciclo financiero a corto plazo (compra, venta, cobro).'
+  },
+  { pregunta: '¿Cuál de las siguientes es una categoría NIF C-4?',
+    opciones: [
+      { texto: 'Activos diferidos', correcta: false },
+      { texto: 'Materias primas y materiales', correcta: true },
+      { texto: 'Cuentas por cobrar a largo plazo', correcta: false },
+      { texto: 'Depreciación acumulada', correcta: false }
+    ],
+    explicacion: 'Materias primas y materiales es una de las 6 categorías NIF C-4.'
+  },
+  { pregunta: 'Los cuadros de aluminio, rines y pedales que se ensamblan para producir bicicletas se clasifican como...',
+    opciones: [
+      { texto: 'Artículos terminados', correcta: false },
+      { texto: 'Materias primas y materiales', correcta: true },
+      { texto: 'Mercancías en tránsito', correcta: false },
+      { texto: 'Refacciones y suministros', correcta: false }
+    ],
+    explicacion: 'Son componentes adquiridos para transformarse en productos terminados.'
+  },
+  { pregunta: 'Los 40 cuadros en taller con mano de obra y soldadura acumulada se clasifican como...',
+    opciones: [
+      { texto: 'Producción en proceso', correcta: true },
+      { texto: 'Artículos terminados', correcta: false },
+      { texto: 'Materias primas', correcta: false },
+      { texto: 'Artículos en consignación', correcta: false }
+    ],
+    explicacion: 'Son productos no terminados que acumulan materia prima, mano de obra directa y gastos indirectos de fabricación.'
+  },
+  { pregunta: 'Las 10 bicicletas entregadas a prueba en Tiendas Deportivas El Rally se clasifican como...',
+    opciones: [
+      { texto: 'Artículos terminados', correcta: false },
+      { texto: 'Artículos en consignación o demostración', correcta: true },
+      { texto: 'Mercancías en tránsito', correcta: false },
+      { texto: 'Materias primas', correcta: false }
+    ],
+    explicacion: 'Fueron entregadas a un tercero, pero la entidad conserva los riesgos y beneficios.'
+  },
+  { pregunta: 'El lote de 50 bicicletas comprado en Monterrey que viene en camino se clasifica como...',
+    opciones: [
+      { texto: 'Artículos terminados', correcta: false },
+      { texto: 'Mercancías en tránsito', correcta: true },
+      { texto: 'Producción en proceso', correcta: false },
+      { texto: 'Consignación', correcta: false }
+    ],
+    explicacion: 'Son compras en camino de las cuales ya se tienen los riesgos y beneficios.'
+  },
+  { pregunta: '¿Cuál es la naturaleza de las subcuentas de inventario?',
+    opciones: [
+      { texto: 'Acreedora: aumentan con abonos.', correcta: false },
+      { texto: 'Deudora: aumentan con cargos.', correcta: true },
+      { texto: 'Mixta: aumentan con cargos y abonos.', correcta: false },
+      { texto: 'No tienen naturaleza definida.', correcta: false }
+    ],
+    explicacion: 'Las subcuentas de inventario son de naturaleza deudora; se cargan al aumentar.'
+  },
+  { pregunta: '¿Cuál es la igualdad fundamental de la partida doble?',
+    opciones: [
+      { texto: 'Activo = Ventas − Costos', correcta: false },
+      { texto: 'Activo = Pasivo + Capital', correcta: true },
+      { texto: 'Pasivo = Capital − Activo', correcta: false },
+      { texto: 'Capital = Activo + Pasivo', correcta: false }
+    ],
+    explicacion: 'La igualdad fundamental es Activo = Pasivo + Capital.'
+  },
+  { pregunta: 'En el asiento de apertura de Bicicletas del Norte, la cuenta <strong>Bancos</strong> debe...',
+    opciones: [
+      { texto: 'Abonarse (Haber)', correcta: false },
+      { texto: 'Cargarse (Debe)', correcta: true },
+      { texto: 'No registrarse', correcta: false },
+      { texto: 'Registrarse como pasivo', correcta: false }
+    ],
+    explicacion: 'Bancos es activo. Todo aumento de activo se carga.'
+  },
+  { pregunta: 'En el asiento de apertura de Bicicletas del Norte, la cuenta <strong>Proveedores</strong> debe...',
+    opciones: [
+      { texto: 'Cargarse (Debe)', correcta: false },
+      { texto: 'Abonarse (Haber)', correcta: true },
+      { texto: 'No registrarse', correcta: false },
+      { texto: 'Registrarse como activo', correcta: false }
+    ],
+    explicacion: 'Proveedores es pasivo. Todo aumento de pasivo se abona.'
+  },
+  { pregunta: '¿Cuál es el total del Debe en el asiento de apertura del caso?',
+    opciones: [
+      { texto: '$500,000.00', correcta: false },
+      { texto: '$550,000.00', correcta: true },
+      { texto: '$275,000.00', correcta: false },
+      { texto: '$225,000.00', correcta: false }
+    ],
+    explicacion: 'La suma del Debe es $550,000 = Bancos $225,000 + inventarios $275,000 + Mobiliario $50,000.'
+  },
+  { pregunta: '¿Cuál es el total del inventario inicial del caso?',
+    opciones: [
+      { texto: '$100,000.00', correcta: false },
+      { texto: '$275,000.00', correcta: true },
+      { texto: '$550,000.00', correcta: false },
+      { texto: '$225,000.00', correcta: false }
+    ],
+    explicacion: 'El inventario inicial suma $275,000 distribuidos en 6 categorías NIF C-4.'
+  },
+  { pregunta: '¿Para qué sirve la <strong>cuenta colectiva</strong> de inventario en el libro mayor?',
+    opciones: [
+      { texto: 'Para detallar artículo por artículo el inventario.', correcta: false },
+      { texto: 'Para resumir el rubro de inventarios, complementada por tarjetas auxiliares.', correcta: true },
+      { texto: 'Para registrar solo las compras del periodo.', correcta: false },
+      { texto: 'Para calcular la utilidad bruta directamente.', correcta: false }
+    ],
+    explicacion: 'La cuenta colectiva resume el rubro; las tarjetas auxiliares detallan por artículo.'
+  },
+  { pregunta: '¿Para qué sirven las <strong>tarjetas auxiliares</strong> o kardex?',
+    opciones: [
+      { texto: 'Para registrar el capital contable.', correcta: false },
+      { texto: 'Para detallar unidades, costo unitario y saldo por artículo.', correcta: true },
+      { texto: 'Para calcular impuestos.', correcta: false },
+      { texto: 'Para registrar la depreciación.', correcta: false }
+    ],
+    explicacion: 'Las tarjetas auxiliares desglosan unidades, costo unitario y saldo por artículo.'
+  },
+  { pregunta: 'La suma de los saldos de todas las <strong>tarjetas auxiliares</strong> debe coincidir con...',
+    opciones: [
+      { texto: 'El saldo del capital social.', correcta: false },
+      { texto: 'El saldo de la cuenta colectiva de inventario en el mayor.', correcta: true },
+      { texto: 'El total del pasivo.', correcta: false },
+      { texto: 'El total de las ventas.', correcta: false }
+    ],
+    explicacion: 'La suma de auxiliares debe coincidir con el saldo de la cuenta colectiva.'
+  },
+  { pregunta: '¿Cuál de los siguientes NO es una categoría NIF C-4?',
+    opciones: [
+      { texto: 'Materias primas y materiales', correcta: false },
+      { texto: 'Producción en proceso', correcta: false },
+      { texto: 'Cuentas por cobrar a largo plazo', correcta: true },
+      { texto: 'Artículos en consignación o demostración', correcta: false }
+    ],
+    explicacion: 'Las cuentas por cobrar a largo plazo no son una categoría de inventario NIF C-4.'
+  },
+  { pregunta: 'El inventario del caso está valuado en $275,000. ¿Cuál es el monto del <strong>Capital Social</strong> al 1 de enero de 2026?',
+    opciones: [
+      { texto: '$275,000.00', correcta: false },
+      { texto: '$500,000.00', correcta: true },
+      { texto: '$550,000.00', correcta: false },
+      { texto: '$50,000.00', correcta: false }
+    ],
+    explicacion: 'El Capital Social al arranque es de $500,000.'
+  },
+  { pregunta: 'Los artículos en consignación se caracterizan porque...',
+    opciones: [
+      { texto: 'La entidad ha transferido los riesgos y beneficios al tercero.', correcta: false },
+      { texto: 'La entidad conserva los riesgos y beneficios, aunque el bien esté en manos de un tercero.', correcta: true },
+      { texto: 'Se venden siempre al contado.', correcta: false },
+      { texto: 'No son inventarios.', correcta: false }
+    ],
+    explicacion: 'La entidad conserva los riesgos y beneficios, por eso siguen siendo inventarios.'
+  }
+];
+
+const Examen = {
+  reactivos: [],
+  TOTAL: 10,
+  aciertos: 0,
+  respondidas: 0,
+  finalizado: false,
+
+  init() {
+    const seleccionados = shuffle(BancoExamen).slice(0, this.TOTAL);
+    this.reactivos = seleccionados.map(r => ({
+      pregunta: r.pregunta,
+      explicacion: r.explicacion,
+      opciones: shuffle(r.opciones),
+      eleccion: null,
+      verificada: false
+    }));
+    this.aciertos = 0;
+    this.respondidas = 0;
+    this.finalizado = false;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() {
+    this.init();
+  },
+
+  render() {
+    const cont = document.getElementById('contenedorExamen');
+    cont.innerHTML = '';
+
+    this.reactivos.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reactivo';
+      if (r.verificada) {
+        const correcta = r.eleccion !== null && r.opciones[r.eleccion].correcta;
+        div.classList.add(correcta ? 'reactivo--correcto' : 'reactivo--incorrecto');
+      }
+
+      let html = `
+        <div class="reactivo__titulo">
+          <span class="reactivo__numero">${i + 1}</span>
+          Reactivo ${i + 1} de ${this.reactivos.length}
+        </div>
+        <div class="reactivo__pregunta">${r.pregunta}</div>
+        <div class="reactivo__opciones">
+      `;
+
+      r.opciones.forEach((op, j) => {
+        const clases = ['reactivo__opcion'];
+        if (r.verificada) {
+          clases.push('bloqueada');
+          if (op.correcta) clases.push('correcta');
+          else if (r.eleccion === j) clases.push('incorrecta');
+        }
+        const checked = r.eleccion === j ? 'checked' : '';
+        html += `
+          <label class="${clases.join(' ')}">
+            <input type="radio" name="examen-${i}" value="${j}" ${checked} ${r.verificada ? 'disabled' : ''} onchange="Examen.responder(${i}, ${j})">
+            ${op.texto}
+          </label>
+        `;
+      });
+
+      html += `</div>`;
+
+      html += `<div class="reactivo__feedback ${r.verificada ? 'visible' : ''} ${r.verificada ? (r.opciones[r.eleccion].correcta ? 'reactivo__feedback--correcto' : 'reactivo__feedback--incorrecto') : ''}">`;
+      if (r.verificada) {
+        if (r.opciones[r.eleccion].correcta) {
+          html += `<strong>¡Correcto!</strong>`;
+        } else {
+          html += `<strong>Incorrecto.</strong> La respuesta correcta está marcada en verde.`;
+        }
+        html += `<br><br><strong>Explicación:</strong> ${r.explicacion}`;
+      }
+      html += `</div>`;
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const r = this.reactivos[i];
+    if (r.verificada) return;
+
+    r.eleccion = j;
+    r.verificada = true;
+
+    if (r.opciones[j].correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.TOTAL) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('examenProgresoTexto').textContent = this.respondidas + ' / ' + this.TOTAL + ' respondidas';
+    const pct = (this.respondidas / this.TOTAL) * 100;
+    document.getElementById('examenProgresoRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    this.finalizado = true;
+    const porcentaje = Math.round((this.aciertos / this.TOTAL) * 100);
+
+    const cont = document.getElementById('resultadoExamen');
+    cont.classList.add('visible');
+    document.getElementById('examenPorcentaje').textContent = porcentaje + '%';
+    document.getElementById('examenDetalle').textContent = this.aciertos + ' aciertos de ' + this.TOTAL + ' reactivos';
+
+    let mensaje = '';
+    if (porcentaje >= 90) {
+      mensaje = '¡Excelente! Dominas todos los temas del Punto 1. Estás lista para avanzar al Punto 2.';
+    } else if (porcentaje >= 70) {
+      mensaje = 'Buen trabajo. Tienes una base sólida. Repasa los reactivos donde fallaste para afinar los conceptos.';
+    } else if (porcentaje >= 50) {
+      mensaje = 'Aprobaste con lo mínimo. Te recomendamos volver a la presentación del Punto 1 y repasar los conceptos antes de continuar.';
+    } else {
+      mensaje = 'Es necesario reforzar los conceptos. Repasa la presentación del Punto 1 y vuelve a intentar el examen.';
+    }
+    document.getElementById('examenMensaje').textContent = mensaje;
+
+    setTimeout(() => {
+      cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoExamen').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  tabActiva: 'clasificador',
+
+  cargarCaso() {
+    Clasificador.reiniciar();
+    PartidaDoble.reiniciar();
+    Examen.reiniciar();
+  },
+
+  limpiar() {
+    Clasificador.reiniciar();
+    PartidaDoble.reiniciar();
+    Examen.reiniciar();
+  },
+
+  cambiarTab(tab) {
+    this.tabActiva = tab;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('tab--activa', t.dataset.tab === tab);
+    });
+    document.querySelectorAll('.contenido-tab').forEach(c => {
+      c.classList.toggle('contenido-tab--activo', c.id === 'tab-' + tab);
+    });
+  }
+};
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+const Modal = {
+  abrir() {
+    const tabActiva = App.tabActiva;
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    if (tabActiva === 'clasificador') {
+      titulo.textContent = '¿Cómo funciona el clasificador?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Clasificar cada partida del inventario en la categoría correcta de la NIF C-4.</p>
+        <h3>Cómo usar la actividad</h3>
+        <ul>
+          <li>Haz clic en una <strong>partida</strong> para seleccionarla.</li>
+          <li>Haz clic en la <strong>categoría</strong> donde creas que va.</li>
+          <li>Si aciertas, la partida se mueve a esa categoría.</li>
+          <li>Si fallas, la partida permanece en la lista para reintentar.</li>
+          <li>Usa <strong>Reiniciar actividad</strong> para barajar el orden y empezar de nuevo.</li>
+        </ul>
+      `;
+    } else if (tabActiva === 'partida') {
+      titulo.textContent = '¿Cómo funciona la tabla de partida doble?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Decidir si cada cuenta del asiento de apertura va al Debe o al Haber.</p>
+        <h3>Reglas de la partida doble</h3>
+        <ul>
+          <li><strong>Todo aumento de activo</strong> se carga (Debe).</li>
+          <li><strong>Todo aumento de pasivo</strong> se abona (Haber).</li>
+          <li><strong>Todo aumento de capital</strong> se abona (Haber).</li>
+          <li>La suma del Debe debe igualar la suma del Haber.</li>
+        </ul>
+        <h3>Cómo usar la actividad</h3>
+        <ul>
+          <li>Elige <strong>Debe</strong> o <strong>Haber</strong> en cada fila.</li>
+          <li>Observa en tiempo real la suma del Debe, la del Haber y la diferencia.</li>
+          <li>Cada reinicio baraja el orden de las cuentas.</li>
+          <li>Cuando termines, presiona <strong>Verificar asiento</strong>.</li>
+        </ul>
+      `;
+    } else {
+      titulo.textContent = '¿Cómo funciona el examen final?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Evaluar el dominio de todos los temas del Punto 1 con calificación inmediata.</p>
+        <h3>Estructura</h3>
+        <ul>
+          <li><strong>10 reactivos</strong> seleccionados al azar de un banco de 20.</li>
+          <li>Se <strong>aleatoriza</strong> el orden de los reactivos y de las opciones.</li>
+          <li>Cada reactivo tiene <strong>4 opciones</strong>, solo una correcta.</li>
+        </ul>
+        <h3>Calificación inmediata</h3>
+        <ul>
+          <li>Al hacer clic en una opción, el reactivo se califica al instante.</li>
+          <li>La opción correcta se marca en verde; tu elección incorrecta en rojo.</li>
+          <li>El reactivo queda bloqueado: no se puede cambiar la respuesta.</li>
+          <li>Al responder el último reactivo, aparece tu <strong>calificación en %</strong>.</li>
+        </ul>
+      `;
+    }
+
+    overlay.classList.add('visible');
+  },
+
+  cerrar() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+  }
+};
+
+document.getElementById('modalOverlay').onclick = (e) => {
+  if (e.target.id === 'modalOverlay') Modal.cerrar();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Modal.cerrar();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  Clasificador.init();
+  PartidaDoble.init();
+  Examen.init();
+});
+</script>
+
+</body>
+</html>
