@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 6 — Temas Complementarios de la NIF C-4 | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #1a3a6b;
+  --azul-medio: #2c5aa0;
+  --azul-claro: #d6e4f5;
+  --azul-muy-claro: #eef4fb;
+
+  --fondo: #f7f9fc;
+  --superficie: #ffffff;
+  --texto: #1a2b45;
+  --texto-suave: #5a6b82;
+  --borde: #c5d5e8;
+
+  --ambar-fondo: #fef3c7;
+  --ambar-borde: #F59E0B;
+  --ambar-texto: #92400e;
+
+  --verde-fondo: #d1fae5;
+  --verde-borde: #10B981;
+  --verde-texto: #065f46;
+
+  --rojo-fondo: #fee2e2;
+  --rojo-borde: #EF4444;
+  --rojo-texto: #991b1b;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  --sombra-sm: 0 1px 2px rgba(26,58,107,0.06);
+  --sombra-md: 0 4px 6px rgba(26,58,107,0.10);
+  --sombra-lg: 0 10px 15px rgba(26,58,107,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.barra-progreso {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--borde);
+  z-index: 1000;
+}
+
+.barra-progreso__relleno {
+  height: 100%;
+  background: var(--azul-medio);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.contenedor-slides {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-lg);
+  padding-top: 2rem;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  background: var(--superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-lg);
+  padding: var(--espacio-xl) var(--espacio-lg);
+  animation: fadeIn 0.5s ease;
+  min-height: 70vh;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.slide.activo { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide__numero {
+  display: inline-block;
+  background: var(--azul-profundo);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.slide__titulo {
+  font-size: 2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.2;
+}
+
+.slide__subtitulo {
+  font-size: 1.1rem;
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.slide__cuerpo { font-size: 1rem; }
+
+.navegacion {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espacio-md) var(--espacio-lg);
+  z-index: 999;
+  box-shadow: 0 -2px 10px rgba(26,58,107,0.05);
+}
+
+.navegacion__boton {
+  background: var(--azul-profundo);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radio-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__boton:hover { background: var(--azul-medio); }
+.navegacion__boton:active { transform: scale(0.97); }
+.navegacion__boton:disabled {
+  background: var(--borde);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+.navegacion__contador {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.navegacion__indice {
+  background: transparent;
+  border: 2px solid var(--azul-profundo);
+  color: var(--azul-profundo);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.navegacion__indice:hover {
+  background: var(--azul-profundo);
+  color: #fff;
+}
+
+.indice {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 380px;
+  height: 100vh;
+  background: var(--superficie);
+  box-shadow: -4px 0 20px rgba(26,58,107,0.15);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: var(--espacio-lg);
+}
+
+.indice.abierto { right: 0; }
+
+.indice__titulo {
+  font-size: 1.2rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-sm);
+  border-bottom: 2px solid var(--borde);
+}
+
+.indice__lista { list-style: none; }
+
+.indice__item {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--texto);
+  transition: background 0.2s;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.indice__item:hover { background: var(--azul-muy-claro); }
+.indice__item.activo {
+  background: var(--azul-profundo);
+  color: #fff;
+  font-weight: 600;
+}
+
+.indice__item-num {
+  font-weight: 700;
+  font-size: 0.8rem;
+  min-width: 1.5rem;
+}
+
+.indice__cerrar {
+  position: absolute;
+  top: var(--espacio-md);
+  right: var(--espacio-md);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+  line-height: 1;
+  font-family: var(--fuente-base);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26,58,107,0.4);
+  z-index: 1000;
+  display: none;
+}
+
+.overlay.visible { display: block; }
+
+.caja-concepto {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-concepto__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-concepto__texto {
+  font-size: 1rem;
+  color: var(--texto);
+  line-height: 1.7;
+}
+
+.caja-concepto__texto strong { color: var(--azul-profundo); }
+
+.caja-ejemplo {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-ejemplo__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-xs);
+}
+
+.caja-ejemplo__texto {
+  font-size: 0.95rem;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+.caja-resultado {
+  background: var(--azul-muy-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.caja-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.caja-resultado__linea {
+  font-size: 0.95rem;
+  color: var(--texto);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__linea--utilidad {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  background: var(--azul-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+}
+
+.caja-resultado__nota {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+}
+
+.alerta {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.exito {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-medio);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.95rem;
+}
+
+.nota-ambar {
+  background: var(--ambar-fondo);
+  border-left: 4px solid var(--ambar-borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.92rem;
+  color: var(--ambar-texto);
+}
+
+.nota-ambar strong { color: var(--ambar-texto); font-weight: 700; }
+
+.nota-verde {
+  background: var(--verde-fondo);
+  border-left: 4px solid var(--verde-borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  font-size: 0.92rem;
+  color: var(--verde-texto);
+}
+
+.nota-verde strong { color: var(--verde-texto); font-weight: 700; }
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.9rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-datos thead { background: var(--azul-medio); color: #fff; }
+
+.tabla-datos th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.tabla-datos td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla-datos tbody tr:hover { background: var(--fondo); }
+.tabla-datos tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-datos .monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+}
+
+.tabla-datos .centro { text-align: center; }
+
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.grid-tarjetas--mini {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+}
+
+.tarjeta {
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-md);
+}
+
+.tarjeta__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+}
+
+.tarjeta__texto {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.formula-destacada {
+  background: var(--azul-claro);
+  border: 2px solid var(--azul-profundo);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+  text-align: center;
+  font-family: var(--fuente-mono);
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.canvas-esquema {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto var(--espacio-md);
+  border-radius: var(--radio-md);
+  background: var(--superficie);
+}
+
+@media (max-width: 768px) {
+  .slide {
+    padding: var(--espacio-lg) var(--espacio-md);
+    min-height: 80vh;
+  }
+  .slide__titulo { font-size: 1.4rem; }
+  .slide__subtitulo { font-size: 0.95rem; }
+  .navegacion { padding: var(--espacio-sm) var(--espacio-md); }
+  .navegacion__boton { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
+  .tabla-datos { font-size: 0.72rem; }
+  .grid-tarjetas { grid-template-columns: 1fr; }
+  .indice { width: 300px; right: -300px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="barra-progreso">
+    <div class="barra-progreso__relleno" id="progreso"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="indice" id="indice">
+    <button class="indice__cerrar" id="cerrarIndice" aria-label="Cerrar índice">Cerrar</button>
+    <h2 class="indice__titulo">Índice — Punto 6</h2>
+    <ul class="indice__lista" id="listaIndice"></ul>
+  </aside>
+
+  <main class="contenedor-slides" id="contenedorSlides">
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide activo" data-titulo="Portada">
+      <span class="slide__numero">Punto 6 de 6</span>
+      <h1 class="slide__titulo">Temas Complementarios de la NIF C-4</h1>
+      <p class="slide__subtitulo">Identificación Específica, Costo Estándar, Regla LCM, Métodos de Estimación y Efectos de Errores — Caso: "Bicicletas del Norte, S.A. de C.V."</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿De qué trata este punto?</div>
+          <div class="caja-concepto__texto">
+            A lo largo de los cinco puntos anteriores aprendiste lo esencial de la NIF C-4:
+            clasificar inventarios, registrarlos con tres procedimientos, asignarles costo
+            con <strong>PEPS</strong> y <strong>Costo Promedio Móvil</strong>, manejar
+            <strong>mercancías en tránsito</strong> y <strong>ajustes por recuento físico</strong>,
+            y relacionar todo con el <strong>Estado de Resultados</strong>.
+            <br><br>
+            Ahora cerramos el ciclo con <strong>cuatro temas complementarios</strong> que la NIF C-4
+            reconoce y que completan el panorama profesional:
+            <br><br>
+            <strong>1.</strong> Identificación Específica (tercera fórmula de asignación del costo)<br>
+            <strong>2.</strong> Costo Estándar (método de valuación predeterminado)<br>
+            <strong>3.</strong> Regla de Costo o Mercado, el Menor (valuación al cierre)<br>
+            <strong>4.</strong> Métodos de Estimación (Detallista y Utilidad Bruta) y Efectos de Errores
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">1. Identificación Específica</div>
+            <div class="tarjeta__texto">
+              Cada artículo se rastrea con su factura de compra específica. Aplicable a
+              baja rotación y alto valor unitario.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">2. Costo Estándar</div>
+            <div class="tarjeta__texto">
+              Costo predeterminado con niveles normales de materia prima, mano de obra
+              y gastos de fabricación.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">3. Regla LCM</div>
+            <div class="tarjeta__texto">
+              El inventario se informa al menor entre su costo y su valor de mercado
+              (costo de reposición, valor de realización o valor neto de realización).
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">4. Estimación y Errores</div>
+            <div class="tarjeta__texto">
+              Métodos Detallista y Utilidad Bruta para estimar sin conteo físico; efectos
+              de los errores en el inventario sobre el ER y el BG.
+            </div>
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Nota:</strong> Este punto es fundamentalmente conceptual. Las actividades
+          interactivas (rastreador de lotes, calculadora LCM, estimador de inventario y examen
+          final) están en el complemento del Punto 6.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: IDENTIFICACIÓN ESPECÍFICA -->
+    <section class="slide" data-titulo="Identificación Específica">
+      <span class="slide__numero">Slide 2</span>
+      <h1 class="slide__titulo">Identificación Específica (Costos Identificados)</h1>
+      <p class="slide__subtitulo">La tercera fórmula de asignación del costo reconocida por la NIF C-4</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            En la <strong>Identificación Específica</strong> (también llamada <em>Costos
+            Identificados</em>), cada artículo del inventario se puede
+            <strong>identificar directamente con una compra específica y su factura</strong>.
+            No se usan lotes genéricos ni promedios: cada unidad tiene su propio costo
+            rastreable.
+            <br><br>
+            Cuando se vende una unidad, se registra exactamente el costo de la factura que
+            le dio origen. El <strong>costo real se enfrenta al ingreso real</strong>, logrando
+            el enfrentamiento perfecto entre ingresos y gastos.
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">¿Cuándo se aplica?</div>
+            <div class="tarjeta__texto">
+              En empresas con <strong>baja rotación de inventarios</strong> y
+              <strong>alto valor unitario</strong> de cada bien. La NIF C-4 establece que las
+              mercancías con <strong>número de serie y costo superior a $50,000</strong> deben
+              emplear este método.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Ventajas</div>
+            <div class="tarjeta__texto">
+              Es <strong>conceptualmente el método ideal</strong>: el costo real se enfrenta al
+              ingreso real y el inventario se reporta al costo real de esos artículos. Con
+              avances tecnológicos (códigos de barras, RFID) es cada vez más sencillo.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Desventajas</div>
+            <div class="tarjeta__texto">
+              Requiere <strong>disciplina administrativa estricta</strong> para rastrear cada
+              unidad. No es aplicable a mercancía homogénea o a granel (tornillos, granos,
+              líquidos).
+            </div>
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Aplicación cualitativa al caso</div>
+          <div class="caja-ejemplo__texto">
+            En <strong>Bicicletas del Norte</strong>, las bicicletas de gama alta con
+            <strong>número de serie</strong> y costo superior a $50,000 se rastrean
+            individualmente. Cada venta identifica exactamente qué unidad salió y a qué
+            costo. Las refacciones (tornillos, grasas) no aplican: son homogéneas.
+          </div>
+        </div>
+
+        <div class="nota-ambar">
+          <strong>Regla normativa:</strong> Cuando el inventario tiene número de serie y su
+          costo unitario supera los $50,000, la NIF C-4 exige el uso de Identificación
+          Específica. No es opcional.
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> Es la tercera fórmula de asignación del costo, junto con
+          PEPS y Costo Promedio. Pero a diferencia de ellos, no usa lotes ni promedios:
+          rastrea cada unidad.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: COSTO ESTÁNDAR -->
+    <section class="slide" data-titulo="Costo Estándar">
+      <span class="slide__numero">Slide 3</span>
+      <h1 class="slide__titulo">Costo Estándar</h1>
+      <p class="slide__subtitulo">Un costo predeterminado que requiere revisión periódica</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿En qué consiste?</div>
+          <div class="caja-concepto__texto">
+            El <strong>Costo Estándar</strong> se determina
+            <strong>anticipadamente</strong>, considerando los
+            <strong>niveles normales de utilización</strong> de:
+            <br><br>
+            • <strong>Materia prima</strong><br>
+            • <strong>Materiales</strong><br>
+            • <strong>Mano de obra</strong><br>
+            • <strong>Gastos de fabricación</strong>
+            <br><br>
+            Es un costo <strong>predeterminado</strong> que sirve como referencia para valuar
+            el inventario y controlar la producción. No se calcula al momento de la compra,
+            sino antes de producir.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Analogía cualitativa</div>
+          <div class="caja-ejemplo__texto">
+            Es como el <strong>presupuesto estándar de una receta de cocina</strong>:
+            antes de preparar el platillo, ya se sabe cuánto debería costar cada porción
+            según las cantidades normales de ingredientes y el tiempo normal de preparación.
+            Si al final el costo real difiere mucho del estándar, se investiga por qué.
+          </div>
+        </div>
+
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Regla de actualización</div>
+          <div class="caja-concepto__texto">
+            El Costo Estándar <strong>debe revisarse periódicamente</strong> y ajustarse a la
+            medida en que la diferencia con el <strong>costo de adquisición real</strong> sea
+            de <strong>importancia relativa</strong>. Si la diferencia es significativa, el
+            estándar deja de ser representativo y debe corregirse.
+          </div>
+        </div>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">¿Para qué sirve?</div>
+            <div class="tarjeta__texto">
+              Para <strong>controlar la producción</strong>, detectar desviaciones y valuar
+              inventarios cuando los costos reales aún no se conocen con precisión.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">¿Quién lo usa?</div>
+            <div class="tarjeta__texto">
+              Principalmente <strong>empresas manufactureras</strong> con procesos repetitivos
+              y producción en serie (ensamble, alimentos, textiles, electrónica).
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Relación con la NIF C-4</div>
+            <div class="tarjeta__texto">
+              La NIF C-4 lo reconoce como método de valuación, siempre que se revise
+              periódicamente y se ajuste cuando la diferencia con el costo real sea
+              significativa.
+            </div>
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> El Costo Estándar no es un costo histórico: es un
+          costo <strong>predeterminado</strong> que debe revisarse y ajustarse. Si no se
+          actualiza, pierde representatividad.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: REGLA LCM -->
+    <section class="slide" data-titulo="Regla Costo o Mercado, el Menor">
+      <span class="slide__numero">Slide 4</span>
+      <h1 class="slide__titulo">Regla de Costo o Mercado, el Menor (LCM)</h1>
+      <p class="slide__subtitulo">El inventario se informa al menor entre su costo y su valor de mercado</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Fundamento normativo</div>
+          <div class="caja-concepto__texto">
+            Independientemente del método utilizado para valuar el inventario (PEPS, Promedio
+            o Identificación Específica), éste deberá valuarse a la fecha del cierre
+            <strong>al costo de adquisición o al valor de mercado, el que sea menor</strong>.
+            <br><br>
+            Esta regla proporciona una <strong>representación más realista</strong> del valor
+            del inventario y ayuda a las empresas a <strong>evitar sobrevalorar</strong> sus
+            activos.
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Los tres conceptos de "mercado"
+        </h3>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Costo de reposición</div>
+            <div class="tarjeta__texto">
+              Costo de <strong>reemplazar el inventario</strong> con artículos similares.
+              Es el concepto de mercado más común.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Valor de realización</div>
+            <div class="tarjeta__texto">
+              <strong>Precio de venta menos el costo de venderlo</strong>. Representa el
+              límite superior: no se puede valuar por encima de lo que se obtendría al venderlo.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">Valor neto de realización</div>
+            <div class="tarjeta__texto">
+              <strong>Valor de realización menos el % de margen bruto</strong>. Representa
+              el límite inferior: evita infravalorar el inventario.
+            </div>
+          </div>
+        </div>
+
+        <div class="formula-destacada">
+          Límite Superior = Valor de realización (precio venta − gastos venta)<br>
+          Mercado designado = Costo de reposición<br>
+          Límite Inferior = Valor neto de realización (valor realización − % margen bruto)
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Las tres alternativas de aplicación
+        </h3>
+
+        <div class="grid-tarjetas">
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">1. Partidas individuales</div>
+            <div class="tarjeta__texto">
+              Se aplica LCM <strong>artículo por artículo</strong>. Es la más precisa pero
+              la más laboriosa.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">2. Por grupos de artículos</div>
+            <div class="tarjeta__texto">
+              Se agrupan artículos similares (congelados, enlatados, etc.) y se aplica LCM
+              al total del grupo.
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta__titulo">3. Al total del inventario</div>
+            <div class="tarjeta__texto">
+              Se aplica LCM al <strong>total del inventario</strong>. Es la más sencilla pero
+              la menos precisa.
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Ejemplo del PPTX: alimentos congelados y enlatados
+        </h3>
+
+        <table class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Alimento</th>
+              <th class="monto">Costo</th>
+              <th class="monto">Valor de mercado</th>
+              <th class="monto">Individual</th>
+              <th class="monto">Por grupo</th>
+              <th class="monto">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="6" style="background:var(--azul-claro);font-weight:700;text-transform:uppercase;font-size:0.78rem;">Congelados</td>
+            </tr>
+            <tr>
+              <td>Espinacas</td>
+              <td class="monto">$80,000</td>
+              <td class="monto">$104,000</td>
+              <td class="monto">$80,000</td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td>Zanahorias</td>
+              <td class="monto">$100,000</td>
+              <td class="monto">$90,000</td>
+              <td class="monto">$90,000</td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td>Frijoles</td>
+              <td class="monto">$50,000</td>
+              <td class="monto">$40,000</td>
+              <td class="monto">$40,000</td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr class="fila-total">
+              <td>Total congelados</td>
+              <td class="monto">$230,000</td>
+              <td class="monto">$234,000</td>
+              <td class="monto">$210,000</td>
+              <td class="monto">$230,000</td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td colspan="6" style="background:var(--azul-claro);font-weight:700;text-transform:uppercase;font-size:0.78rem;">Enlatados</td>
+            </tr>
+            <tr>
+              <td>Chícharos</td>
+              <td class="monto">$90,000</td>
+              <td class="monto">$48,000</td>
+              <td class="monto">$48,000</td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr>
+              <td>Ensalada de verduras</td>
+              <td class="monto">$95,000</td>
+              <td class="monto">$97,000</td>
+              <td class="monto">$95,000</td>
+              <td class="monto"></td>
+              <td class="monto"></td>
+            </tr>
+            <tr class="fila-total">
+              <td>Total enlatados</td>
+              <td class="monto">$185,000</td>
+              <td class="monto">$145,000</td>
+              <td class="monto">$143,000</td>
+              <td class="monto">$140,000</td>
+              <td class="monto"></td>
+            </tr>
+            <tr class="fila-total">
+              <td>TOTAL INVENTARIO</td>
+              <td class="monto">$415,000</td>
+              <td class="monto">$379,000</td>
+              <td class="monto">$350,000</td>
+              <td class="monto">$370,000</td>
+              <td class="monto">$374,000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Ajuste al cierre según la alternativa elegida</div>
+          <div class="caja-resultado__linea">
+            <strong>Individual:</strong> Pérdida por deterioro $65,000 → Inventario $350,000
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Por grupos:</strong> Pérdida por deterioro $45,000 → Inventario $370,000
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>Al total:</strong> Pérdida por deterioro $41,000 → Inventario $374,000
+          </div>
+          <div class="caja-resultado__nota">
+            Asiento: <em>Pérdida por deterioro de valor de inventario</em> (cargo) contra
+            <em>Inventario</em> (abono). El monto depende de la alternativa de aplicación.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: MÉTODOS DE ESTIMACIÓN -->
+    <section class="slide" data-titulo="Métodos de Estimación">
+      <span class="slide__numero">Slide 5</span>
+      <h1 class="slide__titulo">Métodos de Estimación del Inventario Final</h1>
+      <p class="slide__subtitulo">Detallista y Utilidad Bruta: estimar sin conteo físico</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">¿Por qué estimar?</div>
+          <div class="caja-concepto__texto">
+            Las empresas que usan <strong>inventarios periódicos</strong> requieren conteo
+            físico para conocer el inventario final. Pero no es práctico hacerlo cada mes.
+            Por eso se usan <strong>procedimientos de estimación</strong> que permiten
+            preparar estados financieros sin esperar al conteo.
+            <br><br>
+            Son especialmente útiles cuando el inventario fue
+            <strong>robado, destruido o perdido</strong>: se estima el valor que debía
+            existir para efectos de seguros, reclamaciones o ajustes contables.
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Método Detallista (o al Menudeo)
+        </h3>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Metodología</div>
+          <div class="caja-ejemplo__texto">
+            1. Se lleva un registro del <strong>costo total</strong> de los artículos comprados.<br>
+            2. Se lleva un registro del <strong>valor total a precio de venta</strong> de los
+            artículos disponibles para la venta.<br>
+            3. Se calcula el <strong>factor de costo</strong>:
+            <br><br>
+            <strong>Factor de costo = Artículos disponibles al costo ÷ Artículos disponibles a precio de venta</strong>
+            <br><br>
+            4. Se determina el inventario final a precio de venta:<br>
+            <strong>Mercancía disponible a precio de venta − Ventas netas = Inventario final a precio de venta</strong>
+            <br><br>
+            5. Se multiplica el inventario final a precio de venta por el <strong>factor de costo</strong>
+            para obtener el <strong>inventario final al costo</strong>.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Ejemplo del PPTX (margen del 40% sobre costo)</div>
+          <div class="caja-ejemplo__texto">
+            <strong>Mercancía disponible al costo:</strong> $1,500,000<br>
+            <strong>Mercancía disponible a precio de venta:</strong> $2,100,000<br>
+            <strong>Ventas netas:</strong> $1,600,000<br>
+            <br>
+            Factor de costo = $1,500,000 ÷ $2,100,000 = <strong>0.7143</strong><br>
+            Inventario final a precio de venta = $2,100,000 − $1,600,000 = $500,000<br>
+            Inventario final al costo = $500,000 × 0.7143 = <strong>$357,143</strong><br>
+            Costo de ventas = $1,500,000 − $357,143 = <strong>$1,142,857</strong>
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Método de Utilidad Bruta
+        </h3>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Metodología en 3 pasos</div>
+          <div class="caja-ejemplo__texto">
+            <strong>1.</strong> Determinar el <strong>costo de mercancía disponible</strong>
+            (inventario inicial + compras netas).<br>
+            <strong>2.</strong> Estimar el <strong>costo de mercancía vendida</strong>
+            aplicando el porcentaje de utilidad bruta a las ventas netas.<br>
+            <strong>3.</strong> Restar ambas estimaciones:
+            <br><br>
+            <strong>Inventario final estimado = Mercancía disponible − Costo de ventas estimado</strong>
+            <br><br>
+            Considera un <strong>margen de utilidad constante</strong> con el ejercicio anterior.
+          </div>
+        </div>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Ejemplo del PPTX (Distribuidores Label)</div>
+          <div class="caja-ejemplo__texto">
+            <strong>Datos:</strong> Inventario inicial $154,200; Compras netas $551,000;
+            Ventas netas $824,000; UB promedio 40% sobre precio de venta.<br>
+            <br>
+            <strong>Mercancía disponible:</strong> $154,200 + $551,000 = $705,200<br>
+            <strong>Costo de ventas estimado:</strong> $824,000 × (1 − 0.40) = $494,400<br>
+            <strong>Inventario final estimado:</strong> $705,200 − $494,400 = <strong>$210,800</strong>
+          </div>
+        </div>
+
+        <div class="nota-verde">
+          <strong>Nota importante:</strong> Cuando la utilidad bruta se expresa
+          <strong>sobre el precio de costo</strong> (no sobre venta), hay que convertirla.
+          Ejemplo del PPTX: UB 25% sobre costo → UB sobre venta = 25 ÷ 125 = 20%.
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> El Detallista usa el <strong>factor de costo</strong> a
+          partir de precios de venta. El de Utilidad Bruta usa el <strong>% de margen</strong>
+          para estimar el costo de lo vendido. Ambos permiten estimar sin conteo físico.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: EFECTOS DE ERRORES EN EL INVENTARIO -->
+    <section class="slide" data-titulo="Efectos de errores en el inventario">
+      <span class="slide__numero">Slide 6</span>
+      <h1 class="slide__titulo">Efectos de los Errores en el Inventario</h1>
+      <p class="slide__subtitulo">Cómo un error en el inventario distorsiona el ER y el BG</p>
+
+      <div class="slide__cuerpo">
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">El problema</div>
+          <div class="caja-concepto__texto">
+            Los errores en la valuación del inventario provocan que el
+            <strong>costo de ventas no sea correcto</strong> y, por lo tanto, que la
+            <strong>utilidad del Estado de Resultados</strong> tampoco lo sea. En el
+            Balance General, los <strong>activos aparecerían sobrevaluados o subvaluados</strong>.
+          </div>
+        </div>
+
+        <h3 style="color: var(--azul-profundo); margin: var(--espacio-lg) 0 var(--espacio-md); font-size: 1.05rem;">
+          Tabla de efectos
+        </h3>
+
+        <table class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Error en el inventario</th>
+              <th class="centro">Costo de ventas</th>
+              <th class="centro">Utilidad neta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Inventario final sobrevaluado</strong></td>
+              <td class="centro" style="background:var(--verde-fondo);color:var(--verde-texto);font-weight:700;">Subvaluado</td>
+              <td class="centro" style="background:var(--rojo-fondo);color:var(--rojo-texto);font-weight:700;">Sobrevaluada</td>
+            </tr>
+            <tr>
+              <td><strong>Inventario final subvaluado</strong></td>
+              <td class="centro" style="background:var(--rojo-fondo);color:var(--rojo-texto);font-weight:700;">Sobrevaluado</td>
+              <td class="centro" style="background:var(--verde-fondo);color:var(--verde-texto);font-weight:700;">Subvaluada</td>
+            </tr>
+            <tr>
+              <td><strong>Inventario inicial sobrevaluado</strong></td>
+              <td class="centro" style="background:var(--rojo-fondo);color:var(--rojo-texto);font-weight:700;">Sobrevaluado</td>
+              <td class="centro" style="background:var(--verde-fondo);color:var(--verde-texto);font-weight:700;">Subvaluada</td>
+            </tr>
+            <tr>
+              <td><strong>Inventario inicial subvaluado</strong></td>
+              <td class="centro" style="background:var(--verde-fondo);color:var(--verde-texto);font-weight:700;">Subvaluado</td>
+              <td class="centro" style="background:var(--rojo-fondo);color:var(--rojo-texto);font-weight:700;">Sobrevaluada</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caja-ejemplo">
+          <div class="caja-ejemplo__titulo">Ejemplo del PPTX (efecto compensatorio)</div>
+          <div class="caja-ejemplo__texto">
+            <strong>Año 2003 (con error):</strong> IF sobrevaluado en $20,000 →
+            Costo de ventas subvaluado en $20,000 → Utilidad sobrevaluada en $20,000.<br>
+            <strong>Año 2004 (corrección):</strong> El error se compensa: la utilidad de 2004
+            queda subvaluada en $20,000.<br>
+            <strong>Resultado:</strong> La diferencia se elimina en el siguiente periodo, pero
+            <strong>la utilidad reportada en cada año individual no fue correcta</strong>.
+          </div>
+        </div>
+
+        <div class="nota-ambar">
+          <strong>Consecuencia:</strong> El efecto del error se compensa en el siguiente
+          período, eliminándose la diferencia. Sin embargo, la utilidad reportada en los
+          dos períodos individuales no estuvo correcta. Los usuarios de los estados
+          financieros tomaron decisiones con información distorsionada.
+        </div>
+
+        <div class="alerta">
+          <strong>Idea clave:</strong> Un error en el inventario no solo afecta al inventario:
+          distorsiona el costo de ventas, la utilidad neta y los activos del Balance. Es un
+          error en cascada que toca los dos estados financieros.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: SÍNTESIS -->
+    <section class="slide" data-titulo="Síntesis del Punto 6">
+      <span class="slide__numero">Slide 7</span>
+      <h1 class="slide__titulo">Síntesis del Punto 6</h1>
+      <p class="slide__subtitulo">Mapa conceptual y cierre del ciclo completo de la NIF C-4</p>
+
+      <div class="slide__cuerpo">
+
+        <!-- Canvas del esquema -->
+        <canvas id="esquemaCanvas" class="canvas-esquema" width="900" height="540"></canvas>
+
+        <div class="caja-concepto">
+          <div class="caja-concepto__titulo">Cuatro fundamentos clave</div>
+          <div class="caja-concepto__texto">
+            <strong>1. Identificación Específica:</strong> tercera fórmula de asignación del
+            costo. Rastrea cada unidad con su factura. Obligatoria para mercancía con número
+            de serie y costo superior a $50,000.<br><br>
+
+            <strong>2. Costo Estándar:</strong> costo predeterminado con niveles normales de
+            materia prima, mano de obra y gastos de fabricación. Requiere revisión periódica.<br><br>
+
+            <strong>3. Regla LCM:</strong> el inventario se informa al menor entre su costo y
+            su valor de mercado. Aplicable individual, por grupos o al total.<br><br>
+
+            <strong>4. Estimación y errores:</strong> Detallista y Utilidad Bruta permiten
+            estimar sin conteo físico. Los errores en el inventario distorsionan el ER y el BG,
+            aunque se compensan al siguiente periodo.
+          </div>
+        </div>
+
+        <div class="caja-resultado">
+          <div class="caja-resultado__titulo">Recorrido completo de la clase</div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 1:</strong> Definición, naturaleza y clasificación (NIF C-4)
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 2:</strong> Procedimientos de registro contable (Global, Analítico, Perpetuos)
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 3:</strong> Fórmulas de asignación del costo (PEPS y Promedio Móvil)
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 4:</strong> Mercancías en tránsito y ajustes por inventario físico
+          </div>
+          <div class="caja-resultado__linea">
+            <strong>Punto 5:</strong> Relación con el Estado de Resultados
+          </div>
+          <div class="caja-resultado__linea caja-resultado__linea--utilidad">
+            <strong>Punto 6: Temas complementarios de la NIF C-4</strong>
+          </div>
+          <div class="caja-resultado__nota">
+            Los seis puntos conforman el ciclo contable completo de los inventarios bajo NIF C-4.
+          </div>
+        </div>
+
+        <div class="exito">
+          <strong>Has completado el Punto 6 y con ello la clase completa.</strong> Ahora dominas
+          el ciclo contable completo de los inventarios bajo NIF C-4, incluyendo los temas
+          complementarios: Identificación Específica, Costo Estándar, Regla LCM, métodos de
+          estimación y efectos de errores. Aplicado al caso de Bicicletas del Norte, S.A. de C.V.
+        </div>
+
+        <div class="alerta">
+          <strong>Práctica recomendada:</strong> Abre el complemento del Punto 6 para reforzar
+          estos temas con el rastreador de lotes, la calculadora LCM, el estimador de inventario
+          y el examen final.
+        </div>
+
+        <div style="text-align: center; margin-top: var(--espacio-lg);">
+          <button class="navegacion__boton" onclick="abrirIndice()" style="padding: 0.8rem 2rem; font-size: 1rem;">
+            Volver al índice
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="navegacion">
+    <button class="navegacion__boton" id="btnAnterior" onclick="Slides.anterior()">Anterior</button>
+    <div style="display: flex; align-items: center; gap: var(--espacio-md);">
+      <button class="navegacion__indice" onclick="abrirIndice()">Índice</button>
+      <span class="navegacion__contador" id="contador">1 / 7</span>
+    </div>
+    <button class="navegacion__boton" id="btnSiguiente" onclick="Slides.siguiente()">Siguiente</button>
+  </nav>
+
+</div>
+
+<script>
+const Slides = {
+  actual: 0,
+  slides: [],
+  total: 0,
+
+  init() {
+    this.slides = document.querySelectorAll('.slide');
+    this.total = this.slides.length;
+    this.render();
+    this.bindKeys();
+    this.bindHash();
+    this.construirIndice();
+    this.dibujarEsquema();
+  },
+
+  ir(n) {
+    if (n < 0 || n >= this.total) return;
+    this.slides[this.actual].classList.remove('activo');
+    this.actual = n;
+    this.slides[this.actual].classList.add('activo');
+    this.render();
+  },
+
+  siguiente() { this.ir(this.actual + 1); },
+  anterior() { this.ir(this.actual - 1); },
+
+  render() {
+    document.getElementById('contador').textContent = (this.actual + 1) + ' / ' + this.total;
+    document.getElementById('btnAnterior').disabled = this.actual === 0;
+    document.getElementById('btnSiguiente').disabled = this.actual === this.total - 1;
+    const pct = ((this.actual + 1) / this.total) * 100;
+    document.getElementById('progreso').style.width = pct + '%';
+    document.querySelectorAll('.indice__item').forEach((item, i) => {
+      item.classList.toggle('activo', i === this.actual);
+    });
+    history.replaceState(null, '', '#slide-' + (this.actual + 1));
+    this.slides[this.actual].scrollTop = 0;
+  },
+
+  bindKeys() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        this.siguiente();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.anterior();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        this.ir(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        this.ir(this.total - 1);
+      }
+    });
+  },
+
+  bindHash() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#slide-')) {
+      const n = parseInt(hash.replace('#slide-', '')) - 1;
+      if (n >= 0 && n < this.total) {
+        this.ir(n);
+      }
+    }
+  },
+
+  construirIndice() {
+    const lista = document.getElementById('listaIndice');
+    lista.innerHTML = '';
+    this.slides.forEach((slide, i) => {
+      const titulo = slide.dataset.titulo || ('Slide ' + (i + 1));
+      const li = document.createElement('li');
+      li.className = 'indice__item' + (i === this.actual ? ' activo' : '');
+      li.innerHTML = '<span class="indice__item-num">' + (i + 1) + '.</span> ' + titulo;
+      li.onclick = () => {
+        this.ir(i);
+        cerrarIndice();
+      };
+      lista.appendChild(li);
+    });
+  },
+
+  dibujarEsquema() {
+    const canvas = document.getElementById('esquemaCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const COLOR = {
+      azulProfundo: '#1a3a6b',
+      azulMedio: '#2c5aa0',
+      azulClaro: '#d6e4f5',
+      azulMuyClaro: '#eef4fb',
+      texto: '#1a2b45',
+      textoSuave: '#5a6b82',
+      blanco: '#ffffff',
+      ambar: '#f59e0b',
+      ambarClaro: '#fef3c7',
+      verde: '#10b981',
+      verdeClaro: '#d1fae5'
+    };
+
+    function cajaRedondeada(x, y, w, h, radio, fondo, borde, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x + radio, y);
+      ctx.lineTo(x + w - radio, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radio);
+      ctx.lineTo(x + w, y + h - radio);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radio, y + h);
+      ctx.lineTo(x + radio, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radio);
+      ctx.lineTo(x, y + radio);
+      ctx.quadraticCurveTo(x, y, x + radio, y);
+      ctx.closePath();
+      if (fondo) { ctx.fillStyle = fondo; ctx.fill(); }
+      if (borde) { ctx.strokeStyle = borde; ctx.lineWidth = grosor || 2; ctx.stroke(); }
+    }
+
+    function textoCentrado(texto, x, y, fuente, color, maxAncho) {
+      ctx.font = fuente;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (!maxAncho) {
+        ctx.fillText(texto, x, y);
+        return;
+      }
+
+      const palabras = texto.split(' ');
+      const lineas = [];
+      let lineaActual = '';
+      palabras.forEach(p => {
+        const prueba = lineaActual ? lineaActual + ' ' + p : p;
+        if (ctx.measureText(prueba).width > maxAncho && lineaActual) {
+          lineas.push(lineaActual);
+          lineaActual = p;
+        } else {
+          lineaActual = prueba;
+        }
+      });
+      if (lineaActual) lineas.push(lineaActual);
+
+      const altoLinea = parseInt(fuente.match(/(\d+)px/)[1], 10) * 1.2;
+      const inicioY = y - ((lineas.length - 1) * altoLinea) / 2;
+
+      lineas.forEach((linea, i) => {
+        ctx.fillText(linea, x, inicioY + i * altoLinea);
+      });
+    }
+
+    function linea(x1, y1, x2, y2, color, grosor) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = grosor || 2;
+      ctx.stroke();
+    }
+
+    function flechaVertical(x, y1, y2, color) {
+      linea(x, y1, x, y2, color, 2);
+      const tam = 6;
+      ctx.beginPath();
+      ctx.moveTo(x, y2);
+      ctx.lineTo(x - tam, y2 - tam);
+      ctx.lineTo(x + tam, y2 - tam);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // Fondo
+    ctx.fillStyle = COLOR.blanco;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // ============================================================
+    // NODO RAÍZ
+    // ============================================================
+    const raizX = 450;
+    const raizY = 28;
+    const raizW = 460;
+    const raizH = 40;
+
+    cajaRedondeada(raizX - raizW/2, raizY - raizH/2, raizW, raizH, 8, COLOR.azulProfundo, null);
+    textoCentrado('TEMAS COMPLEMENTARIOS DE LA NIF C-4', raizX, raizY, 'bold 13px system-ui', COLOR.blanco);
+
+    // Bifurcación a 4 ramas
+    linea(raizX, raizY + raizH/2, raizX, 80, COLOR.azulProfundo, 2);
+    const ramasX = [130, 340, 560, 770];
+    const ramaY = 80;
+
+    linea(ramasX[0], ramaY, ramasX[3], ramaY, COLOR.azulProfundo, 2);
+    ramasX.forEach(x => {
+      flechaVertical(x, ramaY, 105, COLOR.azulProfundo);
+    });
+
+    // ============================================================
+    // 4 NODOS DE RAMA
+    // ============================================================
+    const nodoY = 128;
+    const nodoW = 180;
+    const nodoH = 44;
+
+    const nodos = [
+      { x: ramasX[0], titulo: 'IDENTIFICACIÓN', subtitulo: 'ESPECÍFICA', color: COLOR.azulMedio },
+      { x: ramasX[1], titulo: 'COSTO', subtitulo: 'ESTÁNDAR', color: COLOR.azulMedio },
+      { x: ramasX[2], titulo: 'REGLA LCM', subtitulo: 'COSTO O MERCADO', color: COLOR.azulMedio },
+      { x: ramasX[3], titulo: 'ESTIMACIÓN Y', subtitulo: 'ERRORES', color: COLOR.azulMedio }
+    ];
+
+    nodos.forEach(n => {
+      cajaRedondeada(n.x - nodoW/2, nodoY - nodoH/2, nodoW, nodoH, 8, n.color, null);
+      textoCentrado(n.titulo, n.x, nodoY - 8, 'bold 11px system-ui', COLOR.blanco);
+      textoCentrado(n.subtitulo, n.x, nodoY + 9, 'bold 10px system-ui', COLOR.blanco);
+    });
+
+    // ============================================================
+    // SUB-NODOS DE CADA RAMA
+    // ============================================================
+
+    // Rama 1: Identificación Específica
+    const sub1Y = 210;
+    linea(ramasX[0], nodoY + nodoH/2, ramasX[0], sub1Y - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[0] - 85, sub1Y - 22, 170, 44, 6, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Cada unidad con', ramasX[0], sub1Y - 8, '9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('su factura de origen', ramasX[0], sub1Y + 8, '9px system-ui', COLOR.textoSuave, 160);
+
+    const sub1bY = 280;
+    linea(ramasX[0], sub1Y + 22, ramasX[0], sub1bY - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[0] - 85, sub1bY - 22, 170, 44, 6, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('Número de serie +', ramasX[0], sub1bY - 8, 'bold 9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('costo > $50,000', ramasX[0], sub1bY + 8, '9px system-ui', COLOR.ambarTexto, 160);
+
+    // Rama 2: Costo Estándar
+    const sub2Y = 210;
+    linea(ramasX[1], nodoY + nodoH/2, ramasX[1], sub2Y - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[1] - 85, sub2Y - 22, 170, 44, 6, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Costo predeterminado', ramasX[1], sub2Y - 8, '9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('MP + MO + GIF', ramasX[1], sub2Y + 8, '9px system-ui', COLOR.textoSuave, 160);
+
+    const sub2bY = 280;
+    linea(ramasX[1], sub2Y + 22, ramasX[1], sub2bY - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[1] - 85, sub2bY - 22, 170, 44, 6, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('Revisión periódica', ramasX[1], sub2bY - 8, 'bold 9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('y ajuste al real', ramasX[1], sub2bY + 8, '9px system-ui', COLOR.ambarTexto, 160);
+
+    // Rama 3: Regla LCM
+    const sub3Y = 210;
+    linea(ramasX[2], nodoY + nodoH/2, ramasX[2], sub3Y - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[2] - 85, sub3Y - 22, 170, 44, 6, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Costo vs. mercado', ramasX[2], sub3Y - 8, '9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('el menor', ramasX[2], sub3Y + 8, '9px sistema-ui', COLOR.textoSuave, 160);
+
+    const sub3bY = 280;
+    linea(ramasX[2], sub3Y + 22, ramasX[2], sub3bY - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[2] - 85, sub3bY - 22, 170, 44, 6, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('Individual · Grupos', ramasX[2], sub3bY - 8, 'bold 9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('o Total del inventario', ramasX[2], sub3bY + 8, '9px system-ui', COLOR.ambarTexto, 160);
+
+    // Rama 4: Estimación y Errores
+    const sub4Y = 210;
+    linea(ramasX[3], nodoY + nodoH/2, ramasX[3], sub4Y - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[3] - 85, sub4Y - 22, 170, 44, 6, COLOR.azulMuyClaro, COLOR.azulMedio, 2);
+    textoCentrado('Detallista y', ramasX[3], sub4Y - 8, '9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('Utilidad Bruta', ramasX[3], sub4Y + 8, '9px system-ui', COLOR.textoSuave, 160);
+
+    const sub4bY = 280;
+    linea(ramasX[3], sub4Y + 22, ramasX[3], sub4bY - 22, COLOR.azulMedio, 2);
+    cajaRedondeada(ramasX[3] - 85, sub4bY - 22, 170, 44, 6, COLOR.ambarClaro, COLOR.ambar, 2);
+    textoCentrado('Errores distorsionan', ramasX[3], sub4bY - 8, 'bold 9px system-ui', COLOR.azulProfundo, 160);
+    textoCentrado('ER y BG', ramasX[3], sub4bY + 8, '9px system-ui', COLOR.ambarTexto, 160);
+
+    // ============================================================
+    // CONVERGENCIA FINAL
+    // ============================================================
+    const lineaConvY = 360;
+    ramasX.forEach(x => {
+      linea(x, sub4bY + 22, x, lineaConvY, COLOR.azulProfundo, 2);
+    });
+    linea(ramasX[0], lineaConvY, ramasX[3], lineaConvY, COLOR.azulProfundo, 2);
+    flechaVertical(raizX, lineaConvY, lineaConvY + 30, COLOR.azulProfundo);
+
+    // Caja final
+    const finalY = 425;
+    const finalW = 600;
+    const finalH = 50;
+    cajaRedondeada(raizX - finalW/2, finalY - finalH/2, finalW, finalH, 8, COLOR.azulClaro, COLOR.azulProfundo, 2);
+    textoCentrado('Ciclo completo de la NIF C-4', raizX, finalY - 10, 'bold 13px system-ui', COLOR.azulProfundo);
+    textoCentrado('Definición → Registro → Costeo → Tránsito → ER → Complementarios', raizX, finalY + 12, '10px system-ui', COLOR.texto, finalW - 30);
+
+    // Leyenda inferior
+    ctx.font = '11px system-ui';
+    ctx.fillStyle = COLOR.textoSuave;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Los cuatro temas complementarios completan el panorama normativo de los inventarios.', raizX, 490);
+  }
+};
+
+function abrirIndice() {
+  document.getElementById('indice').classList.add('abierto');
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function cerrarIndice() {
+  document.getElementById('indice').classList.remove('abierto');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+document.getElementById('cerrarIndice').onclick = cerrarIndice;
+document.getElementById('overlay').onclick = cerrarIndice;
+
+document.addEventListener('DOMContentLoaded', () => {
+  Slides.init();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punto 6 — Complemento: Actividades y examen | Bicicletas del Norte, S.A. de C.V.</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul-profundo: #0B1E3A;
+  --azul-brillante: #1E5EFF;
+  --cian: #4FC3F7;
+  --blanco-gris: #F0F4F8;
+  --azul-medio: #143A7A;
+  --cian-claro: #D6F0FE;
+  --azul-claro: #DCE8FF;
+  --verde-exito: #10B981;
+  --rojo-error: #EF4444;
+  --ambar: #F59E0B;
+
+  --fuente-base: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-mono: 'Courier New', Courier, monospace;
+
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+
+  --sombra-sm: 0 1px 2px rgba(11,30,58,0.06);
+  --sombra-md: 0 4px 6px rgba(11,30,58,0.10);
+  --sombra-lg: 0 10px 15px rgba(11,30,58,0.12);
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--fuente-base);
+  background: var(--blanco-gris);
+  color: var(--azul-profundo);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: var(--espacio-lg);
+}
+
+.contenedor { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--sombra-lg);
+  flex-wrap: wrap;
+}
+
+.header__titulo { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.header__subtitulo { font-size: 0.8rem; opacity: 0.8; font-weight: 400; }
+.header__acciones { display: flex; gap: var(--espacio-sm); flex-wrap: wrap; }
+
+.boton {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.boton--primario { background: var(--azul-brillante); color: #fff; }
+.boton--primario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--secundario { background: transparent; color: #fff; border: 2px solid var(--cian); }
+.boton--secundario:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton--terciario { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.boton--terciario:hover { background: rgba(255,255,255,0.1); }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  background: transparent;
+  border: none;
+  font-family: var(--fuente-base);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--azul-medio);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  min-width: 180px;
+}
+
+.tab:hover { background: var(--cian-claro); }
+.tab--activa {
+  color: var(--azul-profundo);
+  border-bottom-color: var(--azul-brillante);
+  background: var(--azul-claro);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: var(--espacio-lg);
+  overflow: hidden;
+}
+
+.panel__header {
+  background: var(--azul-medio);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.panel__cuerpo { padding: var(--espacio-lg); }
+
+.instruccion {
+  background: var(--cian-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  font-size: 0.9rem;
+}
+
+.instruccion strong { color: var(--azul-profundo); }
+
+.barra-acciones {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-accion {
+  background: var(--azul-brillante);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boton-accion:hover { background: var(--cian); color: var(--azul-profundo); }
+.boton-accion--reiniciar { background: var(--ambar); color: #fff; }
+.boton-accion--reiniciar:hover { background: #d97706; color: #fff; }
+.boton-accion--agregar { background: var(--azul-profundo); color: #fff; }
+.boton-accion--agregar:hover { background: var(--azul-medio); }
+
+.aviso {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: var(--espacio-md);
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.aviso.visible { display: block; }
+
+.aviso--error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid var(--rojo-error);
+}
+
+.aviso--exito {
+  background: #d1fae5;
+  color: #065f46;
+  border-left: 4px solid var(--verde-exito);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.grid-entradas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-lg);
+}
+
+.campo { display: flex; flex-direction: column; gap: var(--espacio-xs); }
+
+.campo__etiqueta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.campo__input {
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.campo__input:focus { outline: none; border-color: var(--azul-brillante); }
+
+.campo__input--error {
+  border-color: var(--rojo-error);
+  background: #fef2f2;
+}
+
+.campo__ayuda {
+  font-size: 0.72rem;
+  color: var(--azul-medio);
+  font-style: italic;
+}
+
+.tabla-resultado {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  font-size: 0.85rem;
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.tabla-resultado thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-resultado th {
+  padding: 0.7rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-resultado th.monto { text-align: right; }
+.tabla-resultado th.centro { text-align: center; }
+
+.tabla-resultado td {
+  padding: 0.6rem 0.6rem;
+  border-bottom: 1px solid var(--azul-claro);
+  vertical-align: top;
+}
+
+.tabla-resultado td.monto {
+  text-align: right;
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.tabla-resultado td.centro { text-align: center; }
+
+.tabla-resultado tbody tr:hover { background: var(--blanco-gris); }
+
+.tabla-resultado .cuenta { font-weight: 500; }
+
+.tabla-resultado .cuenta-principal {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  background: var(--cian-claro);
+}
+
+.tabla-resultado tbody tr.fila-total {
+  background: var(--azul-claro);
+  font-weight: 700;
+}
+
+.tabla-resultado tbody tr.fila-total td {
+  border-top: 2px solid var(--azul-profundo);
+}
+
+.tabla-resultado tbody tr.fila-paso {
+  background: #f8fafc;
+}
+
+.tabla-resultado tbody tr.fila-error {
+  background: #fee2e2;
+}
+
+.panel-resultado {
+  background: var(--azul-claro);
+  border-left: 4px solid var(--azul-brillante);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  margin-top: var(--espacio-md);
+}
+
+.panel-resultado__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espacio-sm);
+}
+
+.panel-resultado__linea {
+  font-size: 0.9rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  font-family: var(--fuente-mono);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+}
+
+.panel-resultado__linea--utilidad {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+}
+
+.panel-resultado__linea--error {
+  font-size: 1rem;
+  font-weight: 700;
+  background: #fee2e2;
+  border-radius: var(--radio-sm);
+  padding: 0.4rem 0.6rem;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--rojo-error);
+  color: var(--rojo-error);
+}
+
+.panel-resultado__nota {
+  font-size: 0.82rem;
+  color: var(--azul-medio);
+  margin-top: var(--espacio-sm);
+  line-height: 1.5;
+  font-family: var(--fuente-base);
+}
+
+.desglose-compacto {
+  margin-top: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.desglose-compacto__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  padding-bottom: var(--espacio-xs);
+  border-bottom: 2px solid var(--azul-brillante);
+}
+
+.desglose-linea {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  font-family: var(--fuente-mono);
+  font-size: 0.88rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--azul-claro);
+  flex-wrap: wrap;
+}
+
+.desglose-linea:last-child { border-bottom: none; }
+
+.desglose-linea__etiqueta {
+  font-family: var(--fuente-base);
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+  min-width: 180px;
+}
+
+.desglose-linea__calculo {
+  color: var(--azul-medio);
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.desglose-linea__total {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  flex-shrink: 0;
+}
+
+.desglose-linea--total {
+  background: var(--cian-claro);
+  border-radius: var(--radio-sm);
+  border-bottom: none;
+  margin-top: var(--espacio-sm);
+  border-left: 3px solid var(--azul-brillante);
+  padding: 0.6rem 0.75rem;
+}
+
+.desglose-linea--total .desglose-linea__total { font-size: 0.95rem; }
+
+/* ==== ACTIVIDAD 1 — RASTREADOR DE LOTES ==== */
+.tabla-rastreador {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  font-size: 0.82rem;
+}
+
+.tabla-rastreador thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-rastreador th {
+  padding: 0.55rem 0.5rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabla-rastreador td {
+  padding: 0.5rem 0.5rem;
+  border-bottom: 1px solid var(--azul-claro);
+  font-family: var(--fuente-mono);
+  font-size: 0.8rem;
+}
+
+.tabla-rastreador .texto { font-family: var(--fuente-base); }
+.tabla-rastreador .centro { text-align: center; }
+.tabla-rastreador .monto { text-align: right; font-weight: 600; color: var(--azul-profundo); }
+
+.lote-disponible { background: #fff; }
+.lote-vendido { background: #d1fae5; opacity: 0.7; }
+
+.badge-estado {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-estado--disponible { background: var(--cian-claro); color: var(--azul-profundo); }
+.badge-estado--vendido { background: var(--verde-exito); color: #fff; }
+
+.selector-venta {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.selector-venta__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+}
+
+.lista-lotes-seleccion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.lote-seleccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-sm);
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+
+.lote-seleccion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.lote-seleccion--seleccionado { border-color: var(--azul-brillante); background: var(--azul-brillante); color: #fff; font-weight: 600; }
+.lote-seleccion--seleccionado .lote-seleccion__detalle { color: #fff; }
+
+.lote-seleccion__nombre { font-weight: 700; }
+.lote-seleccion__detalle { font-family: var(--fuente-mono); font-size: 0.78rem; color: var(--azul-medio); }
+
+/* ==== ACTIVIDAD 2 — CALCULADORA LCM ==== */
+.selector-alternativa {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.selector-alternativa__boton {
+  padding: 0.55rem 1.2rem;
+  border: 2px solid var(--azul-brillante);
+  background: #fff;
+  color: var(--azul-brillante);
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.selector-alternativa__boton:hover { background: var(--cian-claro); }
+.selector-alternativa__boton--activo { background: var(--azul-brillante); color: #fff; }
+
+.tabla-lcm-editable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-md);
+  box-shadow: var(--sombra-sm);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+  font-size: 0.82rem;
+}
+
+.tabla-lcm-editable thead { background: var(--azul-profundo); color: #fff; }
+
+.tabla-lcm-editable th {
+  padding: 0.55rem 0.4rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.tabla-lcm-editable td {
+  padding: 0.4rem 0.4rem;
+  border-bottom: 1px solid var(--azul-claro);
+}
+
+.tabla-lcm-editable input {
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente-mono);
+  font-size: 0.78rem;
+  color: var(--azul-profundo);
+  font-weight: 600;
+  background: #fff;
+}
+
+.tabla-lcm-editable input:focus { outline: none; border-color: var(--azul-brillante); }
+
+.tabla-lcm-editable .monto-calc {
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+  color: var(--azul-profundo);
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+.tabla-lcm-editable .nombre-categoria {
+  font-weight: 700;
+  color: var(--azul-profundo);
+  background: var(--cian-claro);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ==== ACTIVIDAD 3 — ESTIMADOR ==== */
+.selector-metodo-estimacion {
+  display: flex;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.selector-metodo-estimacion__boton {
+  padding: 0.55rem 1.2rem;
+  border: 2px solid var(--azul-brillante);
+  background: #fff;
+  color: var(--azul-brillante);
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--fuente-base);
+}
+
+.selector-metodo-estimacion__boton:hover { background: var(--cian-claro); }
+.selector-metodo-estimacion__boton--activo { background: var(--azul-brillante); color: #fff; }
+
+/* ==== EXAMEN ==== */
+.examen-progreso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md) var(--espacio-lg);
+  background: var(--azul-claro);
+  border-radius: var(--radio-md);
+  margin-bottom: var(--espacio-lg);
+  flex-wrap: wrap;
+}
+
+.examen-progreso__texto {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  font-family: var(--fuente-mono);
+}
+
+.examen-progreso__barra {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.examen-progreso__relleno {
+  height: 100%;
+  background: var(--azul-brillante);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.reactivo {
+  background: var(--blanco-gris);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-md);
+  transition: all 0.3s;
+}
+
+.reactivo--correcto { border-color: var(--verde-exito); background: #d1fae5; }
+.reactivo--incorrecto { border-color: var(--rojo-error); background: #fee2e2; }
+
+.reactivo__titulo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--azul-brillante);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reactivo--correcto .reactivo__numero { background: var(--verde-exito); }
+.reactivo--incorrecto .reactivo__numero { background: var(--rojo-error); }
+
+.reactivo__pregunta {
+  font-size: 0.92rem;
+  margin-bottom: var(--espacio-md);
+  color: var(--azul-profundo);
+  line-height: 1.5;
+}
+
+.reactivo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.reactivo__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88rem;
+}
+
+.reactivo__opcion:hover { border-color: var(--azul-brillante); background: var(--cian-claro); }
+.reactivo__opcion.correcta { border-color: var(--verde-exito); background: #d1fae5; font-weight: 600; }
+.reactivo__opcion.incorrecta { border-color: var(--rojo-error); background: #fee2e2; opacity: 0.85; }
+.reactivo__opcion.bloqueada { cursor: not-allowed; pointer-events: none; }
+.reactivo__opcion input { accent-color: var(--azul-brillante); }
+
+.reactivo__feedback {
+  margin-top: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  display: none;
+}
+
+.reactivo__feedback.visible { display: block; }
+.reactivo__feedback--correcto { background: #d1fae5; border-left: 4px solid var(--verde-exito); color: #065f46; }
+.reactivo__feedback--incorrecto { background: #fee2e2; border-left: 4px solid var(--rojo-error); color: #991b1b; }
+
+.resultado-examen {
+  background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+  color: #fff;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-lg);
+  margin-top: var(--espacio-lg);
+  display: none;
+  text-align: center;
+}
+
+.resultado-examen.visible { display: block; animation: fadeIn 0.5s ease; }
+
+.resultado-examen__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.resultado-examen__porcentaje {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--fuente-mono);
+  line-height: 1;
+  margin-bottom: var(--espacio-sm);
+}
+
+.resultado-examen__detalle {
+  font-size: 1rem;
+  margin-bottom: var(--espacio-md);
+  opacity: 0.9;
+}
+
+.resultado-examen__mensaje {
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-md);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.contenido-tab { display: none; }
+.contenido-tab--activo { display: block; }
+
+/* ==== MODAL ==== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11,30,58,0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-md);
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: #fff;
+  border-radius: var(--radio-lg);
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-lg);
+}
+
+.modal__header {
+  background: var(--azul-profundo);
+  color: #fff;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+  position: sticky;
+  top: 0;
+}
+
+.modal__titulo { font-size: 1rem; font-weight: 700; }
+
+.modal__cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--fuente-base);
+}
+
+.modal__cuerpo { padding: var(--espacio-lg); }
+
+.modal__cuerpo h3 {
+  font-size: 0.95rem;
+  color: var(--azul-profundo);
+  margin-bottom: var(--espacio-xs);
+  margin-top: var(--espacio-md);
+}
+
+.modal__cuerpo h3:first-child { margin-top: 0; }
+
+.modal__cuerpo p {
+  font-size: 0.9rem;
+  color: var(--azul-medio);
+  margin-bottom: var(--espacio-sm);
+  line-height: 1.6;
+}
+
+.modal__cuerpo ul { margin-left: var(--espacio-lg); margin-bottom: var(--espacio-sm); }
+
+.modal__cuerpo li {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin-bottom: 0.3rem;
+}
+
+.modal__cuerpo strong { color: var(--azul-profundo); }
+
+@media (max-width: 768px) {
+  body { padding: var(--espacio-md); }
+  .header { padding: var(--espacio-md); }
+  .header__titulo { font-size: 1rem; }
+  .panel__cuerpo { padding: var(--espacio-md); }
+  .tab { font-size: 0.72rem; padding: 0.6rem 0.4rem; min-width: 120px; }
+  .resultado-examen__porcentaje { font-size: 3rem; }
+  .tabla-resultado, .tabla-rastreador, .tabla-lcm-editable { font-size: 0.68rem; }
+  .grid-entradas { grid-template-columns: 1fr; }
+  .desglose-linea__etiqueta { min-width: 120px; font-size: 0.82rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <header class="header">
+    <div>
+      <div class="header__titulo">Punto 6 — Complemento: Actividades y examen</div>
+      <div class="header__subtitulo">Identificación Específica · Costo Estándar · LCM · Estimación · Errores — Bicicletas del Norte, S.A. de C.V.</div>
+    </div>
+    <div class="header__acciones">
+      <button class="boton boton--primario" onclick="App.cargarCaso()">Cargar caso</button>
+      <button class="boton boton--secundario" onclick="Modal.abrir()">¿Cómo funciona?</button>
+      <button class="boton boton--terciario" onclick="App.limpiar()">Limpiar</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab tab--activa" data-tab="rastreador" onclick="App.cambiarTab('rastreador')">Act. 1: Rastreador específico</button>
+    <button class="tab" data-tab="lcm" onclick="App.cambiarTab('lcm')">Act. 2: Calculadora LCM</button>
+    <button class="tab" data-tab="estimacion" onclick="App.cambiarTab('estimacion')">Act. 3: Estimación y errores</button>
+    <button class="tab" data-tab="examen" onclick="App.cambiarTab('examen')">Examen final</button>
+  </div>
+
+  <!-- PESTAÑA 1: RASTREADOR DE IDENTIFICACIÓN ESPECÍFICA -->
+  <div class="contenido-tab contenido-tab--activo" id="tab-rastreador">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 1 — Rastreador de Identificación Específica</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada bicicleta de alta gama tiene un <strong>número de serie único</strong>
+          y un costo específico según su factura. Selecciona un lote disponible y regístralo como vendido.
+          La app rastrea exactamente qué unidad salió y a qué costo, aplicando el método de
+          <strong>Identificación Específica</strong>. Observa cómo el costo de ventas se compone
+          de costos <strong>reales y rastreables</strong>, no de lotes ni promedios.
+        </div>
+
+        <div class="aviso aviso--error" id="avisoRastreador"></div>
+        <div class="aviso aviso--exito" id="avisoRastreadorExito"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Rastreador.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <h3 style="font-size:1rem;color:var(--azul-profundo);margin-bottom:var(--espacio-md);">
+          Inventario rastreable (bicicletas de alta gama)
+        </h3>
+
+        <table class="tabla-rastreador">
+          <thead>
+            <tr>
+              <th>Número de serie</th>
+              <th>Factura de origen</th>
+              <th>Fecha compra</th>
+              <th class="monto">Costo unitario</th>
+              <th class="centro">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoRastreador"></tbody>
+        </table>
+
+        <div class="selector-venta" id="selectorVenta" style="display:none;">
+          <div class="selector-venta__titulo">Selecciona el lote a vender (número de serie):</div>
+          <div class="lista-lotes-seleccion" id="listaLotesSeleccion"></div>
+        </div>
+
+        <div class="desglose-compacto">
+          <div class="desglose-compacto__titulo">Ventas registradas y su costo rastreado</div>
+          <div id="desgloseRastreador"></div>
+        </div>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo">Resultado del rastreo específico</div>
+          <div class="panel-resultado__linea"><span>Bicicletas en inventario</span><span id="resInvRastreador">0</span></div>
+          <div class="panel-resultado__linea"><span>Costo total del inventario restante</span><span id="resCostoInvRastreador">$0.00</span></div>
+          <div class="panel-resultado__linea"><span>Bicicletas vendidas</span><span id="resVendidasRastreador">0</span></div>
+          <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>COSTO DE VENTAS RASTREADO</span><span id="resCostoVentasRastreador">$0.00</span></div>
+          <div class="panel-resultado__nota">
+            Cada venta registra el costo exacto de la factura que le dio origen. No hay lotes
+            genéricos ni promedios: el costo real se enfrenta al ingreso real.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 2: CALCULADORA LCM -->
+  <div class="contenido-tab" id="tab-lcm">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 2 — Calculadora de la Regla Costo o Mercado, el Menor (LCM)</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Edita el <strong>costo</strong> y el <strong>valor de mercado</strong>
+          de cada artículo. La app aplica la regla LCM (el menor entre costo y mercado) y muestra
+          el ajuste al cierre según la alternativa elegida: <strong>individual</strong>,
+          <strong>por grupos</strong> o <strong>al total del inventario</strong>. Si el valor de mercado
+          está fuera de los límites superior e inferior, se usa el límite correspondiente.
+        </div>
+
+        <div class="aviso aviso--error" id="avisoLCM"></div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="LCM.reiniciar()">
+            Reiniciar actividad
+          </button>
+        </div>
+
+        <div class="selector-alternativa">
+          <button class="selector-alternativa__boton selector-alternativa__boton--activo" data-alt="individual" onclick="LCM.cambiarAlternativa('individual')">
+            Individual
+          </button>
+          <button class="selector-alternativa__boton" data-alt="grupos" onclick="LCM.cambiarAlternativa('grupos')">
+            Por grupos
+          </button>
+          <button class="selector-alternativa__boton" data-alt="total" onclick="LCM.cambiarAlternativa('total')">
+            Al total
+          </button>
+        </div>
+
+        <table class="tabla-lcm-editable">
+          <thead>
+            <tr>
+              <th>Artículo</th>
+              <th>Costo</th>
+              <th>Valor de mercado</th>
+              <th>Límite sup.</th>
+              <th>Límite inf.</th>
+              <th class="monto-calc">LCM aplicado</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoLCM"></tbody>
+        </table>
+
+        <div class="panel-resultado">
+          <div class="panel-resultado__titulo" id="tituloResultadoLCM">Resultado de la aplicación LCM</div>
+          <div class="panel-resultado__linea"><span>Costo total registrado</span><span id="resCostoLCM">$0.00</span></div>
+          <div class="panel-resultado__linea"><span>Valor LCM aplicado</span><span id="resValorLCM">$0.00</span></div>
+          <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>AJUSTE POR DETERIORO</span><span id="resAjusteLCM">$0.00</span></div>
+          <div class="panel-resultado__nota" id="resNotaLCM"></div>
+        </div>
+
+        <div class="desglose-compacto">
+          <div class="desglose-compacto__titulo">Desglose del cálculo LCM</div>
+          <div id="desgloseLCM"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 3: ESTIMACIÓN Y ERRORES -->
+  <div class="contenido-tab" id="tab-estimacion">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Actividad 3 — Estimación de inventario y efectos de errores</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Explora los <strong>métodos de estimación</strong>
+          (Detallista y Utilidad Bruta) y los <strong>efectos de los errores</strong> en el
+          inventario. Cambia entre las dos sub-pestañas: <strong>Estimación</strong> y
+          <strong>Errores</strong>.
+        </div>
+
+        <div class="selector-metodo-estimacion" style="margin-bottom: var(--espacio-md);">
+          <button class="selector-metodo-estimacion__boton selector-metodo-estimacion__boton--activo" data-sub="estimacion" onclick="Estimacion.cambiarSub('estimacion')">
+            Métodos de estimación
+          </button>
+          <button class="selector-metodo-estimacion__boton" data-sub="errores" onclick="Estimacion.cambiarSub('errores')">
+            Efectos de errores
+          </button>
+        </div>
+
+        <!-- SUB-PESTAÑA: ESTIMACIÓN -->
+        <div id="subEstimacion">
+          <div class="selector-metodo-estimacion">
+            <button class="selector-metodo-estimacion__boton selector-metodo-estimacion__boton--activo" data-met="detallista" onclick="Estimacion.cambiarMetodo('detallista')">
+              Método Detallista
+            </button>
+            <button class="selector-metodo-estimacion__boton" data-met="utilidad-bruta" onclick="Estimacion.cambiarMetodo('utilidad-bruta')">
+              Método Utilidad Bruta
+            </button>
+          </div>
+
+          <div class="aviso aviso--error" id="avisoEstimacion"></div>
+
+          <div class="barra-acciones">
+            <button class="boton-accion boton-accion--reiniciar" onclick="Estimacion.reiniciar()">
+              Reiniciar actividad
+            </button>
+          </div>
+
+          <div class="grid-entradas" id="entradasEstimacion"></div>
+
+          <div class="desglose-compacto">
+            <div class="desglose-compacto__titulo" id="tituloDesgloseEstimacion">Desglose del cálculo</div>
+            <div id="desgloseEstimacion"></div>
+          </div>
+
+          <div class="panel-resultado">
+            <div class="panel-resultado__titulo" id="tituloResultadoEstimacion">Resultado de la estimación</div>
+            <div id="lineasResultadoEstimacion"></div>
+            <div class="panel-resultado__nota" id="notaEstimacion"></div>
+          </div>
+        </div>
+
+        <!-- SUB-PESTAÑA: ERRORES -->
+        <div id="subErrores" style="display:none;">
+          <div class="instruccion" style="margin-bottom: var(--espacio-md);">
+            Selecciona el tipo de error en el inventario y observa su efecto en el
+            <strong>costo de ventas</strong> y en la <strong>utilidad neta</strong>. Los efectos son
+            opuestos según el tipo de error, y se compensan en el siguiente periodo.
+          </div>
+
+          <div class="selector-metodo-estimacion">
+            <button class="selector-metodo-estimacion__boton selector-metodo-estimacion__boton--activo" data-err="if-sobre" onclick="Estimacion.cambiarError('if-sobre')">
+              IF sobrevaluado
+            </button>
+            <button class="selector-metodo-estimacion__boton" data-err="if-sub" onclick="Estimacion.cambiarError('if-sub')">
+              IF subvaluado
+            </button>
+            <button class="selector-metodo-estimacion__boton" data-err="ii-sobre" onclick="Estimacion.cambiarError('ii-sobre')">
+              II sobrevaluado
+            </button>
+            <button class="selector-metodo-estimacion__boton" data-err="ii-sub" onclick="Estimacion.cambiarError('ii-sub')">
+              II subvaluado
+            </button>
+          </div>
+
+          <div class="desglose-compacto">
+            <div class="desglose-compacto__titulo">Efecto en el Estado de Resultados</div>
+            <div id="desgloseErrores"></div>
+          </div>
+
+          <div class="panel-resultado" id="panelResultadoErrores">
+            <div class="panel-resultado__titulo" id="tituloErrores">Efecto del error</div>
+            <div id="lineasErrores"></div>
+            <div class="panel-resultado__nota" id="notaErrores"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 4: EXAMEN -->
+  <div class="contenido-tab" id="tab-examen">
+    <div class="panel">
+      <div class="panel__header">
+        <span>Examen final — 10 reactivos de opción múltiple</span>
+      </div>
+      <div class="panel__cuerpo">
+
+        <div class="instruccion">
+          <strong>Instrucción:</strong> Cada reactivo se califica en cuanto haces clic en una opción.
+          Después de responder, la opción correcta se marca en verde y la tuya (si es incorrecta)
+          en rojo. El reactivo queda bloqueado. Al responder el último, aparece automáticamente
+          tu <strong>calificación global</strong>. Cada reinicio genera un examen distinto.
+          <br><br>
+          <strong>Nota:</strong> Todos los reactivos son <strong>conceptuales</strong>. Ningún
+          reactivo pide cifras monetarias como respuesta.
+        </div>
+
+        <div class="barra-acciones">
+          <button class="boton-accion boton-accion--reiniciar" onclick="Examen.reiniciar()">
+            Reiniciar examen
+          </button>
+        </div>
+
+        <div class="examen-progreso">
+          <div class="examen-progreso__texto" id="examenProgresoTexto">0 / 10 respondidas</div>
+          <div class="examen-progreso__barra">
+            <div class="examen-progreso__relleno" id="examenProgresoRelleno"></div>
+          </div>
+        </div>
+
+        <div id="contenedorExamen"></div>
+
+        <div class="resultado-examen" id="resultadoExamen">
+          <div class="resultado-examen__titulo">Calificación final</div>
+          <div class="resultado-examen__porcentaje" id="examenPorcentaje">0%</div>
+          <div class="resultado-examen__detalle" id="examenDetalle">0 aciertos de 10</div>
+          <div class="resultado-examen__mensaje" id="examenMensaje"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__titulo" id="modalTitulo">¿Cómo funciona el complemento?</div>
+      <button class="modal__cerrar" onclick="Modal.cerrar()">Cerrar</button>
+    </div>
+    <div class="modal__cuerpo" id="modalCuerpo"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtPct(n) {
+  return (n * 100).toFixed(2) + '%';
+}
+
+/* ============================================================
+   ACTIVIDAD 1 — RASTREADOR DE IDENTIFICACIÓN ESPECÍFICA
+   ============================================================ */
+const LotesIniciales = [
+  { serie: 'ALP-2026-001', factura: 'F-1001', fecha: '05/Ene', costo: 68000, estado: 'disponible' },
+  { serie: 'ALP-2026-002', factura: 'F-1001', fecha: '05/Ene', costo: 68000, estado: 'disponible' },
+  { serie: 'ALP-2026-003', factura: 'F-1002', fecha: '12/Ene', costo: 72500, estado: 'disponible' },
+  { serie: 'ALP-2026-004', factura: 'F-1002', fecha: '12/Ene', costo: 72500, estado: 'disponible' },
+  { serie: 'ALP-2026-005', factura: 'F-1003', fecha: '20/Ene', costo: 80000, estado: 'disponible' },
+  { serie: 'ALP-2026-006', factura: 'F-1003', fecha: '20/Ene', costo: 80000, estado: 'disponible' }
+];
+
+const Rastreador = {
+  lotes: [],
+  ventas: [],
+  loteSeleccionado: null,
+
+  init() {
+    this.lotes = LotesIniciales.map(l => ({ ...l, estado: 'disponible' }));
+    this.ventas = [];
+    this.loteSeleccionado = null;
+    this.ocultarAvisos();
+    this.render();
+    this.actualizarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  mostrarAviso(texto) {
+    const a = document.getElementById('avisoRastreador');
+    a.textContent = texto;
+    a.classList.add('visible');
+    const b = document.getElementById('avisoRastreadorExito');
+    b.classList.remove('visible');
+  },
+
+  mostrarExito(texto) {
+    const a = document.getElementById('avisoRastreadorExito');
+    a.textContent = texto;
+    a.classList.add('visible');
+    const b = document.getElementById('avisoRastreador');
+    b.classList.remove('visible');
+  },
+
+  ocultarAvisos() {
+    document.getElementById('avisoRastreador').classList.remove('visible');
+    document.getElementById('avisoRastreadorExito').classList.remove('visible');
+  },
+
+  render() {
+    const tbody = document.getElementById('cuerpoRastreador');
+    tbody.innerHTML = '';
+
+    this.lotes.forEach((l, i) => {
+      const tr = document.createElement('tr');
+      tr.className = l.estado === 'vendido' ? 'lote-vendido' : 'lote-disponible';
+      tr.innerHTML = `
+        <td class="texto"><strong>${l.serie}</strong></td>
+        <td class="texto">${l.factura}</td>
+        <td class="texto">${l.fecha}</td>
+        <td class="monto">${fmt(l.costo)}</td>
+        <td class="centro">
+          <span class="badge-estado badge-estado--${l.estado}">${l.estado}</span>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const disponibles = this.lotes.filter(l => l.estado === 'disponible');
+    const selector = document.getElementById('selectorVenta');
+    const lista = document.getElementById('listaLotesSeleccion');
+
+    if (disponibles.length === 0) {
+      selector.style.display = 'none';
+    } else {
+      selector.style.display = 'block';
+      lista.innerHTML = '';
+      disponibles.forEach(l => {
+        const div = document.createElement('div');
+        const sel = this.loteSeleccionado === l.serie ? 'lote-seleccion--seleccionado' : '';
+        div.className = 'lote-seleccion ' + sel;
+        div.innerHTML = `
+          <span class="lote-seleccion__nombre">${l.serie}</span>
+          <span class="lote-seleccion__detalle">${l.factura} · ${fmt(l.costo)}</span>
+        `;
+        div.onclick = () => {
+          this.loteSeleccionado = l.serie;
+          this.render();
+        };
+        lista.appendChild(div);
+      });
+
+      // Botón de vender
+      const btnVender = document.createElement('button');
+      btnVender.className = 'boton-accion';
+      btnVender.style.marginTop = 'var(--espacio-md)';
+      btnVender.textContent = this.loteSeleccionado ? 'Registrar venta del lote ' + this.loteSeleccionado : 'Selecciona un lote arriba';
+      btnVender.disabled = !this.loteSeleccionado;
+      if (!this.loteSeleccionado) {
+        btnVender.style.opacity = '0.5';
+        btnVender.style.cursor = 'not-allowed';
+      }
+      btnVender.onclick = () => this.vender();
+      lista.appendChild(btnVender);
+    }
+
+    // Desglose
+    const cont = document.getElementById('desgloseRastreador');
+    if (this.ventas.length === 0) {
+      cont.innerHTML = '<div style="text-align:center;color:var(--azul-medio);font-size:0.9rem;padding:1rem;">Aún no has registrado ventas. Selecciona un lote y regístralo como vendido.</div>';
+    } else {
+      let html = '';
+      this.ventas.forEach((v, i) => {
+        html += `
+          <div class="desglose-linea">
+            <span class="desglose-linea__etiqueta">Venta ${i + 1} — ${v.serie}:</span>
+            <span class="desglose-linea__calculo">Factura ${v.factura} del ${v.fecha}</span>
+            <span class="desglose-linea__total">= ${fmt(v.costo)}</span>
+          </div>
+        `;
+      });
+      const total = this.ventas.reduce((s, v) => s + v.costo, 0);
+      html += `
+        <div class="desglose-linea desglose-linea--total">
+          <span class="desglose-linea__etiqueta">Costo total rastreado:</span>
+          <span class="desglose-linea__calculo">Suma de costos reales de cada factura</span>
+          <span class="desglose-linea__total">${fmt(total)}</span>
+        </div>
+      `;
+      cont.innerHTML = html;
+    }
+  },
+
+  vender() {
+    if (!this.loteSeleccionado) {
+      this.mostrarAviso('Selecciona primero un lote disponible.');
+      return;
+    }
+    const lote = this.lotes.find(l => l.serie === this.loteSeleccionado);
+    if (!lote || lote.estado === 'vendido') {
+      this.mostrarAviso('Ese lote ya fue vendido.');
+      return;
+    }
+    lote.estado = 'vendido';
+    this.ventas.push({
+      serie: lote.serie,
+      factura: lote.factura,
+      fecha: lote.fecha,
+      costo: lote.costo
+    });
+    this.mostrarExito(`Venta registrada: ${lote.serie} rastreada a la factura ${lote.factura} por ${fmt(lote.costo)}.`);
+    this.loteSeleccionado = null;
+    this.render();
+    this.actualizarResultado();
+  },
+
+  actualizarResultado() {
+    const disponibles = this.lotes.filter(l => l.estado === 'disponible');
+    const costoInv = disponibles.reduce((s, l) => s + l.costo, 0);
+    const costoVentas = this.ventas.reduce((s, v) => s + v.costo, 0);
+
+    document.getElementById('resInvRastreador').textContent = disponibles.length;
+    document.getElementById('resCostoInvRastreador').textContent = fmt(costoInv);
+    document.getElementById('resVendidasRastreador').textContent = this.ventas.length;
+    document.getElementById('resCostoVentasRastreador').textContent = fmt(costoVentas);
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 2 — CALCULADORA LCM
+   ============================================================ */
+const ArticulosLCM = [
+  { categoria: 'Congelados', articulo: 'Espinacas',          costo: 80000, mercado: 104000, limiteSup: 150000, limiteInf: 60000 },
+  { categoria: 'Congelados', articulo: 'Zanahorias',         costo: 100000, mercado: 90000,  limiteSup: 140000, limiteInf: 70000 },
+  { categoria: 'Congelados', articulo: 'Frijoles',           costo: 50000,  mercado: 40000,  limiteSup: 70000,  limiteInf: 30000 },
+  { categoria: 'Enlatados',  articulo: 'Chícharos',           costo: 90000,  mercado: 48000,  limiteSup: 120000, limiteInf: 40000 },
+  { categoria: 'Enlatados',  articulo: 'Ensalada de verduras', costo: 95000,  mercado: 97000,  limiteSup: 130000, limiteInf: 60000 }
+];
+
+const LCM = {
+  articulos: [],
+  alternativa: 'individual',
+
+  init() {
+    this.articulos = ArticulosLCM.map(a => ({ ...a }));
+    this.alternativa = 'individual';
+    document.querySelectorAll('.selector-alternativa__boton').forEach(b => {
+      b.classList.toggle('selector-alternativa__boton--activo', b.dataset.alt === 'individual');
+    });
+    this.ocultarAviso();
+    this.render();
+    this.calcular();
+  },
+
+  reiniciar() { this.init(); },
+
+  mostrarAviso(texto) {
+    const a = document.getElementById('avisoLCM');
+    a.textContent = texto;
+    a.classList.add('visible');
+  },
+
+  ocultarAviso() {
+    document.getElementById('avisoLCM').classList.remove('visible');
+  },
+
+  cambiarAlternativa(alt) {
+    this.alternativa = alt;
+    document.querySelectorAll('.selector-alternativa__boton').forEach(b => {
+      b.classList.toggle('selector-alternativa__boton--activo', b.dataset.alt === alt);
+    });
+    this.calcular();
+  },
+
+  calcularMercadoDesignado(art) {
+    // El valor de mercado designado es el costo de reposición
+    // pero limitado por el límite superior (valor de realización) y el inferior (valor neto de realización)
+    let valor = art.mercado;
+    let ajustado = false;
+    if (valor > art.limiteSup) {
+      valor = art.limiteSup;
+      ajustado = true;
+    } else if (valor < art.limiteInf) {
+      valor = art.limiteInf;
+      ajustado = true;
+    }
+    return { valor, ajustado };
+  },
+
+  render() {
+    const tbody = document.getElementById('cuerpoLCM');
+    tbody.innerHTML = '';
+
+    let categoriaActual = null;
+    this.articulos.forEach((a, i) => {
+      if (a.categoria !== categoriaActual) {
+        categoriaActual = a.categoria;
+        const trCat = document.createElement('tr');
+        trCat.innerHTML = `<td colspan="6" class="nombre-categoria">${categoriaActual}</td>`;
+        tbody.appendChild(trCat);
+      }
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="texto">${a.articulo}</td>
+        <td><input type="number" value="${a.costo}" min="0" step="100" oninput="LCM.actualizar(${i}, 'costo', this.value)"></td>
+        <td><input type="number" value="${a.mercado}" min="0" step="100" oninput="LCM.actualizar(${i}, 'mercado', this.value)"></td>
+        <td><input type="number" value="${a.limiteSup}" min="0" step="100" oninput="LCM.actualizar(${i}, 'limiteSup', this.value)"></td>
+        <td><input type="number" value="${a.limiteInf}" min="0" step="100" oninput="LCM.actualizar(${i}, 'limiteInf', this.value)"></td>
+        <td class="monto-calc" id="lcm-aplicado-${i}">—</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Totales por categoría (solo si alternativa = grupos)
+    const cats = [...new Set(this.articulos.map(a => a.categoria))];
+    cats.forEach(cat => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="6" class="nombre-categoria" id="total-cat-${cat.replace(/\s+/g,'-')}">Total ${cat}: —</td>`;
+      tbody.appendChild(tr);
+    });
+
+    const trTotal = document.createElement('tr');
+    trTotal.className = 'fila-total';
+    trTotal.innerHTML = `<td colspan="6" id="total-general-lcm">Total general: —</td>`;
+    tbody.appendChild(trTotal);
+  },
+
+  actualizar(i, campo, valor) {
+    const num = parseFloat(valor);
+    this.articulos[i][campo] = isNaN(num) ? 0 : num;
+    if (this.articulos[i][campo] < 0) this.articulos[i][campo] = 0;
+    this.calcular();
+  },
+
+  calcular() {
+    const alternativasValidas = ['individual', 'grupos', 'total'];
+    if (!alternativasValidas.includes(this.alternativa)) {
+      this.alternativa = 'individual';
+    }
+
+    let valorTotalAplicado = 0;
+    let costoTotal = 0;
+
+    // Individual: LCM artículo por artículo
+    const individuales = this.articulos.map(a => {
+      const md = this.calcularMercadoDesignado(a);
+      return Math.min(a.costo, md.valor);
+    });
+
+    // Por grupos: suma de costos vs suma de mercados por categoría
+    const grupos = {};
+    this.articulos.forEach(a => {
+      if (!grupos[a.categoria]) grupos[a.categoria] = { costo: 0, mercado: 0 };
+      const md = this.calcularMercadoDesignado(a);
+      grupos[a.categoria].costo += a.costo;
+      grupos[a.categoria].mercado += md.valor;
+    });
+    const valorPorGrupos = {};
+    Object.keys(grupos).forEach(cat => {
+      valorPorGrupos[cat] = Math.min(grupos[cat].costo, grupos[cat].mercado);
+    });
+
+    // Al total: suma global
+    const costoGlobal = this.articulos.reduce((s, a) => s + a.costo, 0);
+    const mercadoGlobal = this.articulos.reduce((s, a) => s + this.calcularMercadoDesignado(a).valor, 0);
+    const valorAlTotal = Math.min(costoGlobal, mercadoGlobal);
+
+    // Actualizar celdas de LCM aplicado
+    this.articulos.forEach((a, i) => {
+      const td = document.getElementById('lcm-aplicado-' + i);
+      if (!td) return;
+
+      if (this.alternativa === 'individual') {
+        const val = individuales[i];
+        td.textContent = fmt(val);
+        td.style.color = val < a.costo ? 'var(--rojo-error)' : 'var(--verde-exito)';
+      } else if (this.alternativa === 'grupos') {
+        const val = valorPorGrupos[a.categoria];
+        const totalCat = grupos[a.categoria].costo;
+        // Repartir proporcionalmente
+        const proporcion = totalCat > 0 ? a.costo / totalCat : 0;
+        const valArt = val * proporcion;
+        td.textContent = fmt(valArt) + ' (prop.)';
+        td.style.color = val < totalCat ? 'var(--rojo-error)' : 'var(--verde-exito)';
+      } else {
+        const val = valorAlTotal;
+        const totalCat = costoGlobal;
+        const proporcion = totalCat > 0 ? a.costo / totalCat : 0;
+        const valArt = val * proporcion;
+        td.textContent = fmt(valArt) + ' (prop.)';
+        td.style.color = val < totalCat ? 'var(--rojo-error)' : 'var(--verde-exito)';
+      }
+    });
+
+    // Actualizar totales por categoría
+    Object.keys(grupos).forEach(cat => {
+      const id = 'total-cat-' + cat.replace(/\s+/g, '-');
+      const el = document.getElementById(id);
+      if (el) {
+        if (this.alternativa === 'individual') {
+          const sumaInd = this.articulos.filter(a => a.categoria === cat).reduce((s, a, idx) => {
+            const i = this.articulos.indexOf(a);
+            return s + individuales[i];
+          }, 0);
+          el.textContent = `Total ${cat}: ${fmt(sumaInd)} (LCM individual)`;
+        } else if (this.alternativa === 'grupos') {
+          el.textContent = `Total ${cat}: ${fmt(valorPorGrupos[cat])} (LCM por grupo)`;
+        } else {
+          el.textContent = `Total ${cat}: ${fmt(grupos[cat].costo)} (incluido en LCM total)`;
+        }
+      }
+    });
+
+    // Total general
+    if (this.alternativa === 'individual') {
+      valorTotalAplicado = individuales.reduce((s, v) => s + v, 0);
+    } else if (this.alternativa === 'grupos') {
+      valorTotalAplicado = Object.values(valorPorGrupos).reduce((s, v) => s + v, 0);
+    } else {
+      valorTotalAplicado = valorAlTotal;
+    }
+    costoTotal = costoGlobal;
+
+    const ajuste = costoTotal - valorTotalAplicado;
+
+    document.getElementById('resCostoLCM').textContent = fmt(costoTotal);
+    document.getElementById('resValorLCM').textContent = fmt(valorTotalAplicado);
+    document.getElementById('resAjusteLCM').textContent = fmt(ajuste);
+    document.getElementById('tituloResultadoLCM').textContent = 'Resultado LCM — Alternativa: ' + this.alternativa;
+
+    const nota = ajuste > 0
+      ? `El inventario se ajusta a la baja en ${fmt(ajuste)}. Asiento: Pérdida por deterioro (cargo) contra Inventario (abono).`
+      : 'No hay ajuste: el costo es menor o igual al valor de mercado en todos los casos.';
+
+    document.getElementById('resNotaLCM').textContent = nota;
+
+    // Desglose
+    let html = '';
+    if (this.alternativa === 'individual') {
+      this.articulos.forEach((a, i) => {
+        const md = this.calcularMercadoDesignado(a);
+        const lcm = individuales[i];
+        html += `
+          <div class="desglose-linea">
+            <span class="desglose-linea__etiqueta">${a.articulo}:</span>
+            <span class="desglose-linea__calculo">Costo ${fmt(a.costo)} vs. Mercado ${fmt(md.valor)}</span>
+            <span class="desglose-linea__total">LCM = ${fmt(lcm)}</span>
+          </div>
+        `;
+      });
+    } else if (this.alternativa === 'grupos') {
+      Object.keys(grupos).forEach(cat => {
+        html += `
+          <div class="desglose-linea">
+            <span class="desglose-linea__etiqueta">Grupo ${cat}:</span>
+            <span class="desglose-linea__calculo">Costo ${fmt(grupos[cat].costo)} vs. Mercado ${fmt(grupos[cat].mercado)}</span>
+            <span class="desglose-linea__total">LCM = ${fmt(valorPorGrupos[cat])}</span>
+          </div>
+        `;
+      });
+    } else {
+      html += `
+        <div class="desglose-linea">
+          <span class="desglose-linea__etiqueta">Total inventario:</span>
+          <span class="desglose-linea__calculo">Costo global ${fmt(costoGlobal)} vs. Mercado global ${fmt(mercadoGlobal)}</span>
+          <span class="desglose-linea__total">LCM = ${fmt(valorAlTotal)}</span>
+        </div>
+      `;
+    }
+
+    html += `
+      <div class="desglose-linea desglose-linea--total">
+        <span class="desglose-linea__etiqueta">Ajuste por deterioro:</span>
+        <span class="desglose-linea__calculo">Costo total − Valor LCM aplicado</span>
+        <span class="desglose-linea__total">${fmt(ajuste)}</span>
+      </div>
+    `;
+    document.getElementById('desgloseLCM').innerHTML = html;
+  }
+};
+
+/* ============================================================
+   ACTIVIDAD 3 — ESTIMACIÓN Y ERRORES
+   ============================================================ */
+const Estimacion = {
+  subVista: 'estimacion',
+  metodo: 'detallista',
+  errorActual: 'if-sobre',
+
+  // Datos detallista
+  datosDetallista: {
+    mercanciaCosto: 1500000,
+    mercanciaVenta: 2100000,
+    ventasNetas: 1600000
+  },
+
+  // Datos utilidad bruta
+  datosUB: {
+    inventarioInicial: 154200,
+    comprasNetas: 551000,
+    ventasNetas: 824000,
+    porcentajeUB: 0.40
+  },
+
+  init() {
+    this.subVista = 'estimacion';
+    this.metodo = 'detallista';
+    this.errorActual = 'if-sobre';
+    document.querySelectorAll('.selector-metodo-estimacion__boton[data-sub]').forEach(b => {
+      b.classList.toggle('selector-metodo-estimacion__boton--activo', b.dataset.sub === 'estimacion');
+    });
+    document.querySelectorAll('.selector-metodo-estimacion__boton[data-met]').forEach(b => {
+      b.classList.toggle('selector-metodo-estimacion__boton--activo', b.dataset.met === 'detallista');
+    });
+    document.querySelectorAll('.selector-metodo-estimacion__boton[data-err]').forEach(b => {
+      b.classList.toggle('selector-metodo-estimacion__boton--activo', b.dataset.err === 'if-sobre');
+    });
+    document.getElementById('subEstimacion').style.display = 'block';
+    document.getElementById('subErrores').style.display = 'none';
+    this.renderEntradas();
+    this.calcularEstimacion();
+    this.calcularError();
+  },
+
+  reiniciar() { this.init(); },
+
+  cambiarSub(sub) {
+    this.subVista = sub;
+    document.querySelectorAll('.selector-metodo-estimacion__boton[data-sub]').forEach(b => {
+      b.classList.toggle('selector-metodo-estimacion__boton--activo', b.dataset.sub === sub);
+    });
+    document.getElementById('subEstimacion').style.display = sub === 'estimacion' ? 'block' : 'none';
+    document.getElementById('subErrores').style.display = sub === 'errores' ? 'block' : 'none';
+    if (sub === 'estimacion') this.calcularEstimacion();
+    else this.calcularError();
+  },
+
+  cambiarMetodo(met) {
+    this.metodo = met;
+    document.querySelectorAll('.selector-metodo-estimacion__boton[data-met]').forEach(b => {
+      b.classList.toggle('selector-metodo-estimacion__boton--activo', b.dataset.met === met);
+    });
+    this.renderEntradas();
+    this.calcularEstimacion();
+  },
+
+  cambiarError(err) {
+    this.errorActual = err;
+    document.querySelectorAll('.selector-metodo-estimacion__boton[data-err]').forEach(b => {
+      b.classList.toggle('selector-metodo-estimacion__boton--activo', b.dataset.err === err);
+    });
+    this.calcularError();
+  },
+
+  renderEntradas() {
+    const cont = document.getElementById('entradasEstimacion');
+    if (this.metodo === 'detallista') {
+      cont.innerHTML = `
+        <div class="campo">
+          <label class="campo__etiqueta">Mercancía disponible al costo</label>
+          <input type="number" class="campo__input" id="e-det-costo" value="${this.datosDetallista.mercanciaCosto}" min="0" step="1000" oninput="Estimacion.actualizarDetallista('mercanciaCosto', this.value)">
+          <span class="campo__ayuda">Costo total de artículos disponibles</span>
+        </div>
+        <div class="campo">
+          <label class="campo__etiqueta">Mercancía disponible a precio de venta</label>
+          <input type="number" class="campo__input" id="e-det-venta" value="${this.datosDetallista.mercanciaVenta}" min="0" step="1000" oninput="Estimacion.actualizarDetallista('mercanciaVenta', this.value)">
+          <span class="campo__ayuda">Valor total a precio de venta</span>
+        </div>
+        <div class="campo">
+          <label class="campo__etiqueta">Ventas netas del periodo</label>
+          <input type="number" class="campo__input" id="e-det-ventas" value="${this.datosDetallista.ventasNetas}" min="0" step="1000" oninput="Estimacion.actualizarDetallista('ventasNetas', this.value)">
+          <span class="campo__ayuda">Ventas netas (a precio de venta)</span>
+        </div>
+      `;
+    } else {
+      cont.innerHTML = `
+        <div class="campo">
+          <label class="campo__etiqueta">Inventario inicial</label>
+          <input type="number" class="campo__input" id="e-ub-ii" value="${this.datosUB.inventarioInicial}" min="0" step="100" oninput="Estimacion.actualizarUB('inventarioInicial', this.value)">
+          <span class="campo__ayuda">Saldo al inicio del periodo</span>
+        </div>
+        <div class="campo">
+          <label class="campo__etiqueta">Compras netas</label>
+          <input type="number" class="campo__input" id="e-ub-compras" value="${this.datosUB.comprasNetas}" min="0" step="100" oninput="Estimacion.actualizarUB('comprasNetas', this.value)">
+          <span class="campo__ayuda">Compras netas del periodo</span>
+        </div>
+        <div class="campo">
+          <label class="campo__etiqueta">Ventas netas</label>
+          <input type="number" class="campo__input" id="e-ub-ventas" value="${this.datosUB.ventasNetas}" min="0" step="100" oninput="Estimacion.actualizarUB('ventasNetas', this.value)">
+          <span class="campo__ayuda">Ventas netas del periodo</span>
+        </div>
+        <div class="campo">
+          <label class="campo__etiqueta">% Utilidad bruta sobre ventas</label>
+          <input type="number" class="campo__input" id="e-ub-pct" value="${this.datosUB.porcentajeUB}" min="0" max="1" step="0.01" oninput="Estimacion.actualizarUB('porcentajeUB', this.value)">
+          <span class="campo__ayuda">Ej. 0.40 = 40%</span>
+        </div>
+      `;
+    }
+  },
+
+  actualizarDetallista(campo, valor) {
+    const num = parseFloat(valor);
+    this.datosDetallista[campo] = isNaN(num) ? 0 : Math.max(0, num);
+    this.calcularEstimacion();
+  },
+
+  actualizarUB(campo, valor) {
+    let num = parseFloat(valor);
+    if (isNaN(num)) num = 0;
+    if (campo === 'porcentajeUB') {
+      if (num < 0) num = 0;
+      if (num > 1) num = 1;
+    } else {
+      num = Math.max(0, num);
+    }
+    this.datosUB[campo] = num;
+    this.calcularEstimacion();
+  },
+
+  calcularEstimacion() {
+    const desglose = document.getElementById('desgloseEstimacion');
+    const resultado = document.getElementById('lineasResultadoEstimacion');
+    const nota = document.getElementById('notaEstimacion');
+    const titulo = document.getElementById('tituloDesgloseEstimacion');
+    const tituloRes = document.getElementById('tituloResultadoEstimacion');
+
+    let html = '';
+    let htmlRes = '';
+
+    if (this.metodo === 'detallista') {
+      const { mercanciaCosto, mercanciaVenta, ventasNetas } = this.datosDetallista;
+      const factorCosto = mercanciaVenta > 0 ? mercanciaCosto / mercanciaVenta : 0;
+      const invFinalVenta = mercanciaVenta - ventasNetas;
+      const invFinalCosto = invFinalVenta * factorCosto;
+      const costoVentas = mercanciaCosto - invFinalCosto;
+
+      titulo.textContent = 'Desglose del Método Detallista';
+      tituloRes.textContent = 'Resultado de la estimación — Detallista';
+
+      html = `
+        <div class="desglose-linea">
+          <span class="desglose-linea__etiqueta">Factor de costo:</span>
+          <span class="desglose-linea__calculo">${fmt(mercanciaCosto)} ÷ ${fmt(mercanciaVenta)}</span>
+          <span class="desglose-linea__total">${factorCosto.toFixed(4)}</span>
+        </div>
+        <div class="desglose-linea">
+          <span class="desglose-linea__etiqueta">Inventario final a precio de venta:</span>
+          <span class="desglose-linea__calculo">${fmt(mercanciaVenta)} − ${fmt(ventasNetas)}</span>
+          <span class="desglose-linea__total">${fmt(invFinalVenta)}</span>
+        </div>
+        <div class="desglose-linea">
+          <span class="desglose-linea__etiqueta">Inventario final al costo:</span>
+          <span class="desglose-linea__calculo">${fmt(invFinalVenta)} × ${factorCosto.toFixed(4)}</span>
+          <span class="desglose-linea__total">${fmt(invFinalCosto)}</span>
+        </div>
+        <div class="desglose-linea desglose-linea--total">
+          <span class="desglose-linea__etiqueta">Costo de ventas:</span>
+          <span class="desglose-linea__calculo">${fmt(mercanciaCosto)} − ${fmt(invFinalCosto)}</span>
+          <span class="desglose-linea__total">${fmt(costoVentas)}</span>
+        </div>
+      `;
+
+      htmlRes = `
+        <div class="panel-resultado__linea"><span>Factor de costo</span><span>${factorCosto.toFixed(4)}</span></div>
+        <div class="panel-resultado__linea"><span>Inventario final a precio de venta</span><span>${fmt(invFinalVenta)}</span></div>
+        <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>INVENTARIO FINAL ESTIMADO AL COSTO</span><span>${fmt(invFinalCosto)}</span></div>
+        <div class="panel-resultado__linea"><span>Costo de ventas estimado</span><span>${fmt(costoVentas)}</span></div>
+      `;
+
+      nota.textContent = 'El método Detallista usa el factor de costo (relación costo/venta) para estimar el inventario final a partir del inventario a precio de venta.';
+    } else {
+      const { inventarioInicial, comprasNetas, ventasNetas, porcentajeUB } = this.datosUB;
+      const mercanciaDisponible = inventarioInicial + comprasNetas;
+      const costoVentas = ventasNetas * (1 - porcentajeUB);
+      const invFinalEstimado = mercanciaDisponible - costoVentas;
+
+      titulo.textContent = 'Desglose del Método de Utilidad Bruta';
+      tituloRes.textContent = 'Resultado de la estimación — Utilidad Bruta';
+
+      html = `
+        <div class="desglose-linea">
+          <span class="desglose-linea__etiqueta">Mercancía disponible:</span>
+          <span class="desglose-linea__calculo">${fmt(inventarioInicial)} + ${fmt(comprasNetas)}</span>
+          <span class="desglose-linea__total">${fmt(mercanciaDisponible)}</span>
+        </div>
+        <div class="desglose-linea">
+          <span class="desglose-linea__etiqueta">Costo de ventas estimado:</span>
+          <span class="desglose-linea__calculo">${fmt(ventasNetas)} × (1 − ${porcentajeUB.toFixed(2)})</span>
+          <span class="desglose-linea__total">${fmt(costoVentas)}</span>
+        </div>
+        <div class="desglose-linea desglose-linea--total">
+          <span class="desglose-linea__etiqueta">Inventario final estimado:</span>
+          <span class="desglose-linea__calculo">${fmt(mercanciaDisponible)} − ${fmt(costoVentas)}</span>
+          <span class="desglose-linea__total">${fmt(invFinalEstimado)}</span>
+        </div>
+      `;
+
+      htmlRes = `
+        <div class="panel-resultado__linea"><span>Mercancía disponible</span><span>${fmt(mercanciaDisponible)}</span></div>
+        <div class="panel-resultado__linea"><span>Costo de ventas estimado</span><span>${fmt(costoVentas)}</span></div>
+        <div class="panel-resultado__linea panel-resultado__linea--utilidad"><span>INVENTARIO FINAL ESTIMADO</span><span>${fmt(invFinalEstimado)}</span></div>
+      `;
+
+      nota.textContent = 'El método de Utilidad Bruta estima el costo de ventas aplicando el % de margen a las ventas netas, y lo resta de la mercancía disponible.';
+    }
+
+    desglose.innerHTML = html;
+    resultado.innerHTML = htmlRes;
+  },
+
+  calcularError() {
+    const desglose = document.getElementById('desgloseErrores');
+    const lineas = document.getElementById('lineasErrores');
+    const nota = document.getElementById('notaErrores');
+    const titulo = document.getElementById('tituloErrores');
+
+    const casos = {
+      'if-sobre': {
+        titulo: 'Inventario Final sobrevaluado',
+        cv: 'Subvaluado',
+        utilidad: 'Sobrevaluada',
+        colorCV: 'verde',
+        colorUtil: 'rojo',
+        explicacion: 'Si el inventario final está sobrevaluado, al restarlo del total de mercancías el costo de ventas queda subvaluado. Al ser menor el costo, la utilidad neta queda sobrevaluada. En el Balance, el activo inventario aparece sobrevaluado.'
+      },
+      'if-sub': {
+        titulo: 'Inventario Final subvaluado',
+        cv: 'Sobrevaluado',
+        utilidad: 'Subvaluada',
+        colorCV: 'rojo',
+        colorUtil: 'verde',
+        explicacion: 'Si el inventario final está subvaluado, el costo de ventas queda sobrevaluado. Al ser mayor el costo, la utilidad neta queda subvaluada. En el Balance, el activo inventario aparece subvaluado.'
+      },
+      'ii-sobre': {
+        titulo: 'Inventario Inicial sobrevaluado',
+        cv: 'Sobrevaluado',
+        utilidad: 'Subvaluada',
+        colorCV: 'rojo',
+        colorUtil: 'verde',
+        explicacion: 'Si el inventario inicial está sobrevaluado, el total de mercancías es mayor y el costo de ventas queda sobrevaluado. La utilidad neta queda subvaluada.'
+      },
+      'ii-sub': {
+        titulo: 'Inventario Inicial subvaluado',
+        cv: 'Subvaluado',
+        utilidad: 'Sobrevaluada',
+        colorCV: 'verde',
+        colorUtil: 'rojo',
+        explicacion: 'Si el inventario inicial está subvaluado, el total de mercancías es menor y el costo de ventas queda subvaluado. La utilidad neta queda sobrevaluada.'
+      }
+    };
+
+    const c = casos[this.errorActual];
+
+    titulo.textContent = 'Efecto del error: ' + c.titulo;
+
+    desglose.innerHTML = `
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Tipo de error:</span>
+        <span class="desglose-linea__calculo">${c.titulo}</span>
+        <span class="desglose-linea__total">—</span>
+      </div>
+      <div class="desglose-linea">
+        <span class="desglose-linea__etiqueta">Efecto en costo de ventas:</span>
+        <span class="desglose-linea__calculo">Opuesto al error</span>
+        <span class="desglose-linea__total" style="color:var(--${c.colorCV === 'rojo' ? 'rojo-error' : 'verde-exito'});">${c.cv}</span>
+      </div>
+      <div class="desglose-linea desglose-linea--total">
+        <span class="desglose-linea__etiqueta">Efecto en utilidad neta:</span>
+        <span class="desglose-linea__calculo">Mismo sentido que el error</span>
+        <span class="desglose-linea__total" style="color:var(--${c.colorUtil === 'rojo' ? 'rojo-error' : 'verde-exito'});">${c.utilidad}</span>
+      </div>
+    `;
+
+    lineas.innerHTML = `
+      <div class="panel-resultado__linea"><span>Costo de ventas</span><span style="color:var(--${c.colorCV === 'rojo' ? 'rojo-error' : 'verde-exito'});font-weight:700;">${c.cv}</span></div>
+      <div class="panel-resultado__linea panel-resultado__linea--${c.colorUtil === 'rojo' ? 'error' : 'utilidad'}"><span>UTILIDAD NETA</span><span>${c.utilidad}</span></div>
+    `;
+
+    nota.textContent = c.explicacion + ' El efecto del error se compensa en el siguiente periodo, eliminándose la diferencia, pero la utilidad reportada en los dos periodos individuales no fue correcta.';
+  }
+};
+
+/* ============================================================
+   EXAMEN — Banco de 25 reactivos conceptuales
+   ============================================================ */
+const BancoExamen = [
+  {
+    pregunta: '¿Qué es la Identificación Específica?',
+    opciones: [
+      { texto: 'Un método que promedia todos los costos del periodo.', correcta: false },
+      { texto: 'Un método donde cada artículo se rastrea con su factura de compra específica.', correcta: true },
+      { texto: 'Un método que usa lotes genéricos para asignar costos.', correcta: false },
+      { texto: 'Un método que solo aplica a mercancía homogénea.', correcta: false }
+    ],
+    explicacion: 'La Identificación Específica rastrea cada artículo con su factura de compra específica.'
+  },
+  {
+    pregunta: '¿En qué casos se aplica la Identificación Específica?',
+    opciones: [
+      { texto: 'En empresas con alta rotación y bajo valor unitario.', correcta: false },
+      { texto: 'En empresas con baja rotación y alto valor unitario.', correcta: true },
+      { texto: 'En cualquier empresa sin importar el giro.', correcta: false },
+      { texto: 'Solo en empresas de servicios.', correcta: false }
+    ],
+    explicacion: 'Aplica en empresas con baja rotación y alto valor unitario.'
+  },
+  {
+    pregunta: 'Según la NIF C-4, ¿qué mercancías deben emplear Identificación Específica?',
+    opciones: [
+      { texto: 'Las que tengan número de serie y costo superior a $50,000.', correcta: true },
+      { texto: 'Las que tengan más de 100 unidades en inventario.', correcta: false },
+      { texto: 'Las que se compren en el extranjero.', correcta: false },
+      { texto: 'Las que tengan menos de un año en bodega.', correcta: false }
+    ],
+    explicacion: 'La NIF C-4 exige Identificación Específica para mercancía con número de serie y costo superior a $50,000.'
+  },
+  {
+    pregunta: '¿Cuál es la principal ventaja de la Identificación Específica?',
+    opciones: [
+      { texto: 'Es el método más económico de implementar.', correcta: false },
+      { texto: 'Logra el enfrentamiento perfecto entre ingresos y costos reales.', correcta: true },
+      { texto: 'No requiere disciplina administrativa.', correcta: false },
+      { texto: 'Permite promediar todos los costos del periodo.', correcta: false }
+    ],
+    explicacion: 'La Identificación Específica enfrenta el costo real con el ingreso real, logrando el enfrentamiento perfecto.'
+  },
+  {
+    pregunta: '¿Qué es el Costo Estándar?',
+    opciones: [
+      { texto: 'El costo real pagado al proveedor.', correcta: false },
+      { texto: 'Un costo predeterminado con niveles normales de MP, MO y GIF.', correcta: true },
+      { texto: 'El costo promedio del periodo.', correcta: false },
+      { texto: 'El costo de reposición de mercado.', correcta: false }
+    ],
+    explicacion: 'El Costo Estándar se determina anticipadamente con niveles normales de materia prima, mano de obra y gastos de fabricación.'
+  },
+  {
+    pregunta: '¿Qué debe hacerse periódicamente con el Costo Estándar?',
+    opciones: [
+      { texto: 'Revisarlo y ajustarlo si la diferencia con el costo real es significativa.', correcta: true },
+      { texto: 'Mantenerlo fijo durante toda la vida de la empresa.', correcta: false },
+      { texto: 'Eliminarlo al cierre del ejercicio.', correcta: false },
+      { texto: 'Cambiarlo cada mes sin justificación.', correcta: false }
+    ],
+    explicacion: 'El Costo Estándar debe revisarse periódicamente y ajustarse cuando la diferencia con el costo de adquisición sea de importancia relativa.'
+  },
+  {
+    pregunta: '¿Qué establece la regla de Costo o Mercado, el Menor (LCM)?',
+    opciones: [
+      { texto: 'El inventario se informa al mayor entre costo y mercado.', correcta: false },
+      { texto: 'El inventario se informa al menor entre costo y mercado.', correcta: true },
+      { texto: 'El inventario se informa siempre a costo histórico.', correcta: false },
+      { texto: 'El inventario se informa siempre a valor de mercado.', correcta: false }
+    ],
+    explicacion: 'La regla LCM establece que el inventario se informa al menor entre su costo y su valor de mercado.'
+  },
+  {
+    pregunta: '¿Cuál es la finalidad de la regla LCM?',
+    opciones: [
+      { texto: 'Aumentar el valor del inventario en el Balance.', correcta: false },
+      { texto: 'Proporcionar una representación más realista y evitar sobrevalorar el inventario.', correcta: true },
+      { texto: 'Reducir la utilidad neta del ejercicio.', correcta: false },
+      { texto: 'Eliminar el inventario obsoleto.', correcta: false }
+    ],
+    explicacion: 'La regla LCM da una representación más realista y evita sobrevalorar el inventario.'
+  },
+  {
+    pregunta: '¿Cuáles son los tres conceptos de "mercado" en la regla LCM?',
+    opciones: [
+      { texto: 'Costo de reposición, valor de realización y valor neto de realización.', correcta: true },
+      { texto: 'Costo histórico, costo promedio y costo estándar.', correcta: false },
+      { texto: 'PEPS, Promedio y Identificación Específica.', correcta: false },
+      { texto: 'Valor nominal, valor de mercado y valor en libros.', correcta: false }
+    ],
+    explicacion: 'Los tres conceptos de mercado son: costo de reposición, valor de realización y valor neto de realización.'
+  },
+  {
+    pregunta: '¿Qué representa el valor de realización en la regla LCM?',
+    opciones: [
+      { texto: 'El costo de reemplazar el inventario.', correcta: false },
+      { texto: 'El precio de venta menos el costo de venderlo.', correcta: true },
+      { texto: 'El valor de realización menos el % de margen bruto.', correcta: false },
+      { texto: 'El costo histórico del inventario.', correcta: false }
+    ],
+    explicacion: 'El valor de realización es el precio de venta menos el costo de venderlo. Es el límite superior.'
+  },
+  {
+    pregunta: '¿Qué representa el valor neto de realización en la regla LCM?',
+    opciones: [
+      { texto: 'El precio de venta menos el costo de venderlo.', correcta: false },
+      { texto: 'El valor de realización menos el % de margen bruto.', correcta: true },
+      { texto: 'El costo de reemplazar el inventario.', correcta: false },
+      { texto: 'El costo histórico del inventario.', correcta: false }
+    ],
+    explicacion: 'El valor neto de realización es el valor de realización menos el % de margen bruto. Es el límite inferior.'
+  },
+  {
+    pregunta: '¿Cuáles son las tres alternativas para aplicar la regla LCM?',
+    opciones: [
+      { texto: 'Individual, por grupos y al total del inventario.', correcta: true },
+      { texto: 'PEPS, Promedio y Estándar.', correcta: false },
+      { texto: 'Costo, mercado y valor neto.', correcta: false },
+      { texto: 'Diario, mensual y anual.', correcta: false }
+    ],
+    explicacion: 'La regla LCM se puede aplicar individualmente, por grupos de artículos o al total del inventario.'
+  },
+  {
+    pregunta: '¿Cuál es el asiento contable del ajuste por LCM?',
+    opciones: [
+      { texto: 'Cargo a Inventario y abono a Pérdida por deterioro.', correcta: false },
+      { texto: 'Cargo a Pérdida por deterioro y abono a Inventario.', correcta: true },
+      { texto: 'Cargo a Costo de ventas y abono a Inventario.', correcta: false },
+      { texto: 'Cargo a Capital y abono a Inventario.', correcta: false }
+    ],
+    explicacion: 'El asiento es cargo a Pérdida por deterioro de valor de inventario y abono a Inventario.'
+  },
+  {
+    pregunta: '¿Para qué sirven los métodos de estimación del inventario final?',
+    opciones: [
+      { texto: 'Para reemplazar el conteo físico en todos los casos.', correcta: false },
+      { texto: 'Para estimar el inventario sin conteo físico, especialmente en casos de robo o pérdida.', correcta: true },
+      { texto: 'Para calcular impuestos sobre la renta.', correcta: false },
+      { texto: 'Para eliminar el inventario obsoleto.', correcta: false }
+    ],
+    explicacion: 'Los métodos de estimación permiten estimar el inventario sin conteo físico, útiles cuando hay robo, destrucción o pérdida.'
+  },
+  {
+    pregunta: '¿Cuál es el primer paso del Método Detallista?',
+    opciones: [
+      { texto: 'Calcular el costo de ventas directamente.', correcta: false },
+      { texto: 'Determinar el factor de costo (costo ÷ precio de venta).', correcta: true },
+      { texto: 'Restar las ventas del inventario inicial.', correcta: false },
+      { texto: 'Aplicar el margen de utilidad bruta.', correcta: false }
+    ],
+    explicacion: 'El Método Detallista comienza determinando el factor de costo, que es la relación entre el costo y el precio de venta.'
+  },
+  {
+    pregunta: '¿Cuál es el primer paso del Método de Utilidad Bruta?',
+    opciones: [
+      { texto: 'Determinar el costo de mercancía disponible (II + compras netas).', correcta: true },
+      { texto: 'Calcular el factor de costo.', correcta: false },
+      { texto: 'Estimar el inventario final directamente.', correcta: false },
+      { texto: 'Aplicar el % de margen a las compras.', correcta: false }
+    ],
+    explicacion: 'El primer paso es determinar el costo de mercancía disponible sumando inventario inicial más compras netas.'
+  },
+  {
+    pregunta: '¿Cuál es la fórmula del costo de ventas estimado en el Método de Utilidad Bruta?',
+    opciones: [
+      { texto: 'Ventas netas × (1 + % UB).', correcta: false },
+      { texto: 'Ventas netas × (1 − % UB).', correcta: true },
+      { texto: 'Ventas netas ÷ % UB.', correcta: false },
+      { texto: 'Ventas netas + % UB.', correcta: false }
+    ],
+    explicacion: 'El costo de ventas estimado = ventas netas × (1 − % de utilidad bruta sobre ventas).'
+  },
+  {
+    pregunta: 'Si la utilidad bruta se expresa sobre el precio de costo, ¿cómo se convierte a % sobre ventas?',
+    opciones: [
+      { texto: '% UB costo ÷ (1 + % UB costo).', correcta: true },
+      { texto: '% UB costo × (1 + % UB costo).', correcta: false },
+      { texto: '% UB costo ÷ (1 − % UB costo).', correcta: false },
+      { texto: '% UB costo + 1.', correcta: false }
+    ],
+    explicacion: 'Para convertir % UB sobre costo a % sobre ventas: % UB costo ÷ (1 + % UB costo).'
+  },
+  {
+    pregunta: 'Si el inventario final está sobrevaluado, ¿qué efecto tiene en el costo de ventas?',
+    opciones: [
+      { texto: 'El costo de ventas queda subvaluado.', correcta: true },
+      { texto: 'El costo de ventas queda sobrevaluado.', correcta: false },
+      { texto: 'El costo de ventas no cambia.', correcta: false },
+      { texto: 'Depende del método de costeo.', correcta: false }
+    ],
+    explicacion: 'Si el inventario final está sobrevaluado, al restarlo el costo de ventas queda subvaluado.'
+  },
+  {
+    pregunta: 'Si el inventario final está sobrevaluado, ¿qué efecto tiene en la utilidad neta?',
+    opciones: [
+      { texto: 'La utilidad neta queda subvaluada.', correcta: false },
+      { texto: 'La utilidad neta queda sobrevaluada.', correcta: true },
+      { texto: 'La utilidad neta no cambia.', correcta: false },
+      { texto: 'Depende del método de costeo.', correcta: false }
+    ],
+    explicacion: 'Si el inventario final está sobrevaluado, el costo de ventas queda subvaluado y la utilidad neta sobrevaluada.'
+  },
+  {
+    pregunta: 'Si el inventario inicial está sobrevaluado, ¿qué efecto tiene en la utilidad neta?',
+    opciones: [
+      { texto: 'La utilidad neta queda subvaluada.', correcta: true },
+      { texto: 'La utilidad neta queda sobrevaluada.', correcta: false },
+      { texto: 'La utilidad neta no cambia.', correcta: false },
+      { texto: 'Depende del método de costeo.', correcta: false }
+    ],
+    explicacion: 'Si el inventario inicial está sobrevaluado, el costo de ventas queda sobrevaluado y la utilidad neta subvaluada.'
+  },
+  {
+    pregunta: '¿Qué sucede con el efecto de un error en el inventario en el siguiente periodo?',
+    opciones: [
+      { texto: 'Se acumula con el nuevo error.', correcta: false },
+      { texto: 'Se compensa, eliminándose la diferencia.', correcta: true },
+      { texto: 'Se duplica.', correcta: false },
+      { texto: 'Desaparece sin dejar rastro.', correcta: false }
+    ],
+    explicacion: 'El efecto del error se compensa en el siguiente periodo, eliminándose la diferencia, pero la utilidad de cada periodo individual no fue correcta.'
+  },
+  {
+    pregunta: '¿Por qué es importante la regla LCM para la información financiera?',
+    opciones: [
+      { texto: 'Porque aumenta el valor del inventario en el Balance.', correcta: false },
+      { texto: 'Porque proporciona una representación más realista y evita sobrevalorar el inventario.', correcta: true },
+      { texto: 'Porque elimina la necesidad de conteo físico.', correcta: false },
+      { texto: 'Porque reemplaza a PEPS y Promedio.', correcta: false }
+    ],
+    explicacion: 'La regla LCM da una representación más realista del inventario y evita sobrevalorar los activos.'
+  },
+  {
+    pregunta: '¿Cuál es la relación entre la Identificación Específica y las otras fórmulas de asignación del costo?',
+    opciones: [
+      { texto: 'Es una alternativa más, junto con PEPS y Costo Promedio.', correcta: true },
+      { texto: 'Reemplaza a PEPS en todos los casos.', correcta: false },
+      { texto: 'Solo aplica cuando no se puede usar PEPS.', correcta: false },
+      { texto: 'Es un método de estimación, no de asignación.', correcta: false }
+    ],
+    explicacion: 'La Identificación Específica es la tercera fórmula de asignación del costo, junto con PEPS y Costo Promedio.'
+  }
+];
+
+const Examen = {
+  reactivos: [],
+  TOTAL: 10,
+  aciertos: 0,
+  respondidas: 0,
+
+  init() {
+    const seleccionados = shuffle(BancoExamen).slice(0, this.TOTAL);
+    this.reactivos = seleccionados.map(r => ({
+      pregunta: r.pregunta,
+      explicacion: r.explicacion,
+      opciones: shuffle(r.opciones),
+      eleccion: null,
+      verificada: false
+    }));
+    this.aciertos = 0;
+    this.respondidas = 0;
+    this.render();
+    this.actualizarProgreso();
+    this.ocultarResultado();
+  },
+
+  reiniciar() { this.init(); },
+
+  render() {
+    const cont = document.getElementById('contenedorExamen');
+    cont.innerHTML = '';
+
+    this.reactivos.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reactivo';
+      if (r.verificada) {
+        const correcta = r.eleccion !== null && r.opciones[r.eleccion].correcta;
+        div.classList.add(correcta ? 'reactivo--correcto' : 'reactivo--incorrecto');
+      }
+
+      let html = `
+        <div class="reactivo__titulo">
+          <span class="reactivo__numero">${i + 1}</span>
+          Reactivo ${i + 1} de ${this.reactivos.length}
+        </div>
+        <div class="reactivo__pregunta">${r.pregunta}</div>
+        <div class="reactivo__opciones">
+      `;
+
+      r.opciones.forEach((op, j) => {
+        const clases = ['reactivo__opcion'];
+        if (r.verificada) {
+          clases.push('bloqueada');
+          if (op.correcta) clases.push('correcta');
+          else if (r.eleccion === j) clases.push('incorrecta');
+        }
+        const checked = r.eleccion === j ? 'checked' : '';
+        html += `
+          <label class="${clases.join(' ')}">
+            <input type="radio" name="examen-${i}" value="${j}" ${checked} ${r.verificada ? 'disabled' : ''} onchange="Examen.responder(${i}, ${j})">
+            ${op.texto}
+          </label>
+        `;
+      });
+
+      html += `</div>`;
+
+      html += `<div class="reactivo__feedback ${r.verificada ? 'visible' : ''} ${r.verificada ? (r.opciones[r.eleccion].correcta ? 'reactivo__feedback--correcto' : 'reactivo__feedback--incorrecto') : ''}">`;
+      if (r.verificada) {
+        if (r.opciones[r.eleccion].correcta) {
+          html += `<strong>¡Correcto!</strong>`;
+        } else {
+          html += `<strong>Incorrecto.</strong> La respuesta correcta está marcada en verde.`;
+        }
+        html += `<br><br><strong>Explicación:</strong> ${r.explicacion}`;
+      }
+      html += `</div>`;
+
+      div.innerHTML = html;
+      cont.appendChild(div);
+    });
+  },
+
+  responder(i, j) {
+    const r = this.reactivos[i];
+    if (r.verificada) return;
+
+    r.eleccion = j;
+    r.verificada = true;
+
+    if (r.opciones[j].correcta) this.aciertos++;
+    this.respondidas++;
+
+    this.render();
+    this.actualizarProgreso();
+
+    if (this.respondidas === this.TOTAL) {
+      this.finalizar();
+    }
+  },
+
+  actualizarProgreso() {
+    document.getElementById('examenProgresoTexto').textContent = this.respondidas + ' / ' + this.TOTAL + ' respondidas';
+    const pct = (this.respondidas / this.TOTAL) * 100;
+    document.getElementById('examenProgresoRelleno').style.width = pct + '%';
+  },
+
+  finalizar() {
+    const porcentaje = Math.round((this.aciertos / this.TOTAL) * 100);
+
+    const cont = document.getElementById('resultadoExamen');
+    cont.classList.add('visible');
+    document.getElementById('examenPorcentaje').textContent = porcentaje + '%';
+    document.getElementById('examenDetalle').textContent = this.aciertos + ' aciertos de ' + this.TOTAL + ' reactivos';
+
+    let mensaje = '';
+    if (porcentaje >= 90) {
+      mensaje = '¡Excelente! Dominas los temas complementarios de la NIF C-4. Has completado la clase con éxito.';
+    } else if (porcentaje >= 70) {
+      mensaje = 'Buen trabajo. Tienes una base sólida. Repasa los reactivos donde fallaste.';
+    } else if (porcentaje >= 50) {
+      mensaje = 'Aprobaste con lo mínimo. Te recomendamos repasar la presentación del Punto 6.';
+    } else {
+      mensaje = 'Es necesario reforzar los conceptos. Repasa la presentación y vuelve a intentar.';
+    }
+    document.getElementById('examenMensaje').textContent = mensaje;
+
+    setTimeout(() => {
+      cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  },
+
+  ocultarResultado() {
+    document.getElementById('resultadoExamen').classList.remove('visible');
+  }
+};
+
+/* ============================================================
+   APP
+   ============================================================ */
+const App = {
+  tabActiva: 'rastreador',
+
+  cargarCaso() {
+    Rastreador.reiniciar();
+    LCM.reiniciar();
+    Estimacion.reiniciar();
+    Examen.reiniciar();
+  },
+
+  limpiar() {
+    Rastreador.reiniciar();
+    LCM.reiniciar();
+    Estimacion.reiniciar();
+    Examen.reiniciar();
+  },
+
+  cambiarTab(tab) {
+    this.tabActiva = tab;
+    document.querySelectorAll('.tabs > .tab').forEach(t => {
+      if (t.dataset.tab) {
+        t.classList.toggle('tab--activa', t.dataset.tab === tab);
+      }
+    });
+    document.querySelectorAll('.contenido-tab').forEach(c => {
+      c.classList.toggle('contenido-tab--activo', c.id === 'tab-' + tab);
+    });
+  }
+};
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+const Modal = {
+  abrir() {
+    const tabActiva = App.tabActiva;
+    const overlay = document.getElementById('modalOverlay');
+    const titulo = document.getElementById('modalTitulo');
+    const cuerpo = document.getElementById('modalCuerpo');
+
+    if (tabActiva === 'rastreador') {
+      titulo.textContent = '¿Cómo funciona el rastreador de Identificación Específica?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Aplicar el método de Identificación Específica rastreando cada bicicleta de alta
+        gama con su número de serie y factura de origen.</p>
+        <h3>Cómo usar la actividad</h3>
+        <ul>
+          <li>En la tabla superior verás las 6 bicicletas con su número de serie único.</li>
+          <li>Selecciona un lote disponible en la lista inferior.</li>
+          <li>Presiona el botón para <strong>registrar la venta</strong>.</li>
+          <li>La venta se registra al costo exacto de la factura de origen.</li>
+          <li>El desglose muestra cada venta con su factura y costo rastreado.</li>
+        </ul>
+        <h3>Diferencia con PEPS y Promedio</h3>
+        <p>En Identificación Específica <strong>no hay lotes genéricos ni promedios</strong>:
+        cada unidad tiene su propio costo rastreable. Es el enfrentamiento perfecto entre
+        ingreso real y costo real.</p>
+      `;
+    } else if (tabActiva === 'lcm') {
+      titulo.textContent = '¿Cómo funciona la calculadora LCM?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Aplicar la regla de Costo o Mercado, el Menor (LCM) al inventario final.</p>
+        <h3>Cómo usar la calculadora</h3>
+        <ul>
+          <li>Edita el <strong>costo</strong>, el <strong>valor de mercado</strong> y los
+          <strong>límites superior e inferior</strong> de cada artículo.</li>
+          <li>Elige la alternativa de aplicación: <strong>individual</strong>,
+          <strong>por grupos</strong> o <strong>al total</strong>.</li>
+          <li>La app aplica LCM y muestra el ajuste por deterioro al cierre.</li>
+        </ul>
+        <h3>Conceptos clave</h3>
+        <ul>
+          <li><strong>Mercado designado:</strong> costo de reposición, limitado por el
+          límite superior e inferior.</li>
+          <li><strong>Límite superior:</strong> valor de realización (precio venta − gastos venta).</li>
+          <li><strong>Límite inferior:</strong> valor neto de realización (valor realización − % margen bruto).</li>
+        </ul>
+      `;
+    } else if (tabActiva === 'estimacion') {
+      titulo.textContent = '¿Cómo funciona la actividad de estimación y errores?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Explorar los métodos de estimación del inventario final y los efectos de los
+        errores en el inventario sobre los estados financieros.</p>
+        <h3>Sub-pestaña: Estimación</h3>
+        <ul>
+          <li><strong>Método Detallista:</strong> usa el factor de costo para estimar el
+          inventario final a partir del inventario a precio de venta.</li>
+          <li><strong>Método Utilidad Bruta:</strong> estima el costo de ventas aplicando el
+          % de margen a las ventas netas, y lo resta de la mercancía disponible.</li>
+        </ul>
+        <h3>Sub-pestaña: Errores</h3>
+        <ul>
+          <li>Selecciona el tipo de error: IF o II sobrevaluado o subvaluado.</li>
+          <li>Observa el efecto en el costo de ventas y en la utilidad neta.</li>
+          <li>Los efectos son opuestos según el tipo de error.</li>
+        </ul>
+      `;
+    } else {
+      titulo.textContent = '¿Cómo funciona el examen final?';
+      cuerpo.innerHTML = `
+        <h3>Objetivo</h3>
+        <p>Evaluar la comprensión conceptual de los temas complementarios de la NIF C-4.</p>
+        <h3>Estructura</h3>
+        <ul>
+          <li><strong>10 reactivos</strong> seleccionados al azar de un banco de 25.</li>
+          <li>Se <strong>aleatoriza</strong> el orden de los reactivos y de las opciones.</li>
+          <li>Cada reactivo tiene <strong>4 opciones</strong>, solo una correcta.</li>
+          <li>Todos los reactivos son <strong>conceptuales</strong>: no piden cifras monetarias
+          como respuesta.</li>
+        </ul>
+        <h3>Calificación inmediata</h3>
+        <ul>
+          <li>Al hacer clic en una opción, el reactivo se califica al instante.</li>
+          <li>La opción correcta se marca en verde; tu elección incorrecta en rojo.</li>
+          <li>El reactivo queda bloqueado.</li>
+          <li>Al responder el último reactivo, aparece tu <strong>calificación en %</strong>.</li>
+        </ul>
+      `;
+    }
+
+    overlay.classList.add('visible');
+  },
+
+  cerrar() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+  }
+};
+
+document.getElementById('modalOverlay').onclick = (e) => {
+  if (e.target.id === 'modalOverlay') Modal.cerrar();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') Modal.cerrar();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  Rastreador.init();
+  LCM.init();
+  Estimacion.init();
+  Examen.init();
+});
+</script>
+
+</body>
+</html>
