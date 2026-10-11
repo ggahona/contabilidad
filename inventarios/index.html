@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contabilidad — Materiales de Estudio</title>
+<title>Curso de Inventarios NIF C-4 — Bicicletas del Norte, S.A. de C.V.</title>
 <style>
   :root {
     --azul-noche: #001f45;
@@ -31,15 +31,40 @@
     border-radius: 25px;
     box-shadow: 0 25px 70px rgba(0,0,0,0.3);
     overflow: hidden;
+    position: relative;
   }
   .header {
     background: linear-gradient(135deg, var(--azul-institucional) 0%, var(--azul-barra) 100%);
     color: white;
-    padding: 40px 30px;
+    padding: 50px 30px 40px;
     text-align: center;
+    position: relative;
   }
   .header h1 { font-size: 2.2em; margin-bottom: 10px; line-height: 1.2; }
   .header p { color: var(--oro); font-size: 1.1em; font-weight: 600; }
+
+  .boton-regreso {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.4);
+    padding: 0.4rem 1rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .boton-regreso:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #fff;
+  }
 
   .content { padding: 40px 30px; }
 
@@ -54,6 +79,28 @@
   .intro h2 { color: var(--azul-titulos); margin-bottom: 10px; }
   .intro p { color: var(--azul-pizarra); line-height: 1.6; }
 
+  .caso-base {
+    background: white;
+    border: 2px solid var(--gris-borde);
+    border-left: 5px solid var(--turquesa);
+    border-radius: 15px;
+    padding: 20px 25px;
+    margin-bottom: 30px;
+  }
+  .caso-base h3 {
+    color: var(--azul-titulos);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .caso-base p {
+    color: var(--azul-pizarra);
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+  .caso-base strong { color: var(--azul-noche); }
+
   .seccion-titulo {
     color: var(--azul-titulos);
     font-size: 1.4em;
@@ -67,17 +114,42 @@
     margin-bottom: 20px;
   }
 
+  .guia-card {
+    background: white;
+    border: 2px solid var(--turquesa);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 35px;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    color: var(--gris-texto);
+  }
+  .guia-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,182,215,0.25);
+    border-color: var(--oro);
+  }
+  .guia-card h3 { color: var(--azul-titulos); margin-bottom: 10px; font-size: 1.2em; }
+  .guia-card p { color: var(--azul-pizarra); font-size: 0.95em; line-height: 1.5; }
+  .guia-card .resource-tag {
+    background: var(--turquesa);
+    color: white;
+    margin-top: 12px;
+  }
+
   .resources-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 35px;
   }
   .resource-card {
     background: white;
     border: 2px solid var(--gris-borde);
     border-radius: 15px;
-    padding: 30px;
+    padding: 25px;
     text-align: center;
     transition: all 0.3s ease;
     text-decoration: none;
@@ -93,8 +165,8 @@
     outline: 3px solid var(--turquesa);
     outline-offset: 3px;
   }
-  .resource-card h3 { color: var(--azul-titulos); margin-bottom: 10px; font-size: 1.3em; }
-  .resource-card p { color: var(--azul-pizarra); font-size: 0.95em; line-height: 1.5; }
+  .resource-card h3 { color: var(--azul-titulos); margin-bottom: 10px; font-size: 1.15em; }
+  .resource-card p { color: var(--azul-pizarra); font-size: 0.92em; line-height: 1.5; }
   .resource-tag {
     display: inline-block;
     background: var(--oro);
@@ -102,9 +174,25 @@
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 12px;
-    font-size: 0.8em;
+    font-size: 0.75em;
     margin-top: 10px;
   }
+
+  .ciclo {
+    background: var(--crema-oro);
+    border-radius: 15px;
+    padding: 20px 25px;
+    text-align: center;
+    border-left: 5px solid var(--oro);
+    margin-bottom: 30px;
+  }
+  .ciclo p {
+    color: var(--azul-noche);
+    font-weight: 600;
+    font-size: 0.95em;
+    line-height: 1.8;
+  }
+  .ciclo strong { color: var(--azul-titulos); }
 
   .footer {
     background: var(--azul-barra);
@@ -116,8 +204,16 @@
   .footer strong { color: var(--oro); }
 
   @media (max-width: 600px) {
-    .header h1 { font-size: 1.6em; }
+    .header h1 { font-size: 1.5em; }
+    .header { padding: 50px 20px 30px; }
     .resources-grid { grid-template-columns: 1fr; }
+    .content { padding: 25px 20px; }
+    .boton-regreso {
+      top: 10px;
+      left: 10px;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.7rem;
+    }
   }
 </style>
 </head>
@@ -125,35 +221,116 @@
 <div class="container">
 
   <div class="header">
-    <h1>Materiales de Estudio</h1>
-    <p>Contabilidad — Aprendizaje Flexible</p>
+    <a href="../" class="boton-regreso">← Volver a contabilidad</a>
+    <h1>El Inventario en el Ciclo Contable</h1>
+    <p>Curso NIF C-4 — Bicicletas del Norte, S.A. de C.V.</p>
   </div>
 
   <div class="content">
 
     <div class="intro">
       <h2>¡Bienvenido!</h2>
-      <p>Selecciona un curso para comenzar a estudiar. Todos los materiales son interactivos y funcionan en cualquier dispositivo.</p>
+      <p>Recorre el ciclo contable completo de los inventarios bajo NIF C-4 en 5 puntos temáticos. Cada punto incluye una presentación conceptual y una herramienta aplicativa interactiva.</p>
     </div>
 
-    <h2 class="seccion-titulo">Cursos disponibles</h2>
-    <p class="seccion-subtitulo">Cada curso incluye presentaciones, herramientas aplicativas y guías de referencia.</p>
+    <div class="caso-base">
+      <h3>Caso base</h3>
+      <p>
+        <strong>Empresa:</strong> Bicicletas del Norte, S.A. de C.V. &nbsp;|&nbsp;
+        <strong>Giro:</strong> Ensamble y comercialización de bicicletas &nbsp;|&nbsp;
+        <strong>Norma:</strong> NIF C-4 &nbsp;|&nbsp;
+        <strong>Periodo:</strong> Enero de 2026 &nbsp;|&nbsp;
+        <strong>Moneda:</strong> Pesos mexicanos ($)
+      </p>
+    </div>
+
+    <h2 class="seccion-titulo">Guía de la clase</h2>
+    <p class="seccion-subtitulo">Documento de referencia con la introducción, datos clave y glosario del curso.</p>
+
+    <a href="https://github.com/ggahona/contabilidad/blob/main/inventarios/g0-guia.md" target="_blank" class="guia-card">
+      <h3>Guía e introducción de la clase</h3>
+      <p>Documento Markdown con LaTeX para Obsidian. Contiene la bienvenida, el caso base, el objetivo de aprendizaje, el recorrido de los 5 puntos, las fórmulas clave y los resultados del caso.</p>
+      <span class="resource-tag">Abrir guía (Markdown en GitHub)</span>
+    </a>
+
+    <h2 class="seccion-titulo">Puntos temáticos</h2>
+    <p class="seccion-subtitulo">Clasificar → Registrar → Costear → Ajustar → Presentar</p>
 
     <div class="resources-grid">
 
-      <a href="inventarios/index.html" class="resource-card">
-        <h3>Curso de Inventarios NIF C-4</h3>
-        <p>Ciclo contable completo de los inventarios bajo la norma NIF C-4, aplicado al caso de Bicicletas del Norte, S.A. de C.V.</p>
-        <span class="resource-tag">5 puntos temáticos</span>
+      <a href="g1-presentacion.html" class="resource-card">
+        <h3>Punto 1 — Definición, Naturaleza y Clasificación</h3>
+        <p>Qué son los inventarios según la NIF C-4, por qué van en el Activo Circulante y cuáles son las 6 clases normativas.</p>
+        <span class="resource-tag">Presentación</span>
       </a>
 
+      <a href="g1-complemento.html" class="resource-card">
+        <h3>Punto 1 — Complemento: Clasificador</h3>
+        <p>Clasificador interactivo de partidas, tabla de partida doble y examen final con calificación inmediata.</p>
+        <span class="resource-tag">Herramienta aplicativa</span>
+      </a>
+
+      <a href="g2-presentacion.html" class="resource-card">
+        <h3>Punto 2 — Procedimientos de Registro Contable</h3>
+        <p>Global, Analítico y Perpetuos: tres formas de registrar compras y ventas, todas llegan al mismo resultado final.</p>
+        <span class="resource-tag">Presentación</span>
+      </a>
+
+      <a href="g2-complemento-simulador.html" class="resource-card">
+        <h3>Punto 2 — Complemento: Simulador</h3>
+        <p>Simulador de los 3 procedimientos, actividad de ubicación de cuentas y examen final con calificación inmediata.</p>
+        <span class="resource-tag">Herramienta aplicativa</span>
+      </a>
+
+      <a href="g3-presentacion.html" class="resource-card">
+        <h3>Punto 3 — Fórmulas de Asignación del Costo</h3>
+        <p>PEPS y Costo Promedio Móvil: cómo asignar costo cuando los precios cambian a lo largo del tiempo.</p>
+        <span class="resource-tag">Presentación</span>
+      </a>
+
+      <a href="g3-calculadora-kardex.html" class="resource-card">
+        <h3>Punto 3 — Complemento: Calculadora de Kardex</h3>
+        <p>Calculadora editable de kardex, actividad de detección de errores y examen final con calificación inmediata.</p>
+        <span class="resource-tag">Herramienta aplicativa</span>
+      </a>
+
+      <a href="g4-presentacion.html" class="resource-card">
+        <h3>Punto 4 — Mercancías en Tránsito y Ajustes</h3>
+        <p>Cuenta puente para compras foráneas y regularización de mermas, faltantes y sobrantes por recuento físico.</p>
+        <span class="resource-tag">Presentación</span>
+      </a>
+
+      <a href="g4-simulador-transito-ajustes.html" class="resource-card">
+        <h3>Punto 4 — Complemento: Simulador de tránsito y ajustes</h3>
+        <p>Simulador de mercancías en tránsito, simulador de ajustes por recuento físico y examen final.</p>
+        <span class="resource-tag">Herramienta aplicativa</span>
+      </a>
+
+      <a href="g5-presentacion.html" class="resource-card">
+        <h3>Punto 5 — Relación con el Estado de Resultados</h3>
+        <p>Los dos puntos de contacto entre el Estado de Resultados y el Balance General, y la comprobación del circuito contable.</p>
+        <span class="resource-tag">Presentación</span>
+      </a>
+
+      <a href="g5-conciliador-er-bg.html" class="resource-card">
+        <h3>Punto 5 — Complemento: Conciliador ER ↔ BG</h3>
+        <p>Conciliador interactivo Estado de Resultados ↔ Balance General, actividad de ubicación y examen final.</p>
+        <span class="resource-tag">Herramienta aplicativa</span>
+      </a>
+
+    </div>
+
+    <div class="ciclo">
+      <p>
+        <strong>Clasificar</strong> (Punto 1) → <strong>Registrar</strong> (Punto 2) → <strong>Costear</strong> (Punto 3) → <strong>Ajustar</strong> (Punto 4) → <strong>Presentar</strong> (Punto 5)
+      </p>
     </div>
 
   </div>
 
   <div class="footer">
-    <p><strong>Materiales de Estudio — Contabilidad</strong><br>
-    Recursos interactivos para el aprendizaje de la contabilidad.</p>
+    <p><strong>Curso de Inventarios NIF C-4</strong> — Bicicletas del Norte, S.A. de C.V.<br>
+    5 puntos temáticos + guía de referencia · 10 archivos HTML + 1 Markdown</p>
   </div>
 
 </div>
